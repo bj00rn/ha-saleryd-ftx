@@ -14,11 +14,10 @@ from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import IntegrationBlueprintApiClient
+from .api import SalerydLokeApiClient
 
 from .const import (
-    CONF_PASSWORD,
-    CONF_USERNAME,
+    CONF_WEBSOCKET_URL,
     DOMAIN,
     PLATFORMS,
     STARTUP_MESSAGE,
@@ -40,13 +39,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    username = entry.data.get(CONF_USERNAME)
-    password = entry.data.get(CONF_PASSWORD)
+    url = entry.data.get(CONF_WEBSOCKET_URL)
 
     session = async_get_clientsession(hass)
-    client = IntegrationBlueprintApiClient(username, password, session)
+    client = SalerydLokeApiClient(url, session)
 
-    coordinator = BlueprintDataUpdateCoordinator(hass, client=client)
+    coordinator = SalerydLokeDataUpdateCoordinator(hass, client=client)
     await coordinator.async_refresh()
 
     if not coordinator.last_update_success:
@@ -65,12 +63,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     return True
 
 
-class BlueprintDataUpdateCoordinator(DataUpdateCoordinator):
+class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
-    def __init__(
-        self, hass: HomeAssistant, client: IntegrationBlueprintApiClient
-    ) -> None:
+    def __init__(self, hass: HomeAssistant, client: SalerydLokeApiClient) -> None:
         """Initialize."""
         self.api = client
         self.platforms = []

@@ -2,16 +2,16 @@
 from homeassistant.components.switch import SwitchEntity
 
 from .const import DEFAULT_NAME, DOMAIN, ICON, SWITCH
-from .entity import IntegrationBlueprintEntity
+from .entity import SalerydLokeEntity
 
 
 async def async_setup_entry(hass, entry, async_add_devices):
     """Setup sensor platform."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
-    async_add_devices([IntegrationBlueprintBinarySwitch(coordinator, entry)])
+    async_add_devices([SalerydLokeBinarySwitch(coordinator, entry)])
 
 
-class IntegrationBlueprintBinarySwitch(IntegrationBlueprintEntity, SwitchEntity):
+class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
     """integration_blueprint switch class."""
 
     async def async_turn_on(self, **kwargs):  # pylint: disable=unused-argument

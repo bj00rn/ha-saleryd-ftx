@@ -1,0 +1,33 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "Saleryd Loke FTX integration",
+                "description": "Provide websocket url to FTX fan",
+                "websocket": "Websocket URL",
+                "data": {
+                    "websocket": "Websocket URL"
+                }
+            }
+        },
+        "error": {
+            "connect": "Error getting data, Wrong websocket url?"
+        },
+        "abort": {
+            "single_instance_allowed": "Only a single instance is allowed."
+        }
+    },
+    "options": {
+        "step": {
+            "user": {
+                "websocket": "Websocket URL",
+                "data": {
+                    "websocket": "Websocket URL"
+                }
+            },
+            "error": {
+                "connect": "Error getting data, Wrong websocket url?"
+            }
+        }
+    }
+}

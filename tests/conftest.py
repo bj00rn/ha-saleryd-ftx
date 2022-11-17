@@ -46,7 +46,7 @@ def skip_notifications_fixture():
 def bypass_get_data_fixture():
     """Skip calls to get data from API."""
     with patch(
-        "custom_components.integration_blueprint.IntegrationBlueprintApiClient.async_get_data"
+        "custom_components.integration_blueprint.SalerydLokeApiClient.async_get_data"
     ):
         yield
 
@@ -57,7 +57,7 @@ def bypass_get_data_fixture():
 def error_get_data_fixture():
     """Simulate error when retrieving data from API."""
     with patch(
-        "custom_components.integration_blueprint.IntegrationBlueprintApiClient.async_get_data",
+        "custom_components.integration_blueprint.SalerydLokeApiClient.async_get_data",
         side_effect=Exception,
     ):
         yield
