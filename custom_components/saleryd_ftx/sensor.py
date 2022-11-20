@@ -75,13 +75,13 @@ sensors = {
     ),
     "fireplace_mode": SensorEntityDescription(
         key="MB",
-        icon="mdi:fireplace"
+        icon="mdi:fireplace",
         name="Fireplace mode",
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "temperature_mode": SensorEntityDescription(
         key="MH",
-        icon="mdi:home-thermometer"
+        icon="mdi:home-thermometer",
         name="Temperature mode",
         state_class=SensorStateClass.MEASUREMENT,
     ),
