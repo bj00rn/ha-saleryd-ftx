@@ -6,51 +6,79 @@
 [![Project Maintenance][maintenance-shield]][user_profile]
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
-[![Discord][discord-shield]][discord]
-[![Community Forum][forum-shield]][forum]
 
-_Component to integrate with [integration_blueprint][integration_blueprint]._
+*Component to integrate with [Saleryd FTX Systems](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
 
-**This component will set up the following platforms.**
+**Disclaimer**
 
-Platform | Description
+ This integration has been developed for LOKE1 FTX system. *Use at own risk*. I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
+
+**Sensors**
+
+Name | Description | Unit of measure
+-- | -- | --
+`heat_exchanger_rpm` | Speed of the heat exchanger rotor | rpm
+`heat_exchanger_speed` | Speed of the heat exchanger rotor | percent
+`supply_air_temperature` | Supply air temperature | Degrees celsius
+`heater_air_temperature` | Air temperature at heater battry | Degrees celsius
+`supply_fan_speed` | Speed of the supply air fan | percent
+`extract_fan_speed` | Speed of the extract air fan | percent
+`ventilation_mode` | Ventilation mode of the system  (0=Home,1=Away,2=High) | integer
+`fireplace_mode` | Fireplace mode state (0=Off,1=On) | integer
+`temperature_mode` | Temperature mode (0=Cooling,1=Economy,2=Normal)  | integer
+
+***Services***
+
+Name | Description | Fields
+-- | -- | --
+`set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=off)
+`set_cooling_mode` | Set cooling mode | value: `integer` (0=On, 1=off)
+`set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=High)
+`set_temperature_mode` | Set temperature mode | value: `integer` (0=Cooling,1=Economy,2=Normal)
+
+
+## Confirmed supported devices
+
+Model | Software versions
 -- | --
-`binary_sensor` | Show something `True` or `False`.
-`sensor` | Show info from API.
-`switch` | Switch something `True` or `False`.
+[Saleryd LOKE1 (LOKE BASIC)](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | Firmware 4.1.1
 
-![example][exampleimg]
 
-{% if not installed %}
+## Prequisites
+1. Connect FTX to local network . See instructions in user manual
+2. Take note of the assigned IP adress of the FTX system
+
 ## Installation
-
-1. Click install.
-1. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "SalerydLoke".
-
-{% endif %}
+1. In the HA UI go to "HACS" and add this repository
+2. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Saleryd FTX".
+3. Click install
 
 
-## Configuration is done in the UI
+## Configuration
+### configuration.yaml
 
-<!---->
+Configuration in congfiguration.yaml is not supported
 
-***
 
-[integration_blueprint]: https://github.com/custom-components/integration_blueprint
-[buymecoffee]: https://www.buymeacoffee.com/ludeeus
+### Configuration in the UI
+Setting | Description
+-- | --
+IP | IP adress of the FTX system
+
+
+[saleryd_ftx]: https://github.com/bj00rn/ha-saleryd-ftx
+[buymecoffee]: https://www.buymeacoffee.com/bj00rn
 [buymecoffeebadge]: https://img.shields.io/badge/buy%20me%20a%20coffee-donate-yellow.svg?style=for-the-badge
-[commits-shield]: https://img.shields.io/github/commit-activity/y/custom-components/integration_blueprint.svg?style=for-the-badge
-[commits]: https://github.com/custom-components/integration_blueprint/commits/master
+[commits-shield]: https://img.shields.io/github/commit-activity/y/bj00rn/ha-saleryd-ftx.svg?style=for-the-badge
+[commits]: https://github.com/bj00rn/ha-saleryd-ftx/commits/master
 [hacs]: https://hacs.xyz
 [hacsbadge]: https://img.shields.io/badge/HACS-Custom-orange.svg?style=for-the-badge
-[discord]: https://discord.gg/Qa5fW2R
-[discord-shield]: https://img.shields.io/discord/330944238910963714.svg?style=for-the-badge
 [exampleimg]: example.png
 [forum-shield]: https://img.shields.io/badge/community-forum-brightgreen.svg?style=for-the-badge
 [forum]: https://community.home-assistant.io/
-[license]: https://github.com/custom-components/integration_blueprint/blob/main/LICENSE
-[license-shield]: https://img.shields.io/github/license/custom-components/integration_blueprint.svg?style=for-the-badge
-[maintenance-shield]: https://img.shields.io/badge/maintainer-Joakim%20Sørensen%20%40ludeeus-blue.svg?style=for-the-badge
-[releases-shield]: https://img.shields.io/github/release/custom-components/integration_blueprint.svg?style=for-the-badge
-[releases]: https://github.com/custom-components/integration_blueprint/releases
-[user_profile]: https://github.com/ludeeus
+[license]: https://github.com/bj00rn/ha-saleryd-ftx/blob/main/LICENSE
+[license-shield]: https://img.shields.io/github/license/bj00rn/ha-saleryd-ftx.svg?style=for-the-badge
+[maintenance-shield]: https://img.shields.io/badge/maintainer-bj00rn-blue.svg?style=for-the-badge
+[releases-shield]: https://img.shields.io/github/release/bj00rn/ha-saleryd-ftx.svg?style=for-the-badge
+[releases]: https://github.com/bj00rn/ha-saleryd-ftx/releases
+[user_profile]: https://github.com/bj00rn

@@ -28,15 +28,10 @@ class SalerydLokeApiClient:
         """Get data from the API."""
         return await self.api_wrapper("ws_get", self._url)
 
-    async def async_send_command(self, command):
-        return await self.api_wrapper("ws_set", self._url, command)
+    async def async_send_command(self, data):
+        return await self.api_wrapper("ws_set", self._url, data)
 
-    async def async_set_title(self, value: str) -> None:
-        """Get data from the API."""
-        url = "https://jsonplaceholder.typicode.com/posts/1"
-        await self.api_wrapper("patch", url, data={"title": value}, headers=HEADERS)
-
-    def parse_message(self, msg):
+    def _parse_message(self, msg):
         """parse socket message"""
         parsed = None
 
@@ -46,17 +41,19 @@ class SalerydLokeApiClient:
                     # ignore acks
                     _LOGGER.debug("Ignoring message %s", msg)
                     return
-                # parse response
+
                 value = msg[1::].split(":")[1].strip()
+                if msg[1] != "*":
+                    value = value.split("+")
                 key = msg[1::].split(":")[0]
                 parsed = (key, value)
         except Exception as exc:
-            _LOGGER.warning("Failed to parse message %s", msg)
+            _LOGGER.warning("Failed to parse message %s", msg, exc_info=True)
             raise ParseError() from exc
         return parsed
 
     async def api_wrapper(
-        self, method: str, url: str, data: dict = dict, headers: dict = dict
+        self, method: str, url: str, data: str = dict, headers: dict = dict
     ) -> dict:
         """Get information from the API."""
 
@@ -69,13 +66,13 @@ class SalerydLokeApiClient:
                         command = "#\r"
                         _LOGGER.debug("Outgoing message %s", command)
                         await websocket.send_str(command)
-                        nsamples = 50
+                        nsamples = 100
                         count = 0
                         _LOGGER.debug("Starting sampling of %d messages", nsamples)
                         async for msg in websocket:
                             try:
                                 _LOGGER.debug("Incoming message [%d]: %s", count, msg)
-                                parsed = self.parse_message(msg.data)
+                                parsed = self._parse_message(msg.data)
                                 key, value = parsed
                                 state[key] = value
                             except ParseError:
@@ -88,9 +85,7 @@ class SalerydLokeApiClient:
                                 _LOGGER.debug("Got state %s", state)
                                 return state
                 elif method == "ws_set":
-                    async with self._session.ws_connect(
-                        self._url, headers=headers
-                    ) as websocket:
+                    async with self._session.ws_connect(self._url) as websocket:
                         await websocket.send_str(f"{data}\r")
 
         except asyncio.TimeoutError as exception:

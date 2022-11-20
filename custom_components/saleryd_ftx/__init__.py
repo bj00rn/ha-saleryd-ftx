@@ -28,11 +28,6 @@ SCAN_INTERVAL = timedelta(seconds=30)
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
-async def async_setup(hass: HomeAssistant, config: Config):
-    """Set up this integration using YAML is not supported."""
-    return True
-
-
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
@@ -52,12 +47,44 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
+    # Setup platforms
     for platform in PLATFORMS:
         if entry.options.get(platform, True):
             coordinator.platforms.append(platform)
             hass.async_add_job(
                 hass.config_entries.async_forward_entry_setup(entry, platform)
             )
+
+    # Register services
+    async def control_request(cmd_name, value=None):
+        cmd = f"#{cmd_name}:{value}"
+        _LOGGER.info("Sending control request %s with payload %s", cmd_name, value)
+        await client.async_send_command(data=cmd)
+
+    async def set_fireplace_mode(call):
+        value = call.data.get("value")
+        _LOGGER.info("Sending set fire mode request of %s", value)
+        await control_request("MB", value)
+
+    async def set_ventilation_mode(call):
+        value = call.data.get("value")
+        _LOGGER.info("Sending set ventilation mode request of %s", value)
+        await control_request("MF", value)
+
+    async def set_temperature_mode(call):
+        value = call.data.get("value")
+        _LOGGER.info("Sending set temperature mode request of %s", value)
+        await control_request("MT", value)
+
+    async def set_cooling_mode(call):
+        value = call.data.get("value")
+        _LOGGER.info("Sending set cooling mode request of %s", value)
+        await control_request("MK", value)
+
+    hass.services.async_register(DOMAIN, "set_fireplace_mode", set_fireplace_mode)
+    hass.services.async_register(DOMAIN, "set_cooling_mode", set_cooling_mode)
+    hass.services.async_register(DOMAIN, "set_ventilation_mode", set_ventilation_mode)
+    hass.services.async_register(DOMAIN, "set_temperature_mode", set_temperature_mode)
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True
