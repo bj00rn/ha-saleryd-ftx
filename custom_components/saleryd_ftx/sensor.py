@@ -13,7 +13,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.const import UnitOfTemperature, REVOLUTIONS_PER_MINUTE, PERCENTAGE
+from homeassistant.const import PERCENTAGE, TEMP_CELSIUS
 
 from .const import DEFAULT_NAME, DOMAIN, ICON, SENSOR, ATTRIBUTION
 
@@ -23,66 +23,67 @@ sensors = {
     "heat_exchanger_rpm": SensorEntityDescription(
         key="*XB",
         name="Heat exchanger speed",
-        device_class=None,
-        native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        native_unit_of_measurement="rpm",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "heat_exchanger_speed": SensorEntityDescription(
         key="*XB",
         name="Heat exchanger speed percent",
-        device_class=None,
         native_unit_of_measurement=PERCENTAGE,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "supply_air_temperature": SensorEntityDescription(
         key="*TC",
         name="Supply air temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=TEMP_CELSIUS,
     ),
     "heater_air_temperature": SensorEntityDescription(
         key="*TK",
         name="Heater air temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=TEMP_CELSIUS,
     ),
     "target_temperature": SensorEntityDescription(
         key="*DT",
         name="Target temperature",
         device_class=SensorDeviceClass.TEMPERATURE,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        state_class=SensorStateClass.MEASUREMENT,
+        native_unit_of_measurement=TEMP_CELSIUS,
     ),
     "supply_fan_speed": SensorEntityDescription(
         key="*DA",
+        icon="mdi:fan",
         name="Supply fan speed",
-        device_class=None,
         native_unit_of_measurement=PERCENTAGE,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "extract_fan_speed": SensorEntityDescription(
         key="*DB",
+        icon="mdi:fan",
         name="Extract fan speed",
-        device_class=None,
         native_unit_of_measurement=PERCENTAGE,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "ventilation_mode": SensorEntityDescription(
         key="MF",
         name="Ventilation mode",
-        device_class=None,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        icon="mdi:hvac",
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "fireplace_mode": SensorEntityDescription(
         key="MB",
+        icon="mdi:fireplace"
         name="Fireplace mode",
-        device_class=None,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
     "temperature_mode": SensorEntityDescription(
         key="MH",
+        icon="mdi:home-thermometer"
         name="Temperature mode",
-        device_class=None,
-        entity_category=EntityCategory.DIAGNOSTIC,
+        state_class=SensorStateClass.MEASUREMENT,
     ),
 }
 

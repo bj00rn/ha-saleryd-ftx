@@ -1,10 +1,10 @@
 {
-  "domain": "saleryd_loke_ftx",
-  "name": "Saleryd Loke FTX",
-  "documentation": "https://github.com/custom-components/integration_blueprint",
+  "domain": "saleryd_ftx",
+  "name": "Saleryd FTX",
+  "documentation": "https://github.com/bj00rn/ha-saleryd-ftx",
   "iot_class": "local_polling",
-  "issue_tracker": "https://github.com/custom-components/integration_blueprint/issues",
-  "version": "0.0.0",
+  "issue_tracker": "https://github.com/bj00rn/ha-saleryd-ftx",
+  "version": "0.0.2",
   "config_flow": true,
   "codeowners": [
     "@bj00rn"

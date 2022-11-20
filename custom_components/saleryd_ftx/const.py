@@ -1,11 +1,11 @@
 """Constants for integration_blueprint."""
 # Base component constants
-NAME = "Saleryd Loke FTX integration"
-DOMAIN = "saleryd_loke_ftx"
+NAME = "Saleryd FTX integration"
+DOMAIN = "saleryd_ftx"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.1"
 ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
-ISSUE_URL = "https://github.com/custom-components/integration_blueprint/issues"
+ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
 
 # Icons
 ICON = "mdi:format-quote-close"
