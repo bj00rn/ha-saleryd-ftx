@@ -95,7 +95,7 @@ class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
 
     def __init__(self, hass: HomeAssistant, client: SalerydLokeApiClient) -> None:
         """Initialize."""
-        self.api = client
+        self._api = client
         self.platforms = []
 
         super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
@@ -103,7 +103,7 @@ class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            return await self.api.async_get_data()
+            return await self._api.async_get_data()
         except Exception as exception:
             raise UpdateFailed() from exception
 
