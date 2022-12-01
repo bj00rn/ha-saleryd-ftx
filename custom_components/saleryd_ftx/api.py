@@ -24,6 +24,7 @@ class SalerydLokeApiClient:
         self._url = url
         self._session = session
         self._ws = None
+        self._consumer = None
 
     async def init_ws(self):
         """Init websocket connection"""
@@ -37,6 +38,11 @@ class SalerydLokeApiClient:
             # Server should begin sending messages. Make sure we receive at least one message
             response = await self._ws.receive_str()
             _LOGGER.debug("Received first message from websocket: %s", response)
+
+    async def listen(self):
+        async for msg in self._ws:
+            key, value = self._parse_message(msg)
+            self.state[key] = value
 
     async def async_get_data(self) -> dict:
         """Get data from the API."""
@@ -116,6 +122,7 @@ class SalerydLokeApiClient:
                 "Timeout error fetching information from %s - %s",
                 self._url,
                 exception,
+                exc_info=True,
             )
             raise exception
 
@@ -124,6 +131,7 @@ class SalerydLokeApiClient:
                 "Error parsing information from %s - %s",
                 self._url,
                 exception,
+                exc_info=True,
             )
             raise exception
         except (aiohttp.ClientError, socket.gaierror) as exception:
@@ -131,10 +139,13 @@ class SalerydLokeApiClient:
                 "Error fetching information from %s - %s",
                 self._url,
                 exception,
+                exc_info=True,
             )
             raise exception
         except Exception as exception:  # pylint: disable=broad-except
-            _LOGGER.error("Something really wrong happened! - %s", exception)
+            _LOGGER.error(
+                "Something really wrong happened! - %s", exception, exc_info=True
+            )
             raise exception
 
 

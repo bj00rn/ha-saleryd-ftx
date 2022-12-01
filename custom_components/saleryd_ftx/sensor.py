@@ -100,7 +100,7 @@ sensors = {
         state_class=SensorStateClass.MEASUREMENT,
     ),
     "filter_months_left": SensorEntityDescription(
-        key="FL",
+        key="FT",
         icon="mdi:home-thermometer",
         name="Filter months left",
         state_class=SensorStateClass.MEASUREMENT,
@@ -186,3 +186,7 @@ class SalerydLokeSensor(CoordinatorEntity, SensorEntity):
                 self.entity_description.key
             )[3]
         return state_attrs
+
+    @property
+    def should_poll(self):
+        return False

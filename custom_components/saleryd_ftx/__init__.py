@@ -9,12 +9,12 @@ from datetime import timedelta
 import logging
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import Config, HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.core import HomeAssistant
+from homeassistant.util import Throttle
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
-from .api import SalerydLokeApiClient
+from .gateway import Gateway
 
 from .const import (
     CONF_WEBSOCKET_URL,
@@ -37,13 +37,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     url = entry.data.get(CONF_WEBSOCKET_URL)
 
     session = async_get_clientsession(hass)
-    client = SalerydLokeApiClient(url, session)
+    gateway = Gateway(session, "192.168.1.151", 3001)
 
-    coordinator = SalerydLokeDataUpdateCoordinator(hass, client=client)
-    await coordinator.async_refresh()
+    coordinator = SalerydLokeDataUpdateCoordinator(hass, gateway)
+    # await coordinator.async_refresh()
 
-    if not coordinator.last_update_success:
-        raise ConfigEntryNotReady
+    # if not coordinator.last_update_success:
+    #    raise ConfigEntryNotReady
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
@@ -56,10 +56,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
             )
 
     # Register services
-    async def control_request(cmd_name, value=None):
-        cmd = f"#{cmd_name}:{value}"
-        _LOGGER.info("Sending control request %s with payload %s", cmd_name, value)
-        await client.async_send_command(data=cmd)
+    async def control_request(key, value=None):
+        cmd = f"#{key}:{value}"
+        _LOGGER.info("Sending control request %s with payload %s", key, value)
+        await gateway.send_command(key, value)
 
     async def set_fireplace_mode(call):
         value = call.data.get("value")
@@ -93,19 +93,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
-    def __init__(self, hass: HomeAssistant, client: SalerydLokeApiClient) -> None:
+    def __init__(self, hass: HomeAssistant, gateway: Gateway) -> None:
         """Initialize."""
-        self._api = client
+        self._gateway = gateway
+
         self.platforms = []
 
-        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=SCAN_INTERVAL)
+        self._gateway.add_handler(self.async_set_updated_data)
 
-    async def _async_update_data(self):
-        """Update data via library."""
-        try:
-            return await self._api.async_get_data()
-        except Exception as exception:
-            raise UpdateFailed() from exception
+        super().__init__(hass, _LOGGER, name=DOMAIN)
+
+    @Throttle(timedelta(seconds=30))
+    def async_set_updated_data(self, data) -> None:
+        super().async_set_updated_data(data)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
