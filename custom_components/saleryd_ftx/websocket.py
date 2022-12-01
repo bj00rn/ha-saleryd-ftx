@@ -157,5 +157,11 @@ class WSClient:
     async def send_message(self, message):
         """Send message to FTX"""
         url = f"http://{self.host}:{self.port}"
-        async with self.session.ws_connect(url) as ws:
-            await ws.send_str(message)
+        try:
+            async with self.session.ws_connect(url) as ws:
+                await ws.send_str(message)
+                return True
+        except Exception as e:
+            LOGGER.error("Failed to send message %s", message, exc_info=True)
+
+        return False

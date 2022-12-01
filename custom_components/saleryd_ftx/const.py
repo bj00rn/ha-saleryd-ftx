@@ -1,6 +1,7 @@
 """Constants for integration_blueprint."""
 # Base component constants
 NAME = "Saleryd FTX integration"
+MANUFACTURER = "Saleryd"
 DOMAIN = "saleryd_ftx"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.1"
@@ -22,7 +23,8 @@ PLATFORMS = [SENSOR]
 
 # Configuration and options
 CONF_ENABLED = "enabled"
-CONF_WEBSOCKET_URL = "websocket"
+CONF_WEBSOCKET_IP = "websocket_ip"
+CONF_WEBSOCKET_PORT = "websocket_port"
 
 # Defaults
 DEFAULT_NAME = DOMAIN

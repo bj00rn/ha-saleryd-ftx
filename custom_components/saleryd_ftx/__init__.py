@@ -13,11 +13,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.util import Throttle
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
-
+from homeassistant.exceptions import ConfigEntryNotReady
 from .gateway import Gateway
 
 from .const import (
-    CONF_WEBSOCKET_URL,
+    CONF_WEBSOCKET_IP,
+    CONF_WEBSOCKET_PORT,
     DOMAIN,
     PLATFORMS,
     STARTUP_MESSAGE,
@@ -34,16 +35,23 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
         _LOGGER.info(STARTUP_MESSAGE)
 
-    url = entry.data.get(CONF_WEBSOCKET_URL)
+    url = entry.data.get(CONF_WEBSOCKET_IP)
+    port = entry.data.get(CONF_WEBSOCKET_PORT)
 
     session = async_get_clientsession(hass)
-    gateway = Gateway(session, "192.168.1.151", 3001)
-
+    gateway = Gateway(session, url, port)
     coordinator = SalerydLokeDataUpdateCoordinator(hass, gateway)
-    # await coordinator.async_refresh()
 
-    # if not coordinator.last_update_success:
-    #    raise ConfigEntryNotReady
+    async def callback():
+
+        while True:
+            if coordinator.data:
+                return True
+            if not coordinator.last_update_success:
+                raise ConfigEntryNotReady
+            await asyncio.sleep(1)
+
+    await asyncio.gather(callback())
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
@@ -103,7 +111,7 @@ class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
 
         super().__init__(hass, _LOGGER, name=DOMAIN)
 
-    @Throttle(timedelta(seconds=30))
+    @Throttle(timedelta(seconds=10))
     def async_set_updated_data(self, data) -> None:
         super().async_set_updated_data(data)
 

@@ -63,4 +63,4 @@ class Gateway:
 
     async def send_command(self, key, value):
         """Send command to FTX"""
-        await self._ws.send_message(f"#{key}:{value}\r")
+        return await self._ws.send_message(f"#{key}:{value}\r")

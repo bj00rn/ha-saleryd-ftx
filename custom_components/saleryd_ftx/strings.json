@@ -5,13 +5,13 @@
                 "title": "SalerydLoke",
                 "description": "If you need help with the configuration have a look here: https://github.com/custom-components/integration_blueprint",
                 "data": {
-                    "websocket_url": "Websocket URL",
-                    "password": "Password"
+                    "websocket_ip": "Websocket URL",
+                    "websocket_port": "Port"
                 }
             }
         },
         "error": {
-            "auth": "Username/Password is wrong."
+            "auth": "URL/Port is wrong"
         },
         "abort": {
             "single_instance_allowed": "Only a single instance is allowed."
