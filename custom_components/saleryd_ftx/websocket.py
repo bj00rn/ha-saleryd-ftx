@@ -159,9 +159,9 @@ class WSClient:
         url = f"http://{self.host}:{self.port}"
         try:
             async with self.session.ws_connect(url) as ws:
+                LOGGER.debug("Sending message to FTX %s", message)
                 await ws.send_str(message)
-                return True
+            return True
         except Exception as e:
             LOGGER.error("Failed to send message %s", message, exc_info=True)
-
-        return False
+            raise Exception from e

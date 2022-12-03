@@ -54,13 +54,8 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         return await self._show_config_form(user_input)
 
-    @staticmethod
-    @callback
-    def async_get_options_flow(config_entry):
-        return SalerydLokeOptionsFlowHandler(config_entry)
-
     async def _show_config_form(self, user_input):  # pylint: disable=unused-argument
-        """Show the configuration form to edit location data."""
+        """Show the configuration form to edit configuration data."""
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
@@ -92,39 +87,52 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 return True
         except Exception as e:  # pylint: disable=broad-except
             pass
+
         return False
 
 
-class SalerydLokeOptionsFlowHandler(config_entries.OptionsFlow):
-    """SalerydLoke config flow options handler."""
+#     @staticmethod
+#     @callback
+#     def async_get_options_flow(config_entry):
+#         return SalerydLokeOptionsFlowHandler(config_entry)
 
-    def __init__(self, config_entry):
-        """Initialize HACS options flow."""
-        self.config_entry = config_entry
-        self.options = dict(config_entry.options)
 
-    async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
-        """Manage the options."""
-        return await self.async_step_user()
+# class SalerydLokeOptionsFlowHandler(config_entries.OptionsFlow):
+#     """SalerydLoke config flow options handler."""
 
-    async def async_step_user(self, user_input=None):
-        """Handle a flow initialized by the user."""
-        if user_input is not None:
-            self.options.update(user_input)
-            return await self._update_options()
+#     def __init__(self, config_entry):
+#         self.config_entry = config_entry
 
-        return self.async_show_form(
-            step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(x, default=self.options.get(x, True)): bool
-                    for x in sorted(PLATFORMS)
-                }
-            ),
-        )
+#     async def async_step_init(self, user_input=None):  # pylint: disable=unused-argument
+#         """Manage the options."""
+#         return await self.async_step_user()
 
-    async def _update_options(self):
-        """Update config entry options."""
-        return self.async_create_entry(
-            title=self.config_entry.data.get(CONF_NAME), data=self.options
-        )
+#     async def async_step_user(self, user_input=None):
+#         """Handle a flow initialized by the user."""
+#         errors: Dict[str, str] = {}
+
+#         if user_input is not None:
+#             if not errors:
+#                 return self.async_create_entry(title="", data=user_input)
+
+#         return self.async_show_form(
+#             step_id="user",
+#             data_schema=vol.Schema(
+#                 {
+#                     vol.Required(
+#                         CONF_WEBSOCKET_IP,
+#                         default=self.config_entry.data.get(CONF_WEBSOCKET_IP),
+#                     ): str,
+#                     vol.Required(
+#                         CONF_WEBSOCKET_PORT,
+#                         default=self.config_entry.data.get(CONF_WEBSOCKET_PORT),
+#                     ): int,
+#                 }
+#             ),
+#             # data_schema=vol.Schema(
+#             #     {
+#             #         vol.Required(x, default=self.options.get(x, True)): bool
+#             #         for x in sorted(PLATFORMS)
+#             #     }
+#             # ),
+#         )

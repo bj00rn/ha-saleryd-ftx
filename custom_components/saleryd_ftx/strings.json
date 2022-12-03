@@ -2,16 +2,17 @@
     "config": {
         "step": {
             "user": {
-                "title": "SalerydLoke",
-                "description": "If you need help with the configuration have a look here: https://github.com/custom-components/integration_blueprint",
+                "title": "Saleryd FTX",
+                "description": "Follow instructions in manual to connect FTX to local network. Enter connections details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
                 "data": {
-                    "websocket_ip": "Websocket URL",
+                    "name": "Name",
+                    "websocket_ip": "Websocket Ip adress for the FTX web interface, ie 192.168.1.151",
                     "websocket_port": "Port"
                 }
             }
         },
         "error": {
-            "auth": "URL/Port is wrong"
+            "auth": "Could not connect. Maybe Websocket URL/Port is wrong?"
         },
         "abort": {
             "single_instance_allowed": "Only a single instance is allowed."
@@ -21,9 +22,9 @@
         "step": {
             "user": {
                 "data": {
-                    "binary_sensor": "Binary sensor enabled",
-                    "sensor": "Sensor enabled",
-                    "switch": "Switch enabled"
+                    "name": "Name",
+                    "websocket_ip": "Websocket Ip adress for the FTX web interface, ie 192.168.1.151",
+                    "websocket_port": "Websocket port."
                 }
             }
         }

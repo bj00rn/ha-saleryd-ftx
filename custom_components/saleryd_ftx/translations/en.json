@@ -2,16 +2,17 @@
     "config": {
         "step": {
             "user": {
-                "title": "Saleryd Loke FTX integration",
-                "description": "Provide websocket url to FTX fan",
-                "websocket": "Websocket URL",
+                "title": "Saleryd FTX",
+                "description": "Follow instructions in manual to connect FTX to local network. Enter connections details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
                 "data": {
-                    "websocket": "Websocket URL"
+                    "name": "Name",
+                    "websocket_ip": "Websocket Ip adress for the FTX web interface, ie 192.168.1.151",
+                    "websocket_port": "Port"
                 }
             }
         },
         "error": {
-            "connect": "Error getting data, Wrong websocket url?"
+            "auth": "Could not connect. Maybe Websocket URL/Port is wrong?"
         },
         "abort": {
             "single_instance_allowed": "Only a single instance is allowed."
@@ -20,13 +21,11 @@
     "options": {
         "step": {
             "user": {
-                "websocket": "Websocket URL",
                 "data": {
-                    "websocket": "Websocket URL"
+                    "name": "Name",
+                    "websocket_ip": "Websocket Ip adress for the FTX web interface, ie 192.168.1.151",
+                    "websocket_port": "Websocket port."
                 }
-            },
-            "error": {
-                "connect": "Error getting data, Wrong websocket url?"
             }
         }
     }
