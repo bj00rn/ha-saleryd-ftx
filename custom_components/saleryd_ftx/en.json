@@ -2,8 +2,8 @@
     "config": {
         "step": {
             "user": {
-                "title": "Saleryd Loke FTX integration",
-                "description": "Provide websocket url to FTX fan",
+                "title": "Saleryd Loke HRV integration",
+                "description": "Provide websocket url to HRV fan",
                 "websocket": "Websocket URL",
                 "data": {
                     "websocket": "Websocket URL"

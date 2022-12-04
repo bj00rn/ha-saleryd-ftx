@@ -7,11 +7,11 @@
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
 
-*Component to integrate with [Saleryd FTX Systems](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
+*Component to integrate with [Saleryd HRV Systems](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
 
 **Disclaimer**
 
- This integration has been developed for LOKE1 FTX system. *Use at own risk*. I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
+ This integration has been developed for LOKE1 HRV system. *Use at own risk*. I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
 
 **Sensors**
 
@@ -45,12 +45,12 @@ Model | Software versions
 
 
 ## Prequisites
-1. Connect FTX to local network . See instructions in user manual
-2. Take note of the assigned IP adress of the FTX system
+1. Connect HRV to local network . See instructions in user manual
+2. Take note of the assigned IP adress of the HRV system
 
 ## Installation
 1. In the HA UI go to "HACS" and add this repository
-2. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Saleryd FTX".
+2. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Saleryd HRV".
 3. Click install
 
 
@@ -63,7 +63,7 @@ Configuration in congfiguration.yaml is not supported
 ### Configuration in the UI
 Setting | Description
 -- | --
-IP | IP adress of the FTX system
+IP | IP adress of the HRV system
 
 
 [saleryd_ftx]: https://github.com/bj00rn/ha-saleryd-ftx

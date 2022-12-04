@@ -1,5 +1,5 @@
 {
-    "name": "Saleryd FTX",
+    "name": "Saleryd HRV",
     "hacs": "1.6.0",
     "domains": [
         "sensor"

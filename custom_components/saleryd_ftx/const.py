@@ -1,6 +1,6 @@
 """Constants for integration_blueprint."""
 # Base component constants
-NAME = "Saleryd FTX integration"
+NAME = "Saleryd HRV integration"
 MANUFACTURER = "Saleryd"
 DOMAIN = "saleryd_ftx"
 DOMAIN_DATA = f"{DOMAIN}_data"

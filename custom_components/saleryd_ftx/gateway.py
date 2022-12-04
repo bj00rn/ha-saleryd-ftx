@@ -5,7 +5,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class Gateway:
-    """Gateway to manage communication with FTX"""
+    """Gateway to manage communication with HRV"""
 
     def __init__(self, session, url, port):
         self._url = url
@@ -38,13 +38,16 @@ class Gateway:
 
                 value = msg[1::].split(":")[1].strip()
                 if msg[1] != "*":
-                    # messages beginning with * are arrays
+                    # messages beginning with * are arrays of integers
                     # [value, min, max] or [value, min, max, time_left]
-                    value = [v.strip() for v in value.split("+")]
+                    value = [
+                        int(v.strip()) if v.strip().isnumeric() else v.strip()
+                        for v in value.split("+")
+                    ]
                 key = msg[1::].split(":")[0]
                 parsed = (key, value)
         except Exception as exc:
-            _LOGGER.warning("Failed to parse message %s", msg, exc_info=1)
+            _LOGGER.warning("Failed to parse message %s", msg, exc_info=True)
         return parsed
 
     @property
@@ -62,5 +65,5 @@ class Gateway:
         return parsed_data
 
     async def send_command(self, key, value):
-        """Send command to FTX"""
-        return await self._ws.send_message(f"#{key}:{value}\r")
+        """Send command to HRV"""
+        await self._ws.send_message(f"#{key}:{value}\r")
