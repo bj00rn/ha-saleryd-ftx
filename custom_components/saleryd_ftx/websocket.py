@@ -1,4 +1,4 @@
-"""Python library to connect FTX and Home Assistant to work together."""
+"""Python library to connect HRV and Home Assistant to work together."""
 
 from asyncio import create_task, get_running_loop
 from collections import deque
@@ -49,6 +49,7 @@ class WSClient:
         self.session_handler_callback = callback
 
         self.loop = get_running_loop()
+        self._ws = None
 
         self._data: deque[dict[str, Any]] = deque(maxlen=QUEUE_LEN)
         self._state = self._previous_state = State.NONE
@@ -87,33 +88,31 @@ class WSClient:
         url = f"http://{self.host}:{self.port}"
 
         try:
-            async with self.session.ws_connect(url) as ws:
-                LOGGER.info("Connected to FTX (%s)", self.host)
-                self.set_state(State.RUNNING)
-                self.state_changed()
-                await ws.send_str("#\r")
+            self._ws = await self.session.ws_connect(url)
+            LOGGER.info("Connected to websocket (%s)", self.host)
+            self.set_state(State.RUNNING)
+            self.state_changed()
+            await self._ws.send_str("#\r")
 
-                async for msg in ws:
+            async for msg in self._ws:
 
-                    if self._state == State.STOPPED:
-                        await ws.close()
-                        break
+                if self._state == State.STOPPED:
+                    await self._ws.close()
+                    break
 
-                    if msg.type == aiohttp.WSMsgType.TEXT:
-                        self._data.append(msg.data)
-                        create_task(self.session_handler_callback(Signal.DATA))
-                        LOGGER.debug(
-                            "%s Received: %s", datetime.datetime.now(), msg.data
-                        )
-                        continue
+                if msg.type == aiohttp.WSMsgType.TEXT:
+                    self._data.append(msg.data)
+                    create_task(self.session_handler_callback(Signal.DATA))
+                    LOGGER.debug("%s Received: %s", datetime.datetime.now(), msg.data)
+                    continue
 
-                    if msg.type == aiohttp.WSMsgType.CLOSED:
-                        LOGGER.warning("Connection closed (%s)", self.host)
-                        break
+                if msg.type == aiohttp.WSMsgType.CLOSED:
+                    LOGGER.warning("Connection closed (%s)", self.host)
+                    break
 
-                    if msg.type == aiohttp.WSMsgType.ERROR:
-                        LOGGER.error("Websocket error (%s)", self.host)
-                        break
+                if msg.type == aiohttp.WSMsgType.ERROR:
+                    LOGGER.error("Websocket error (%s)", self.host)
+                    break
 
         except aiohttp.ClientConnectorError:
             if self._state != State.RETRYING:
@@ -129,17 +128,17 @@ class WSClient:
     def stop(self) -> None:
         """Close websocket connection."""
         self.set_state(State.STOPPED)
-        LOGGER.info("Shutting down connection to FTX (%s)", self.host)
+        LOGGER.info("Shutting down connection to websocket (%s)", self.host)
 
     def retry(self) -> None:
-        """Retry to connect to FTX.
+        """Retry to connect to websocket.
 
         Do an immediate retry without timer and without signalling state change.
         Signal state change only after first retry fails.
         """
         if self._state == State.RETRYING and self._previous_state == State.RUNNING:
             LOGGER.info(
-                "Reconnecting to FTX (%s) failed, scheduling retry at an interval of %i seconds",
+                "Reconnecting to websocket (%s) failed, scheduling retry at an interval of %i seconds",
                 self.host,
                 RETRY_TIMER,
             )
@@ -148,20 +147,19 @@ class WSClient:
         self.set_state(State.RETRYING)
 
         if self._previous_state == State.RUNNING:
-            LOGGER.info("Reconnecting to FTX (%s)", self.host)
+            LOGGER.info("Reconnecting to websocket (%s)", self.host)
             self.start()
             return
 
         self.loop.call_later(RETRY_TIMER, self.start)
 
     async def send_message(self, message):
-        """Send message to FTX"""
-        url = f"http://{self.host}:{self.port}"
-        try:
-            async with self.session.ws_connect(url) as ws:
-                LOGGER.debug("Sending message to FTX %s", message)
-                await ws.send_str(message)
-            return True
-        except Exception as e:
-            LOGGER.error("Failed to send message %s", message, exc_info=True)
-            raise Exception from e
+        """Send message to websocket"""
+        if self._state != State.RUNNING:
+            raise Exception(
+                "Failed to send message %s to websocket. Socket state is %s",
+                message,
+                self.state,
+            )
+
+        await self._ws.send_str(message)
