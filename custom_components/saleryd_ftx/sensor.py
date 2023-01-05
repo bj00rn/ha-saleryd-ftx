@@ -1,4 +1,6 @@
 """Sensor platform for integration_blueprint."""
+import decimal
+
 from homeassistant.components.sensor import (
     SensorEntity,
     SensorEntityDescription,
@@ -6,7 +8,6 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 
-from homeassistant.helpers.entity import DeviceInfo, EntityDescription
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
@@ -15,58 +16,11 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.const import PERCENTAGE, TEMP_CELSIUS, UnitOfPower
 
-from .const import DEFAULT_NAME, DOMAIN, ATTRIBUTION
 
-import decimal
-
-
-class SalerydLokeEntity(CoordinatorEntity):
-    """Entity base class"""
-
-    def __init__(
-        self,
-        coordinator: DataUpdateCoordinator,
-        entry_id,
-        entity_description: EntityDescription,
-    ) -> None:
-        super().__init__(coordinator)
-        self._id = entry_id
-        self.entity_description = entity_description
-        self._attr_name = entity_description.name
-        self._attr_unique_id = f"{entry_id}_{entity_description.name}"
-        self._id = entry_id
-
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry_id)},
-            name=DEFAULT_NAME,
-            manufacturer="Saleryd",
-        )
-
-    @property
-    def extra_state_attributes(self):
-        """Return the state attributes."""
-        state_attrs = {
-            "attribution": ATTRIBUTION,
-            "api": str(self.coordinator.data.get("*SC")),
-            "integration": DOMAIN,
-        }
-        value = self.coordinator.data.get(self.entity_description.key)
-        if (
-            isinstance(value, list)
-            and len(value) == 4
-            and self.coordinator.data.get(self.entity_description.key)[3]
-        ):
-            state_attrs["minutes_left"]: self.coordinator.data.get(
-                self.entity_description.key
-            )[3]
-        return state_attrs
-
-    @property
-    def should_poll(self):
-        return False
+from .const import DOMAIN
+from .entity import SalerydLokeEntity
 
 
 class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
@@ -108,14 +62,6 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
 class SalerydLokeBinarySensor(SalerydLokeEntity, BinarySensorEntity):
     """Binary sensor"""
-
-    def __init__(
-        self,
-        coordinator: DataUpdateCoordinator,
-        entry_id,
-        entity_description: BinarySensorEntityDescription,
-    ) -> None:
-        super().__init__(coordinator, entry_id, entity_description)
 
     @property
     def is_on(self) -> bool | None:

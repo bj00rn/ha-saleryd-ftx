@@ -1,35 +1,33 @@
-"""SalerydLokeEntity class"""
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
-from homeassistant.components.sensor import SensorStateClass
+"""Entity"""
 
-
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity import DeviceInfo, EntityCategory
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.typing import StateType
+from homeassistant.helpers.entity import DeviceInfo, EntityDescription
 from homeassistant.helpers.update_coordinator import (
-    CoordinatorEntity,
     DataUpdateCoordinator,
 )
 
-from .const import DOMAIN, NAME, VERSION, ATTRIBUTION
+from homeassistant.helpers.update_coordinator import CoordinatorEntity
+
+from .const import DEFAULT_NAME, DOMAIN, ATTRIBUTION
 
 
-# class SalerydLokeEntity(CoordinatorEntity):
-#     """Entity"""
+class SalerydLokeEntity(CoordinatorEntity):
+    """Entity base class"""
 
-#     def __init__(self, entity_descriptor, coordinator):
-#         self._attr_name = name
-#         self.config_entry = config_entry
-#         self._attr_unique_id = f"{self.config_entry.entry_id}_{name}"
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator,
+        entry_id,
+        entity_description: EntityDescription,
+    ) -> None:
+        super().__init__(coordinator)
+        self._id = entry_id
+        self.entity_description = entity_description
+        self._attr_name = entity_description.name
+        self._attr_unique_id = f"{entry_id}_{entity_description.name}"
+        self._id = entry_id
 
-#         super().__init__(coordinator)
-
-#     @property
-#     def device_info(self):
-#         return {
-#             "identifiers": {(DOMAIN, self.config_entry.entry_id)},
-# # #             "name": self.name,
-#             "model": VERSION,
-#             "manufacturer": NAME,
-#         }
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, entry_id)},
+            name=DEFAULT_NAME,
+            manufacturer="Saleryd",
+        )

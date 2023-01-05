@@ -65,7 +65,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     # Register services
     async def control_request(key, value=None):
-        cmd = f"#{key}:{value}"
         _LOGGER.info("Sending control request %s with payload %s", key, value)
         await gateway.send_command(key, value)
 

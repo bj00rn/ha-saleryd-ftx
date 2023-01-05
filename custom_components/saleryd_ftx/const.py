@@ -18,7 +18,9 @@ BINARY_SENSOR_DEVICE_CLASS = "connectivity"
 BINARY_SENSOR = "binary_sensor"
 SENSOR = "sensor"
 SWITCH = "switch"
-PLATFORMS = [SENSOR]
+FAN = "fan"
+CLIMATE = "climate"
+PLATFORMS = [SENSOR, FAN, CLIMATE]
 
 
 # Configuration and options
