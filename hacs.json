@@ -1,8 +1,6 @@
 {
     "name": "Saleryd HRV",
     "hacs": "1.6.0",
-    "domains": [
-        "sensor"
-    ],
-    "homeassistant": "2022.8.7"
+    "homeassistant": "2022.8.7",
+    "country": ["FI", "NO", "SE", "DK"]
 }
