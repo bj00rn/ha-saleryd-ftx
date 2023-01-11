@@ -2,7 +2,6 @@
     "config": {
         "step": {
             "user": {
-                "title": "Saleryd HRV",
                 "description": "Follow instructions in manual to connect HRV to local network. Enter connections details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
                 "data": {
                     "name": "Name",
