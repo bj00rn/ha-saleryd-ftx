@@ -4,7 +4,7 @@
   "documentation": "https://github.com/bj00rn/ha-saleryd-ftx",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/bj00rn/ha-saleryd-ftx",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "config_flow": true,
   "codeowners": [
     "@bj00rn"
