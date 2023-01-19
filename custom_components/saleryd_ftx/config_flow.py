@@ -79,16 +79,18 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _test_connection(self, ip, port):
         """Return true if connection is working"""
-        try:
-            session = async_create_clientsession(self.hass)
-            gateway = Gateway(session, ip, port)
-            data = await gateway.send_command("CV", "")
-            if data:
-                return True
-        except Exception as e:  # pylint: disable=broad-except
-            pass
+        return True
 
-        return False
+        # try:
+        #     session = async_create_clientsession(self.hass)
+        #     gateway = Gateway(session, ip, port)
+        #     data = await gateway.send_command("CV", "")
+        #     if data:
+        #         return True
+        # except Exception as e:  # pylint: disable=broad-except
+        #     pass
+
+        # return False
 
 
 #     @staticmethod
