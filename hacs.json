@@ -1,6 +1,11 @@
 {
     "name": "Saleryd HRV",
     "hacs": "1.6.0",
-    "homeassistant": "2022.8.7",
-    "country": ["FI", "NO", "SE", "DK"]
+    "homeassistant": "2023.1.5",
+    "country": [
+        "FI",
+        "NO",
+        "SE",
+        "DK"
+    ]
 }

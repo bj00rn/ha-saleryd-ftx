@@ -1,5 +1,5 @@
 import logging
-from .websocket import WSClient, Signal
+from .websocket import WSClient, Signal, State
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -11,19 +11,22 @@ class Gateway:
         self._url = url
         self._port = port
         self._session = session
+        self._state = State.NONE
+        self._handlers = []
         self._ws = WSClient(self._session, self._url, self._port, self._handler)
         self._ws.start()
-        self._handlers = []
 
     def add_handler(self, handler):
         """Add event handler"""
         self._handlers.append(handler)
 
     async def _handler(self, signal: Signal):
-        """Call handlers"""
+        """Call handlers if data"""
         if signal == Signal.DATA:
             for handler in self._handlers:
                 handler(self.data)
+        elif signal == Signal.CONNECTION_STATE:
+            self._state = self._ws.state
 
     def _parse_message(self, msg):
         """parse socket message"""
@@ -49,6 +52,10 @@ class Gateway:
         except Exception as exc:
             _LOGGER.warning("Failed to parse message %s", msg, exc_info=True)
         return parsed
+
+    @property
+    def state(self):
+        return self._state
 
     @property
     def data(self):

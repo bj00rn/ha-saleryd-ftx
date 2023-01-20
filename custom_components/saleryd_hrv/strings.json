@@ -2,16 +2,16 @@
     "config": {
         "step": {
             "user": {
-                "description": "Follow instructions in manual to connect HRV to local network. Enter connections details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
+                "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
                 "data": {
                     "name": "Name",
-                    "websocket_ip": "Websocket Ip adress for the HRV web interface, ie 192.168.1.151",
+                    "websocket_ip": "Websocket IP adress for the HRV web interface, ie 192.168.1.151",
                     "websocket_port": "Port"
                 }
             }
         },
         "error": {
-            "auth": "Could not connect. Maybe Websocket URL/Port is wrong?"
+            "connect": "Could not connect. Verify connection details"
         },
         "abort": {
             "single_instance_allowed": "Only a single instance is allowed."

@@ -4,7 +4,7 @@ import asyncio
 import aiohttp
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from custom_components.saleryd_ftx.api import SalerydLokeApiClient
+from custom_components.saleryd_hrv.api import SalerydLokeApiClient
 
 
 async def test_api(hass, aioclient_mock, caplog):

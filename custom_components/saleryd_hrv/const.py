@@ -2,10 +2,10 @@
 # Base component constants
 NAME = "Saleryd HRV integration"
 MANUFACTURER = "Saleryd"
-DOMAIN = "saleryd_ftx"
+DOMAIN = "saleryd_hrv"
 DOMAIN_DATA = f"{DOMAIN}_data"
 VERSION = "0.0.1"
-ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
+ATTRIBUTION = "Data provided by Saleryd HRV"
 ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
 
 # Icons
@@ -20,7 +20,7 @@ SENSOR = "sensor"
 SWITCH = "switch"
 FAN = "fan"
 CLIMATE = "climate"
-PLATFORMS = [SENSOR, FAN, CLIMATE]
+PLATFORMS = [SENSOR, CLIMATE]
 
 
 # Configuration and options

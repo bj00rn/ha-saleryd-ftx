@@ -1,25 +1,29 @@
 """Adds config flow for SalerydLoke."""
+import logging
+import asyncio
+
 from homeassistant import config_entries
-from homeassistant.core import callback
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.const import CONF_NAME
 import voluptuous as vol
 
-from .gateway import Gateway
+from .gateway import Gateway, State
 from .const import (
     CONF_WEBSOCKET_PORT,
     CONF_WEBSOCKET_IP,
     DOMAIN,
-    PLATFORMS,
-    MANUFACTURER,
+    NAME,
 )
+
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for SalerydLoke."""
 
     VERSION = 1
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
+    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
 
     def __init__(self):
         """Initialize."""
@@ -50,7 +54,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         # Provide defaults for form
         user_input[CONF_WEBSOCKET_IP] = "192.168.1.151"
         user_input[CONF_WEBSOCKET_PORT] = 3001
-        user_input[CONF_NAME] = MANUFACTURER
+        user_input[CONF_NAME] = NAME
 
         return await self._show_config_form(user_input)
 
@@ -79,18 +83,24 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _test_connection(self, ip, port):
         """Return true if connection is working"""
-        return True
 
-        # try:
-        #     session = async_create_clientsession(self.hass)
-        #     gateway = Gateway(session, ip, port)
-        #     data = await gateway.send_command("CV", "")
-        #     if data:
-        #         return True
-        # except Exception as e:  # pylint: disable=broad-except
-        #     pass
+        async def connected(gateway: Gateway):
+            """Is gateway connected"""
+            while True:
+                await asyncio.sleep(1)
+                if gateway.state == State.RUNNING:
+                    return True
 
-        # return False
+        try:
+            session = async_create_clientsession(self.hass)
+            gateway = Gateway(session, ip, port)
+            await asyncio.wait_for(connected(gateway), 10)
+            return True
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.error("Could not connect", exc_info=True)
+            pass
+
+        return False
 
 
 #     @staticmethod

@@ -32,9 +32,9 @@ class SalerydFan(FanEntity, SalerydLokeEntity):
     """Representation of a HRV as fan."""
 
     @property
-    def is_on(self) -> str:
+    def is_on(self) -> bool:
         """Return the current preset_mode."""
-        return self.coordinator.data.get(self.entity_description.key)[0] == 1
+        return self.coordinator.data.get(self.entity_description.key)[0] is not None
 
 
 async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback):

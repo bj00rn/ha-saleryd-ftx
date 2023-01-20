@@ -1,8 +1,8 @@
 {
-  "domain": "saleryd_ftx",
+  "domain": "saleryd_hrv",
   "name": "Saleryd HRV",
   "documentation": "https://github.com/bj00rn/ha-saleryd-ftx",
-  "iot_class": "local_polling",
+  "iot_class": "local_push",
   "issue_tracker": "https://github.com/bj00rn/ha-saleryd-ftx",
   "version": "0.0.5",
   "config_flow": true,

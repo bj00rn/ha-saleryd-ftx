@@ -21,7 +21,6 @@ class Signal(enum.Enum):
 
 class State(enum.Enum):
     """State of the connection."""
-
     NONE = ""
     RETRYING = "retrying"
     RUNNING = "running"
