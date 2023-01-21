@@ -1,12 +1,9 @@
 """Entity"""
 
 from homeassistant.helpers.entity import DeviceInfo, EntityDescription
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-)
-
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .coordinator import SalerydLokeDataUpdateCoordinator
 from .const import DEFAULT_NAME, DOMAIN, ATTRIBUTION, MANUFACTURER
 
 
@@ -15,7 +12,7 @@ class SalerydLokeEntity(CoordinatorEntity):
 
     def __init__(
         self,
-        coordinator: DataUpdateCoordinator,
+        coordinator: SalerydLokeDataUpdateCoordinator,
         entry_id,
         entity_description: EntityDescription,
     ) -> None:
@@ -30,4 +27,4 @@ class SalerydLokeEntity(CoordinatorEntity):
             identifiers={(DOMAIN, entry_id)},
             name=DEFAULT_NAME,
             manufacturer=MANUFACTURER,
-            )
+        )

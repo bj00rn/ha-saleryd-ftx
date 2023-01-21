@@ -12,9 +12,10 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.util import Throttle
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 from homeassistant.exceptions import ConfigEntryNotReady
+
 from .gateway import Gateway
+from .coordinator import SalerydLokeDataUpdateCoordinator
 
 from .const import (
     CONF_WEBSOCKET_IP,
@@ -95,24 +96,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True
-
-
-class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching data from the API."""
-
-    def __init__(self, hass: HomeAssistant, gateway: Gateway) -> None:
-        """Initialize."""
-        self._gateway = gateway
-
-        self.platforms = []
-
-        self._gateway.add_handler(self.async_set_updated_data)
-
-        super().__init__(hass, _LOGGER, name=DOMAIN)
-
-    @Throttle(timedelta(seconds=10))
-    def async_set_updated_data(self, data) -> None:
-        super().async_set_updated_data(data)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:

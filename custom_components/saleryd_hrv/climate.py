@@ -1,8 +1,8 @@
-import enum
+import logging
+
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.const import PERCENTAGE, TEMP_CELSIUS, UnitOfPower
 
-from .const import DOMAIN
 from homeassistant.components.climate import (
     ClimateEntity,
     ClimateEntityFeature,
@@ -12,18 +12,31 @@ from homeassistant.components.climate import (
     PRESET_BOOST,
     HVACMode,
 )
+
+
+FAN_MODE_AUTO = "auto"
+FAN_MODE_FIREPLACE = "fireplace"
+
+from .const import DOMAIN
 from .entity import SalerydLokeEntity
 
 
+_LOGGER = logging.getLogger(__package__)
+
+
 class _SalerydClimate(ClimateEntity, SalerydLokeEntity):
-    """Representation of a HRV as fan."""
+    """Representation of a HRV as HVAC unit."""
 
 
 class SalerydVentilation(_SalerydClimate):
     """Ventilation mode"""
 
-    _attr_supported_features = ClimateEntityFeature.PRESET_MODE
+    _attr_supported_features = (
+        ClimateEntityFeature.PRESET_MODE | ClimateEntityFeature.FAN_MODE
+    )
+    _attr_assumed_state = True
     _attr_preset_modes = [PRESET_HOME, PRESET_AWAY, PRESET_BOOST]
+    _attr_fan_modes = [FAN_MODE_AUTO, FAN_MODE_FIREPLACE]
     _attr_hvac_modes = [HVACMode.AUTO, HVACMode.COOL]
     _attr_temperature_unit = TEMP_CELSIUS
     _attr_hvac_mode = HVACMode.AUTO
@@ -31,13 +44,36 @@ class SalerydVentilation(_SalerydClimate):
     @property
     def preset_mode(self) -> str | None:
         """Get current preset mode"""
-        value = self.coordinator.data.get(self.entity_description.key)[0]
+        value = self.coordinator.data.get("MF")[0]
+        return self.preset_modes[value]
+
+    def set_preset_mode(self, preset_mode: str) -> None:
+        """Set new preset mode."""
+
+        self.hass.services.call(
+            DOMAIN,
+            "set_ventilation_mode",
+            {"value": self.preset_modes.index(preset_mode)},
+            blocking=True,
+            limit=10,
+        )
+
+    @property
+    def fan_mode(self) -> str | None:
+        value = self.coordinator.data.get("MB")[0]
         if value == 0:
-            return PRESET_HOME
-        elif value == 1:
-            return PRESET_AWAY
-        elif value == 2:
-            return PRESET_BOOST
+            return FAN_MODE_AUTO
+        if value == 1:
+            return FAN_MODE_FIREPLACE
+
+    def set_fan_mode(self, fan_mode: str) -> None:
+        self.hass.services.call(
+            DOMAIN,
+            "set_fireplace_mode",
+            {"value": self.fan_modes.index(fan_mode)},
+            blocking=True,
+            limit=10,
+        )
 
 
 async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback):
