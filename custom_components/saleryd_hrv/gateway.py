@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from .websocket import WSClient, Signal, State
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
@@ -13,8 +14,8 @@ class Gateway:
         self._session = session
         self._state = State.NONE
         self._handlers = []
-        self._ws = WSClient(self._session, self._url, self._port, self._handler)
-        self._ws.start()
+        self._client = WSClient(self._session, self._url, self._port, self._handler)
+        self._client.start()
 
     def add_handler(self, handler):
         """Add event handler"""
@@ -26,7 +27,7 @@ class Gateway:
             for handler in self._handlers:
                 handler(self.data)
         elif signal == Signal.CONNECTION_STATE:
-            self._state = self._ws.state
+            self._state = self._client.state
 
     def _parse_message(self, msg):
         """parse socket message"""
@@ -34,14 +35,12 @@ class Gateway:
 
         try:
             if msg[0] == "#":
-                if msg[1] == "?" or msg[1] == "$":
-                    # ignore all acks end ack errors for now
-                    _LOGGER.debug("Ignoring ack message %s", msg)
-                    return
-
+                if msg[1] == "$":
+                    # ack message, strip ack char and treat as state update
+                    msg = msg[1::]
                 value = msg[1::].split(":")[1].strip()
                 if msg[1] != "*":
-                    # messages beginning with * are arrays of integers
+                    # messages not beginning with * are arrays of integers
                     # [value, min, max] or [value, min, max, time_left]
                     value = [
                         int(v.strip()) if v.strip().isnumeric() else v.strip()
@@ -60,7 +59,7 @@ class Gateway:
     @property
     def data(self):
         """Get data"""
-        data = self._ws.data
+        data = self._client.data
         parsed_data = {}
 
         for message in data:
@@ -71,6 +70,15 @@ class Gateway:
 
         return parsed_data
 
+    async def async_get_data(self):
+        return self.data
+
     async def send_command(self, key, value):
         """Send command to HRV"""
-        await self._ws.send_message(f"#{key}:{value}\r")
+
+        async def ack_command():
+            """Should probably ack command here, just sleep for now"""
+            await asyncio.sleep(2)
+
+        await self._client.send_message(f"#{key}:{value}\r")
+        await asyncio.gather(ack_command())

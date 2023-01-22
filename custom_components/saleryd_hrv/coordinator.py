@@ -18,16 +18,7 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
-    def __init__(self, hass: HomeAssistant, gateway: Gateway) -> None:
+    def __init__(self, hass: HomeAssistant, *args, **xargs) -> None:
         """Initialize."""
-        self._gateway = gateway
-
         self.platforms = []
-
-        self._gateway.add_handler(self.async_set_updated_data)
-
-        super().__init__(hass, _LOGGER, name=DOMAIN)
-
-    @Throttle(timedelta(seconds=10))
-    def async_set_updated_data(self, data) -> None:
-        super().async_set_updated_data(data)
+        super().__init__(hass, _LOGGER, name=DOMAIN, *args, **xargs)

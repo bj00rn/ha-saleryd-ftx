@@ -11,6 +11,7 @@ from homeassistant.components.climate import (
     PRESET_AWAY,
     PRESET_BOOST,
     HVACMode,
+    HVACAction,
 )
 
 
@@ -37,13 +38,14 @@ class SalerydVentilation(_SalerydClimate):
     _attr_assumed_state = True
     _attr_preset_modes = [PRESET_HOME, PRESET_AWAY, PRESET_BOOST]
     _attr_fan_modes = [FAN_MODE_AUTO, FAN_MODE_FIREPLACE]
-    _attr_hvac_modes = [HVACMode.AUTO, HVACMode.COOL]
+    _attr_hvac_modes = [HVACMode.FAN_ONLY, HVACMode.COOL]
     _attr_temperature_unit = TEMP_CELSIUS
-    _attr_hvac_mode = HVACMode.AUTO
 
     @property
     def preset_mode(self) -> str | None:
         """Get current preset mode"""
+        if not self.coordinator.data.get("MF"):
+            return None
         value = self.coordinator.data.get("MF")[0]
         return self.preset_modes[value]
 
@@ -57,9 +59,12 @@ class SalerydVentilation(_SalerydClimate):
             blocking=True,
             limit=10,
         )
+        self.schedule_update_ha_state(force_refresh=True)
 
     @property
     def fan_mode(self) -> str | None:
+        if not self.coordinator.data.get("MB"):
+            return None
         value = self.coordinator.data.get("MB")[0]
         if value == 0:
             return FAN_MODE_AUTO
@@ -74,6 +79,33 @@ class SalerydVentilation(_SalerydClimate):
             blocking=True,
             limit=10,
         )
+        self.schedule_update_ha_state(force_refresh=True)
+
+    @property
+    def hvac_action(self) -> HVACAction | str | None:
+        value = self.coordinator.data.get("MK")
+        if not isinstance(value, list):
+            return None
+        if value[0] == 0:
+            return HVACAction.IDLE
+        if value[0] == 1:
+            return HVACAction.COOLING
+
+    @property
+    def hvac_mode(self) -> HVACMode | str | None:
+        value = self.coordinator.data.get("MK")
+        if not isinstance(value, list):
+            return None
+        if value[0] == 0:
+            return HVACMode.FAN_ONLY
+        if value[0] == 1:
+            return HVACMode.COOL
+
+    @property
+    def current_temperature(self):
+        if not self.coordinator.data.get("*TC"):
+            return None
+        return float(self.coordinator.data.get("*TC"))
 
 
 async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback):
@@ -84,7 +116,7 @@ async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback
         SalerydVentilation(
             coordinator,
             entry.entry_id,
-            ClimateEntityDescription(key="MF", name="Ventilation Preset"),
+            ClimateEntityDescription(key="MF", name="Saleryd HRV"),
         ),
     ]
 

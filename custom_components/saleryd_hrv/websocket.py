@@ -8,6 +8,7 @@ import logging
 from typing import Any, Final
 import datetime
 import aiohttp
+import asyncio
 
 LOGGER = logging.getLogger(__package__)
 
@@ -21,6 +22,7 @@ class Signal(enum.Enum):
 
 class State(enum.Enum):
     """State of the connection."""
+
     NONE = ""
     RETRYING = "retrying"
     RUNNING = "running"
@@ -160,5 +162,4 @@ class WSClient:
                 message,
                 self.state,
             )
-
         await self._ws.send_str(message)

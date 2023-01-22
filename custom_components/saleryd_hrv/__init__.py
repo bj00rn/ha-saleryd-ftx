@@ -25,7 +25,7 @@ from .const import (
     STARTUP_MESSAGE,
 )
 
-SCAN_INTERVAL = timedelta(seconds=30)
+SCAN_INTERVAL = timedelta(seconds=5)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -41,18 +41,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     session = async_get_clientsession(hass)
     gateway = Gateway(session, url, port)
-    coordinator = SalerydLokeDataUpdateCoordinator(hass, gateway)
+    coordinator = SalerydLokeDataUpdateCoordinator(
+        hass,
+        update_method=gateway.async_get_data,
+        update_interval=SCAN_INTERVAL,
+    )
 
-    async def callback():
-
-        while True:
-            if coordinator.data:
-                return True
-            if not coordinator.last_update_success:
-                raise ConfigEntryNotReady
-            await asyncio.sleep(1)
-
-    await asyncio.gather(callback())
+    await coordinator.async_config_entry_first_refresh()
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
