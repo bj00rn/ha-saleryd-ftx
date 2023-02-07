@@ -46,8 +46,22 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 return 900
             elif value == 1:
                 return 1800
-            else:
-                return None
+
+        if self.entity_description.key == "MT":
+            if value == 0:
+                return "Comfort"
+            elif value == 1:
+                return "Eco"
+            elif value == 2:
+                return "Cool"
+
+        if self.entity_description.key == "MF":
+            if value == 0:
+                return "Home"
+            elif value == 1:
+                return "Away"
+            elif value == 2:
+                return "Boost"
 
         return value
 
@@ -170,14 +184,6 @@ sensors = {
             key="MB",
             icon="mdi:fireplace",
             name="Fireplace mode",
-        ),
-    },
-    "cooling_mode": {
-        "klass": SalerydLokeBinarySensor,
-        "description": BinarySensorEntityDescription(
-            key="MK",
-            icon="mdi:snowflake",
-            name="Cooling mode",
         ),
     },
     "temperature_mode": {

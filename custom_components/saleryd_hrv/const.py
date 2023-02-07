@@ -20,7 +20,7 @@ SENSOR = "sensor"
 SWITCH = "switch"
 FAN = "fan"
 CLIMATE = "climate"
-PLATFORMS = [SENSOR, CLIMATE]
+PLATFORMS = [SENSOR, CLIMATE, SWITCH]
 
 
 # Configuration and options

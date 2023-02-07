@@ -85,7 +85,7 @@ class SalerydVentilation(_SalerydClimate):
 
         self.hass.services.call(
             DOMAIN,
-            "set_ventilation_mode",
+            "set_temperature_mode",
             {"value": self.preset_modes.index(preset_mode)},
             blocking=True,
             limit=10,
