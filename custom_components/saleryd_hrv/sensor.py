@@ -7,7 +7,7 @@ from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorStateClass,
 )
-
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
@@ -132,6 +132,7 @@ sensors = {
             device_class=SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
             native_unit_of_measurement=UnitOfPower.WATT,
+            entity_category=EntityCategory.DIAGNOSTIC,
         ),
     },
     "supply_fan_speed": {
@@ -195,6 +196,7 @@ sensors = {
             icon="mdi:wrench-clock",
             name="Filter months left",
             state_class=SensorStateClass.MEASUREMENT,
+            entity_category=EntityCategory.DIAGNOSTIC,
         ),
     },
 }

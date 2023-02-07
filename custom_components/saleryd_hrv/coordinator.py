@@ -7,8 +7,6 @@ from homeassistant.util import Throttle
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
-
-from .gateway import Gateway
 from .const import DOMAIN
 
 

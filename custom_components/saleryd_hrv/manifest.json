@@ -8,5 +8,8 @@
   "config_flow": true,
   "codeowners": [
     "@bj00rn"
+  ],
+  "requirements": [
+    "pysaleryd>=2.0.0"
   ]
 }

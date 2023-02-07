@@ -13,8 +13,8 @@ from homeassistant.core import HomeAssistant
 from homeassistant.util import Throttle
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.exceptions import ConfigEntryNotReady
+from pysaleryd.client import Client
 
-from .gateway import Gateway
 from .coordinator import SalerydLokeDataUpdateCoordinator
 
 from .const import (
@@ -39,11 +39,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     url = entry.data.get(CONF_WEBSOCKET_IP)
     port = entry.data.get(CONF_WEBSOCKET_PORT)
 
+    async def get_data():
+        return client.data
+
     session = async_get_clientsession(hass)
-    gateway = Gateway(session, url, port)
+    client = Client(url, port, session)
     coordinator = SalerydLokeDataUpdateCoordinator(
         hass,
-        update_method=gateway.async_get_data,
+        update_method=get_data,
         update_interval=SCAN_INTERVAL,
     )
 
@@ -62,7 +65,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     # Register services
     async def control_request(key, value=None):
         _LOGGER.info("Sending control request %s with payload %s", key, value)
-        await gateway.send_command(key, value)
+        await client.send_command(key, value)
 
     async def set_fireplace_mode(call):
         value = call.data.get("value")
