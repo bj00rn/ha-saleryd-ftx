@@ -39,14 +39,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     url = entry.data.get(CONF_WEBSOCKET_IP)
     port = entry.data.get(CONF_WEBSOCKET_PORT)
 
-    async def get_data():
-        return client.data
-
     session = async_get_clientsession(hass)
     client = Client(url, port, session)
+    await client.connect()
     coordinator = SalerydLokeDataUpdateCoordinator(
         hass,
-        update_method=get_data,
+        update_method=client.async_get_data,
         update_interval=SCAN_INTERVAL,
     )
 

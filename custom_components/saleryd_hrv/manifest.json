@@ -10,6 +10,6 @@
     "@bj00rn"
   ],
   "requirements": [
-    "pysaleryd>=2.0.0"
+    "pysaleryd>=2.0.2"
   ]
 }

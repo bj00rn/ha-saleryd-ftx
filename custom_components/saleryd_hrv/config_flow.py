@@ -84,17 +84,10 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     async def _test_connection(self, ip, port):
         """Return true if connection is working"""
 
-        async def connected(client: Client):
-            """Is client connected"""
-            while True:
-                await asyncio.sleep(1)
-                if client.connected():
-                    return True
-
         try:
             session = async_create_clientsession(self.hass)
             client = Client(ip, port, session)
-            await asyncio.wait_for(connected(client), 10)
+            await client.connect()
             return True
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Could not connect", exc_info=True)

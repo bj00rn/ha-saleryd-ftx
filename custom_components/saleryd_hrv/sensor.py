@@ -118,7 +118,7 @@ sensors = {
             key="*MJ",
             icon="mdi:heating-coil",
             name="Heater temperature percent",
-            device_class=SensorDeviceClass.TEMPERATURE,
+            device_class=SensorDeviceClass.POWER_FACTOR,
             state_class=SensorStateClass.MEASUREMENT,
             native_unit_of_measurement=PERCENTAGE,
         ),
