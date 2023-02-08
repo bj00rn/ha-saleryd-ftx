@@ -175,7 +175,7 @@ sensors = {
             key="MF",
             name="Ventilation mode",
             icon="mdi:hvac",
-            state_class=SensorStateClass.MEASUREMENT,
+            device_class=SensorDeviceClass.ENUM,
         ),
     },
     "fireplace_mode": {
@@ -192,7 +192,7 @@ sensors = {
             key="MT",
             icon="mdi:home-thermometer",
             name="Temperature mode",
-            state_class=SensorStateClass.MEASUREMENT,
+            device_class=SensorDeviceClass.ENUM,
         ),
     },
     "filter_months_left": {
