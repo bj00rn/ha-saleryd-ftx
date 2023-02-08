@@ -15,9 +15,15 @@ from homeassistant.helpers.update_coordinator import (
 from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
+    BinarySensorDeviceClass,
 )
-from homeassistant.const import PERCENTAGE, TEMP_CELSIUS, UnitOfPower
-
+from homeassistant.const import (
+    PERCENTAGE,
+    UnitOfPower,
+    UnitOfTime,
+    UnitOfTemperature,
+    REVOLUTIONS_PER_MINUTE,
+)
 
 from .const import DOMAIN
 from .entity import SalerydLokeEntity
@@ -70,7 +76,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         """Return the native value of the sensor."""
         value = self.coordinator.data.get(self.entity_description.key)
         if value:
-            value = self._data_type(value[0] if isinstance(value, list) else value)
+            value = value[0] if isinstance(value, list) else value
             return self._translate_value(value)
 
 
@@ -91,7 +97,7 @@ sensors = {
         "description": SensorEntityDescription(
             key="*XB",
             name="Heat exchanger rotor speed",
-            native_unit_of_measurement="rpm",
+            native_unit_of_measurement=REVOLUTIONS_PER_MINUTE,
             icon="mdi:cog-transfer",
             state_class=SensorStateClass.MEASUREMENT,
         ),
@@ -113,7 +119,7 @@ sensors = {
             name="Supply air temperature",
             device_class=SensorDeviceClass.TEMPERATURE,
             state_class=SensorStateClass.MEASUREMENT,
-            native_unit_of_measurement=TEMP_CELSIUS,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         ),
     },
     "heater_air_temperature": {
@@ -123,7 +129,7 @@ sensors = {
             name="Heater air temperature",
             device_class=SensorDeviceClass.TEMPERATURE,
             state_class=SensorStateClass.MEASUREMENT,
-            native_unit_of_measurement=TEMP_CELSIUS,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         ),
     },
     "heater_temperature_percent": {
@@ -184,6 +190,16 @@ sensors = {
             key="MB",
             icon="mdi:fireplace",
             name="Fireplace mode",
+            device_class=BinarySensorDeviceClass.RUNNING,
+        ),
+    },
+    "cooling_mode": {
+        "klass": SalerydLokeBinarySensor,
+        "description": BinarySensorEntityDescription(
+            key="MK",
+            icon="mdi:hvac",
+            name="Cooling mode",
+            device_class=BinarySensorDeviceClass.RUNNING,
         ),
     },
     "temperature_mode": {
@@ -198,11 +214,52 @@ sensors = {
     "filter_months_left": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
-            key="FT",
+            key="*FL",
             icon="mdi:wrench-clock",
             name="Filter months left",
             state_class=SensorStateClass.MEASUREMENT,
             entity_category=EntityCategory.DIAGNOSTIC,
+            native_unit_of_measurement=UnitOfTime.MONTHS,
+        ),
+    },
+    "model": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="*SB",
+            icon="mdi:barcode",
+            name="Model",
+            device_class=SensorDeviceClass.ENUM,
+            entity_category=EntityCategory.DIAGNOSTIC,
+        ),
+    },
+    "prod_nr": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="*SA",
+            icon="mdi:barcode",
+            name="Product number",
+            device_class=SensorDeviceClass.ENUM,
+            entity_category=EntityCategory.DIAGNOSTIC,
+        ),
+    },
+    "wifi_version": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="*SC",
+            icon="mdi:wrench-clock",
+            name="Wifi version",
+            device_class=SensorDeviceClass.ENUM,
+            entity_category=EntityCategory.DIAGNOSTIC,
+        ),
+    },
+    "mode_time_left": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="*ME",
+            icon="mdi:clock",
+            name="Mode time left",
+            entity_category=EntityCategory.DIAGNOSTIC,
+            unit_of_measurement=UnitOfTime.MINUTES,
         ),
     },
 }
