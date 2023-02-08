@@ -4,7 +4,6 @@ NAME = "Saleryd HRV integration"
 MANUFACTURER = "Saleryd"
 DOMAIN = "saleryd_hrv"
 DOMAIN_DATA = f"{DOMAIN}_data"
-VERSION = "0.0.1"
 ATTRIBUTION = "Data provided by Saleryd HRV"
 ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
 
@@ -30,7 +29,6 @@ DEFAULT_NAME = DOMAIN
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
 {NAME}
-Version: {VERSION}
 This is a custom integration!
 If you have any issues with this you need to open an issue here:
 {ISSUE_URL}
