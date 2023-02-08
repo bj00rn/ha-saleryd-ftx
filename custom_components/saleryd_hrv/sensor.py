@@ -1,4 +1,4 @@
-"""Sensor platform for integration_blueprint."""
+"""Sensor platform"""
 import decimal
 
 from homeassistant.components.sensor import (
@@ -24,7 +24,7 @@ from .entity import SalerydLokeEntity
 
 
 class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
-    """integration_blueprint Sensor class."""
+    """Sensor base class."""
 
     _attr_state_class = SensorStateClass.MEASUREMENT
 

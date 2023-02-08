@@ -1,4 +1,4 @@
-"""Tests for integration_blueprint api."""
+"""Tests for saleryd_hrv api."""
 import asyncio
 
 import aiohttp

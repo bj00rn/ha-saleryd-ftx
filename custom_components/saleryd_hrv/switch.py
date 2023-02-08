@@ -1,4 +1,4 @@
-"""Switch platform for integration_blueprint."""
+"""Switch platform"""
 from homeassistant.components.switch import (
     SwitchEntity,
     SwitchEntityDescription,
@@ -10,7 +10,7 @@ from .entity import SalerydLokeEntity
 
 
 class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
-    """integration_blueprint switch class."""
+    """Switch base class."""
 
     @property
     def is_on(self):
@@ -21,7 +21,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
 
 
 class SalerydLokeFireplaceModeBinarySwitch(SalerydLokeBinarySwitch):
-    """integration_blueprint switch class."""
+    """Fireplace mode switch class."""
 
     def turn_on(self, **kwargs) -> None:
         """Turn on the switch."""
@@ -47,7 +47,7 @@ class SalerydLokeFireplaceModeBinarySwitch(SalerydLokeBinarySwitch):
 
 
 class SalerydLokeCoolingModeBinarySwitch(SalerydLokeBinarySwitch):
-    """integration_blueprint switch class."""
+    """Cooling switch class."""
 
     def turn_on(self, **kwargs) -> None:
         """Turn on the switch."""

@@ -1,12 +1,12 @@
+"""Data update coordinator"""
+
 import logging
-from datetime import timedelta
 
 from homeassistant.core import HomeAssistant
-from homeassistant.util import Throttle
-
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
+
 from .const import DOMAIN
 
 

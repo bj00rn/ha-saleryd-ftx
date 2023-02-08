@@ -1,4 +1,4 @@
-"""Constants for integration_blueprint."""
+"""Constants for saleryd_hrv."""
 # Base component constants
 NAME = "Saleryd HRV integration"
 MANUFACTURER = "Saleryd"
@@ -11,14 +11,9 @@ ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
 # Icons
 ICON = "mdi:format-quote-close"
 
-# Device classes
-BINARY_SENSOR_DEVICE_CLASS = "connectivity"
-
 # Platforms
-BINARY_SENSOR = "binary_sensor"
 SENSOR = "sensor"
 SWITCH = "switch"
-FAN = "fan"
 CLIMATE = "climate"
 PLATFORMS = [SENSOR, CLIMATE, SWITCH]
 
