@@ -38,7 +38,7 @@ set_temperature_mode:
   description: Set temperature mode
   fields:
     value:
-      description: desired value (0=Cooling,1=Economy,2=Normal)
+      description: desired value (0=Cooling,1=Economy,2=Comfort)
       example: "1"
       required: true
       selector:
