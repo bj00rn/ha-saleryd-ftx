@@ -5,7 +5,9 @@ from homeassistant.components.switch import (
     SwitchDeviceClass,
 )
 
-from .const import DOMAIN
+from homeassistant.util import slugify
+
+from .const import DOMAIN, DEFAULT_NAME
 from .entity import SalerydLokeEntity
 
 
@@ -18,6 +20,10 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
     _service_turn_off = ""
     _can_expire = False
     _expire_key = None
+
+    def __init__(self, coordinator, entry_id, entity_description) -> None:
+        self.entity_id = f"switch.${DEFAULT_NAME}_${slugify(entity_description.name)}"
+        super().__init__(coordinator, entry_id, entity_description)
 
     @property
     def is_on(self):
