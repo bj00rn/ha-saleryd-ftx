@@ -17,6 +17,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
     _service_turn_on = ""
     _service_turn_off = ""
     _can_expire = False
+    _expire_key = None
 
     @property
     def is_on(self):
@@ -49,8 +50,12 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
 
     @property
     def extra_state_attributes(self):
-        if self._can_expire and self.coordinator.data.get("*ME"):
-            attrs = {"time_left": self.coordinator.data.get("*ME")}
+        if (
+            self._can_expire
+            and self._expire_key
+            and self.coordinator.data.get(self._expire_key)
+        ):
+            attrs = {"time_left": self.coordinator.data.get(self._expire_key)}
             return attrs
         return None
 
@@ -61,6 +66,7 @@ class SalerydLokeFireplaceModeBinarySwitch(SalerydLokeBinarySwitch):
     _service_turn_on = "set_fireplace_mode"
     _service_turn_off = "set_fireplace_mode"
     _can_expire = True
+    _expire_key = "*ME"
 
 
 class SalerydLokeCoolingModeBinarySwitch(SalerydLokeBinarySwitch):
@@ -68,7 +74,6 @@ class SalerydLokeCoolingModeBinarySwitch(SalerydLokeBinarySwitch):
 
     _service_turn_on = "set_cooling_mode"
     _service_turn_off = "set_cooling_mode"
-    _can_expire = True
 
 
 class SalerydLokeVentilationModeBinarySwitch(SalerydLokeBinarySwitch):
@@ -97,6 +102,8 @@ class SalerydLokeBoostModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
 
     _state_when_on = 2
     _state_when_off = 1
+    _can_expire = True
+    _expire_key = "*MI"
 
 
 switches = {
