@@ -1,5 +1,6 @@
 """Adds config flow for SalerydLoke."""
 import logging
+import asyncio
 
 from homeassistant import config_entries
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
@@ -86,7 +87,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         try:
             session = async_create_clientsession(self.hass)
             client = Client(ip, port, session)
-            await client.connect()
+            asyncio.wait_for(client.connect(), 10)
             return True
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Could not connect", exc_info=True)
