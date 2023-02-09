@@ -39,9 +39,9 @@ Name | Description | Fields
 
 ## Confirmed supported devices
 
-Model | Software versions
+Model | Control system versions
 -- | --
-[Saleryd LOKE1 (LOKE BASIC)](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | Firmware 4.1.1
+[LOKE01/LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.1
 
 
 ## Prequisites
@@ -63,7 +63,8 @@ Configuration in congfiguration.yaml is not supported
 ### Configuration in the UI
 Setting | Description
 -- | --
-IP | IP adress of the HRV system
+IP | IP adress of the HRV system on the local network
+PORT | Port number of websocket, default 3001
 
 
 [saleryd_ftx]: https://github.com/bj00rn/ha-saleryd-ftx
