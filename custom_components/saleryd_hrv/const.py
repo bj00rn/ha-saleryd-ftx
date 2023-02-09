@@ -14,7 +14,7 @@ ICON = "mdi:format-quote-close"
 SENSOR = "sensor"
 SWITCH = "switch"
 CLIMATE = "climate"
-PLATFORMS = [SENSOR, CLIMATE, SWITCH]
+PLATFORMS = [SENSOR, SWITCH]
 
 
 # Configuration and options
