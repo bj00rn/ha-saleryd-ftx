@@ -186,12 +186,12 @@ sensors = {
             native_unit_of_measurement=UnitOfTime.MONTHS,
         ),
     },
-    "model": {
+    "control_system_name": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
             key="*SB",
             icon="mdi:barcode",
-            name="Model",
+            name="System name",
             device_class=SensorDeviceClass.ENUM,
             entity_category=EntityCategory.DIAGNOSTIC,
         ),
@@ -206,24 +206,14 @@ sensors = {
             entity_category=EntityCategory.DIAGNOSTIC,
         ),
     },
-    "wifi_version": {
+    "control_system_version": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
             key="*SC",
             icon="mdi:wrench-clock",
-            name="Wifi version",
+            name="System version",
             device_class=SensorDeviceClass.ENUM,
             entity_category=EntityCategory.DIAGNOSTIC,
-        ),
-    },
-    "mode_time_left": {
-        "klass": SalerydLokeSensor,
-        "description": SensorEntityDescription(
-            key="*ME",
-            icon="mdi:clock",
-            name="Mode time left",
-            entity_category=EntityCategory.DIAGNOSTIC,
-            unit_of_measurement=UnitOfTime.MINUTES,
         ),
     },
 }
