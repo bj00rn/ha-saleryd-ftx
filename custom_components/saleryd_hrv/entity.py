@@ -4,7 +4,7 @@ from homeassistant.helpers.entity import DeviceInfo, EntityDescription
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .coordinator import SalerydLokeDataUpdateCoordinator
-from .const import DEFAULT_NAME, DOMAIN, MANUFACTURER
+from .const import DEFAULT_NAME, DOMAIN, ATTRIBUTION, MANUFACTURER
 
 
 class SalerydLokeEntity(CoordinatorEntity):

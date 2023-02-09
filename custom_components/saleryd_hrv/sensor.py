@@ -1,5 +1,4 @@
 """Sensor platform"""
-import decimal
 
 from homeassistant.components.sensor import (
     SensorEntity,
@@ -12,11 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import (
     DataUpdateCoordinator,
 )
-from homeassistant.components.binary_sensor import (
-    BinarySensorEntity,
-    BinarySensorEntityDescription,
-    BinarySensorDeviceClass,
-)
+
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfPower,
@@ -24,27 +19,25 @@ from homeassistant.const import (
     UnitOfTemperature,
     REVOLUTIONS_PER_MINUTE,
 )
+from homeassistant.util import slugify
 
-from .const import DOMAIN
+from .const import DOMAIN, DEFAULT_NAME
 from .entity import SalerydLokeEntity
 
 
 class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
     """Sensor base class."""
 
-    _attr_state_class = SensorStateClass.MEASUREMENT
-
     def __init__(
         self,
         coordinator: DataUpdateCoordinator,
         entry_id,
         entity_description: SensorEntityDescription,
-        data_type: type = decimal.Decimal,
     ) -> None:
         """Initialize the sensor."""
-        super().__init__(coordinator, entry_id, entity_description)
+        self.entity_id = f"sensor.${DEFAULT_NAME}_${slugify(entity_description.name)}"
 
-        self._data_type = data_type
+        super().__init__(coordinator, entry_id, entity_description)
 
     def _translate_value(self, value):
         if self.entity_description.key == "MG":
@@ -78,17 +71,6 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         if value:
             value = value[0] if isinstance(value, list) else value
             return self._translate_value(value)
-
-
-class SalerydLokeBinarySensor(SalerydLokeEntity, BinarySensorEntity):
-    """Binary sensor"""
-
-    @property
-    def is_on(self) -> bool | None:
-        """Return true if the binary sensor is on."""
-        state = self.coordinator.data.get(self.entity_description.key)
-        if state:
-            return self.coordinator.data.get(self.entity_description.key)[0] == 1
 
 
 sensors = {
@@ -182,24 +164,6 @@ sensors = {
             name="Ventilation mode",
             icon="mdi:hvac",
             device_class=SensorDeviceClass.ENUM,
-        ),
-    },
-    "fireplace_mode": {
-        "klass": SalerydLokeBinarySensor,
-        "description": BinarySensorEntityDescription(
-            key="MB",
-            icon="mdi:fireplace",
-            name="Fireplace mode",
-            device_class=BinarySensorDeviceClass.RUNNING,
-        ),
-    },
-    "cooling_mode": {
-        "klass": SalerydLokeBinarySensor,
-        "description": BinarySensorEntityDescription(
-            key="MK",
-            icon="mdi:hvac",
-            name="Cooling mode",
-            device_class=BinarySensorDeviceClass.RUNNING,
         ),
     },
     "temperature_mode": {
