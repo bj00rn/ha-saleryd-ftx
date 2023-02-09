@@ -1,6 +1,5 @@
 """Adds config flow for SalerydLoke."""
 import logging
-import asyncio
 
 from homeassistant import config_entries
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
