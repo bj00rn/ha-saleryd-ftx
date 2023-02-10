@@ -15,27 +15,42 @@
 
 **Sensors**
 
-Name | Description | Unit of measure
+Name | Description | Unit |
 -- | -- | --
-`heat_exchanger_rpm` | Speed of the heat exchanger rotor | rpm
-`heat_exchanger_speed` | Speed of the heat exchanger rotor | percent
-`supply_air_temperature` | Supply air temperature | Degrees celsius
-`heater_air_temperature` | Air temperature at heater battry | Degrees celsius
-`supply_fan_speed` | Speed of the supply air fan | percent
-`extract_fan_speed` | Speed of the extract air fan | percent
-`ventilation_mode` | Ventilation mode of the system  (0=Home,1=Away,2=High) | integer
-`fireplace_mode` | Fireplace mode state (0=Off,1=On) | integer
-`temperature_mode` | Temperature mode (0=Cooling,1=Economy,2=Normal)  | integer
+`extract_fan_speed` | fan speed | `%`
+`supply_fan_speed`  | fan speed | `%`
+`filter_months_left` | filter months left | `m`
+`heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm`
+`heat_exchanger_rotor_speed_percent` | rotor speed of heat exchanger | `%`
+`heater_air_temperature` | air temperature at heater | `°C`
+`heater_power` | power setting of heater | `W`
+`heater_temperature_percent` | heater temperature (power?) | `%`
+`product_number` | product number | `str`
+`supply_air_temperature` | supply air temperature | `°C`
+`system_name` | control system name | `str`
+`system_version` | control system version | `str`
+`temperature_mode` | current temperature mode setting | `str`
+`ventilation_mode` | current ventilation mode setting | `str`
 
-***Services***
+**Switches**
+
+Switch | Description
+-- | --
+`home_mode` | Turn Home vent mode on/off
+`away_mode` | Turn Away vent mode on/off
+`boost_mode` | Turn Boost vent mode on/off
+`cooling_mode` | Turn Cooling vent mode on/off
+`fireplace_mode` | Turn Fireplace vent mode on/off
+
+
+**Services**
 
 Name | Description | Fields
 -- | -- | --
 `set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=off)
-`set_cooling_mode` | Set cooling mode | value: `integer` (0=On, 1=off)
 `set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=High)
-`set_temperature_mode` | Set temperature mode | value: `integer` (0=Cooling,1=Economy,2=Normal)
-
+`set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Comfort)
+`set_cooling_mode` | Set cooling mode | value: `integer` (0=On, 1=off)
 
 ## Confirmed supported devices
 
@@ -66,6 +81,9 @@ Setting | Description
 IP | IP adress of the HRV system on the local network
 PORT | Port number of websocket, default 3001
 
+
+## Related projects ##
+[saleryd_ftx]: https://github.com/bj00rn/pysaleryd
 
 [saleryd_ftx]: https://github.com/bj00rn/ha-saleryd-ftx
 [buymecoffee]: https://www.buymeacoffee.com/bj00rn
