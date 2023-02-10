@@ -83,7 +83,7 @@ PORT | Port number of websocket, default 3001
 
 
 ## Related projects ##
-[saleryd_ftx]: https://github.com/bj00rn/pysaleryd
+https://github.com/bj00rn/pysaleryd
 
 [saleryd_ftx]: https://github.com/bj00rn/ha-saleryd-ftx
 [buymecoffee]: https://www.buymeacoffee.com/bj00rn
