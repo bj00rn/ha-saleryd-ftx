@@ -82,6 +82,13 @@ IP | IP adress of the HRV system on the local network
 PORT | Port number of websocket, default 3001
 
 
+## Troubleshooting ##
+### Can't connect to HRV system ###
+* Confirm system is connected and UI is reachable on the local network. Follow steps in the manual.
+* Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser. 3001 is probably default
+* The system HRV system can only handle a few connected clients. Shut down any additional clients/browsers and try again
+
+
 ## Related projects ##
 https://github.com/bj00rn/pysaleryd
 
