@@ -7,12 +7,10 @@ import logging
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
-from homeassistant.util import Throttle
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.loader import async_get_integration
 from pysaleryd.client import Client
-
-from .coordinator import SalerydLokeDataUpdateCoordinator
 
 from .const import (
     CONF_WEBSOCKET_IP,
@@ -21,6 +19,7 @@ from .const import (
     PLATFORMS,
     STARTUP_MESSAGE,
 )
+from .coordinator import SalerydLokeDataUpdateCoordinator
 
 SCAN_INTERVAL = timedelta(seconds=5)
 
@@ -31,7 +30,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up this integration using UI."""
     if hass.data.get(DOMAIN) is None:
         hass.data.setdefault(DOMAIN, {})
-        _LOGGER.info(STARTUP_MESSAGE)
+
+    integration = await async_get_integration(hass, DOMAIN)
+    _LOGGER.info(STARTUP_MESSAGE, integration.version)
 
     url = entry.data.get(CONF_WEBSOCKET_IP)
     port = entry.data.get(CONF_WEBSOCKET_PORT)
