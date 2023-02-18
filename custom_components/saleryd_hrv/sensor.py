@@ -1,27 +1,24 @@
 """Sensor platform"""
 
 from homeassistant.components.sensor import (
+    SensorDeviceClass,
     SensorEntity,
     SensorEntityDescription,
-    SensorDeviceClass,
     SensorStateClass,
+)
+from homeassistant.const import (
+    PERCENTAGE,
+    REVOLUTIONS_PER_MINUTE,
+    UnitOfPower,
+    UnitOfTemperature,
+    UnitOfTime,
 )
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import (
-    DataUpdateCoordinator,
-)
-
-from homeassistant.const import (
-    PERCENTAGE,
-    UnitOfPower,
-    UnitOfTime,
-    UnitOfTemperature,
-    REVOLUTIONS_PER_MINUTE,
-)
+from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
 
-from .const import DOMAIN, DEFAULT_NAME
+from .const import DEFAULT_NAME, DOMAIN
 from .entity import SalerydLokeEntity
 
 

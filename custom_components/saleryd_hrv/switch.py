@@ -1,13 +1,12 @@
 """Switch platform"""
 from homeassistant.components.switch import (
+    SwitchDeviceClass,
     SwitchEntity,
     SwitchEntityDescription,
-    SwitchDeviceClass,
 )
-
 from homeassistant.util import slugify
 
-from .const import DOMAIN, DEFAULT_NAME
+from .const import DEFAULT_NAME, DOMAIN
 from .entity import SalerydLokeEntity
 
 

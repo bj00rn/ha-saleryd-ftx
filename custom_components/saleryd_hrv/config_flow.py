@@ -1,20 +1,13 @@
 """Adds config flow for SalerydLoke."""
 import logging
-import asyncio
 
 from homeassistant import config_entries
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.const import CONF_NAME
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
+from pysaleryd.client import Client
 import voluptuous as vol
 
-from pysaleryd.client import Client
-from .const import (
-    CONF_WEBSOCKET_PORT,
-    CONF_WEBSOCKET_IP,
-    DOMAIN,
-    NAME,
-)
-
+from .const import CONF_WEBSOCKET_IP, CONF_WEBSOCKET_PORT, DOMAIN, NAME
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
