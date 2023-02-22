@@ -2,7 +2,7 @@
 
 set -e
 
-cd "$(dirname "$0")/.."
+cd "$(dirname "$0")/../hass"
 
 # Start Home Assistant
 hass -c . --debug

@@ -4,3 +4,6 @@ venv
 .venv
 .coverage
 .idea
+
+# home assistant data
+hass
