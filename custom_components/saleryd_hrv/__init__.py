@@ -8,7 +8,7 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.loader import async_get_integration
 from pysaleryd.client import Client
 
@@ -37,7 +37,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     url = entry.data.get(CONF_WEBSOCKET_IP)
     port = entry.data.get(CONF_WEBSOCKET_PORT)
 
-    session = async_get_clientsession(hass)
+    session = async_create_clientsession(hass, raise_for_status=True)
     client = Client(url, port, session)
     try:
         await client.connect()
