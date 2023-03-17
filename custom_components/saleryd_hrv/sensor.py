@@ -18,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
 
-from .const import DEFAULT_NAME, DOMAIN
+from .const import DEFAULT_NAME, DOMAIN, CLIENT_STATE
 from .entity import SalerydLokeEntity
 
 
@@ -199,6 +199,16 @@ sensors = {
             key="*SA",
             icon="mdi:barcode",
             name="Product number",
+            device_class=SensorDeviceClass.ENUM,
+            entity_category=EntityCategory.DIAGNOSTIC,
+        ),
+    },
+    "connection_state": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key=CLIENT_STATE,
+            icon="mdi:wrench-clock",
+            name="Connection state",
             device_class=SensorDeviceClass.ENUM,
             entity_category=EntityCategory.DIAGNOSTIC,
         ),

@@ -25,6 +25,7 @@ CONF_WEBSOCKET_PORT = "websocket_port"
 # Defaults
 DEFAULT_NAME = DOMAIN
 
+# Messages
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
 {NAME} %s
@@ -33,3 +34,6 @@ If you have any issues with this you need to open an issue here:
 {ISSUE_URL}
 -------------------------------------------------------------------
 """
+
+# Other constants
+CLIENT_STATE = "*HRV_CLIENT_STATE"

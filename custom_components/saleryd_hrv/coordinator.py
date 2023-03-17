@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pysaleryd.client import Client
 
-from .const import DOMAIN, SUPPORTED_FIRMWARES
+from .const import DOMAIN, SUPPORTED_FIRMWARES, CLIENT_STATE
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
@@ -30,4 +30,5 @@ class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
                 version,
                 ", ".join(SUPPORTED_FIRMWARES),
             )
+        data[CLIENT_STATE] = self.client.state
         return data
