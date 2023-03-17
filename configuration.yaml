@@ -6,3 +6,5 @@ logger:
   default: info
   logs:
     custom_components.saleryd_hrv: debug
+
+debugpy:
