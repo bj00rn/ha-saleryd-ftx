@@ -46,4 +46,3 @@ set_temperature_mode:
           min: 0
           max: 2
           mode: slider
-
