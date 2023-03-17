@@ -6,7 +6,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from pysaleryd.client import Client
 
-from .const import DOMAIN, SUPPORTED_FIRMWARES, CLIENT_STATE
+from .const import CLIENT_STATE, DOMAIN, SUPPORTED_FIRMWARES
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 

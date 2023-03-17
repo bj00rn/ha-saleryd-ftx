@@ -1,17 +1,16 @@
 import logging
 
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.const import PERCENTAGE, TEMP_CELSIUS, UnitOfPower
-
 from homeassistant.components.climate import (
-    ClimateEntity,
-    ClimateEntityFeature,
-    ClimateEntityDescription,
-    PRESET_ECO,
     PRESET_COMFORT,
-    HVACMode,
+    PRESET_ECO,
+    ClimateEntity,
+    ClimateEntityDescription,
+    ClimateEntityFeature,
     HVACAction,
+    HVACMode,
 )
+from homeassistant.const import PERCENTAGE, TEMP_CELSIUS, UnitOfPower
+from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 PRESET_COOL = "cool"
 
@@ -21,7 +20,6 @@ FAN_MODE_BOOST = "boost"
 
 from .const import DOMAIN
 from .entity import SalerydLokeEntity
-
 
 _LOGGER = logging.getLogger(__package__)
 

@@ -18,7 +18,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
 
-from .const import DEFAULT_NAME, DOMAIN, CLIENT_STATE
+from .const import CLIENT_STATE, DEFAULT_NAME, DOMAIN
 from .entity import SalerydLokeEntity
 
 
