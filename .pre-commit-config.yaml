@@ -1,0 +1,35 @@
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.1.0
+    hooks:
+      - id: black
+        language_version: python3 # Should be a command that runs python3.6+
+#  - repo: https://github.com/PyCQA/isort
+#    rev: 5.9.2
+#    hooks:
+#      - id: isort
+#  - repo: https://gitlab.com/pycqa/flake8
+#    rev: 3.9.2
+#    hooks:
+#      - id: flake8
+#        args: [--statistics]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-xml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args:
+          - --fix=lf
+      - id: end-of-file-fixer
+      - id: requirements-txt-fixer
+        files: requirements.txt|requirements-dev.txt
+      - id: debug-statements
+      - id: check-symlinks
