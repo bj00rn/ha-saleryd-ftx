@@ -31,15 +31,16 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             return self.async_abort(reason="single_instance_allowed")
 
         if user_input is not None:
-            valid = await self._test_connection(
-                user_input[CONF_WEBSOCKET_IP], user_input[CONF_WEBSOCKET_PORT]
-            )
-            if valid:
+            try:
+                await self._test_connection(
+                    user_input[CONF_WEBSOCKET_IP], user_input[CONF_WEBSOCKET_PORT]
+                )
+            except Exception as exc:
+                self._errors["base"] = "connect"
+            else:
                 return self.async_create_entry(
                     title=user_input[CONF_NAME], data=user_input
                 )
-            else:
-                self._errors["base"] = "connect"
 
             return await self._show_config_form(user_input)
 
@@ -82,9 +83,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 return True
         except Exception as e:  # pylint: disable=broad-except
             _LOGGER.error("Could not connect", exc_info=True)
-            pass
-
-        return False
+            raise e
 
 
 #     @staticmethod
