@@ -106,7 +106,7 @@ class SalerydLokeBoostModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     """Boost mode switch"""
 
     _state_when_on = 2
-    _state_when_off = 1
+    _state_when_off = 0
     _can_expire = True
     _expire_key = "*MI"
 
