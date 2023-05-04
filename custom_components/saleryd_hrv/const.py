@@ -6,7 +6,7 @@ DOMAIN = "saleryd_hrv"
 DOMAIN_DATA = f"{DOMAIN}_data"
 ATTRIBUTION = "Data provided by Saleryd HRV"
 ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
-SUPPORTED_FIRMWARES = ["4.1.1"]
+SUPPORTED_FIRMWARES = ["4.1.1", "4.1.5"]
 # Icons
 ICON = "mdi:format-quote-close"
 
