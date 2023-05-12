@@ -18,7 +18,19 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import slugify
 
-from .const import CLIENT_STATE, DEFAULT_NAME, DOMAIN
+from .const import (
+    CLIENT_STATE,
+    DEFAULT_NAME,
+    DOMAIN,
+    HEATER_MODE_HIGH,
+    HEATER_MODE_LOW,
+    TEMPERATURE_MODE_COOL,
+    TEMPERATURE_MODE_ECO,
+    TEMPERATURE_MODE_NORMAL,
+    VENTILATION_MODE_AWAY,
+    VENTILATION_MODE_BOOST,
+    VENTILATION_MODE_HOME,
+)
 from .entity import SalerydLokeEntity
 
 
@@ -38,25 +50,25 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
     def _translate_value(self, value):
         if self.entity_description.key == "MG":
-            if value == 0:
+            if value == HEATER_MODE_LOW:
                 return 900
-            elif value == 1:
+            elif value == HEATER_MODE_HIGH:
                 return 1800
 
         if self.entity_description.key == "MT":
-            if value == 0:
-                return "Comfort"
-            elif value == 1:
+            if value == TEMPERATURE_MODE_NORMAL:
+                return "Normal"
+            elif value == TEMPERATURE_MODE_ECO:
                 return "Eco"
-            elif value == 2:
+            elif value == TEMPERATURE_MODE_COOL:
                 return "Cool"
 
         if self.entity_description.key == "MF":
-            if value == 0:
+            if value == VENTILATION_MODE_HOME:
                 return "Home"
-            elif value == 1:
+            elif value == VENTILATION_MODE_AWAY:
                 return "Away"
-            elif value == 2:
+            elif value == VENTILATION_MODE_BOOST:
                 return "Boost"
 
         return value

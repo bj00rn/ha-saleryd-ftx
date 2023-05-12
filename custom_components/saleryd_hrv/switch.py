@@ -6,7 +6,13 @@ from homeassistant.components.switch import (
 )
 from homeassistant.util import slugify
 
-from .const import DEFAULT_NAME, DOMAIN
+from .const import (
+    DEFAULT_NAME,
+    DOMAIN,
+    VENTILATION_MODE_AWAY,
+    VENTILATION_MODE_BOOST,
+    VENTILATION_MODE_HOME,
+)
 from .entity import SalerydLokeEntity
 
 
@@ -91,22 +97,22 @@ class SalerydLokeVentilationModeBinarySwitch(SalerydLokeBinarySwitch):
 class SalerydLokeHomeModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     """Home mode switch"""
 
-    _state_when_on = 0
-    _state_when_off = 1
+    _state_when_on = VENTILATION_MODE_HOME
+    _state_when_off = VENTILATION_MODE_AWAY
 
 
 class SalerydLokeAwayModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     """Away mode switch"""
 
-    _state_when_on = 1
-    _state_when_off = 0
+    _state_when_on = VENTILATION_MODE_AWAY
+    _state_when_off = VENTILATION_MODE_HOME
 
 
 class SalerydLokeBoostModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     """Boost mode switch"""
 
-    _state_when_on = 2
-    _state_when_off = 0
+    _state_when_on = VENTILATION_MODE_BOOST
+    _state_when_off = VENTILATION_MODE_HOME
     _can_expire = True
     _expire_key = "*MI"
 
