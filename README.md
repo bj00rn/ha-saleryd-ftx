@@ -6,14 +6,13 @@
 [![Project Maintenance][maintenance-shield]][user_profile]
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
-
 *Component to integrate with [Saleryd HRV Systems](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
 
-**Disclaimer**
+## Disclaimer
 
  This integration has been developed for LOKE1 HRV system. *Use at own risk*. I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
 
-**Sensors**
+## Sensors
 
 Name | Description | Unit |
 -- | -- | --
@@ -32,7 +31,7 @@ Name | Description | Unit |
 `temperature_mode` | current temperature mode setting | `str`
 `ventilation_mode` | current ventilation mode setting | `str`
 
-**Switches**
+## Switches
 
 Switch | Description
 -- | --
@@ -42,54 +41,55 @@ Switch | Description
 `cooling_mode` | Turn Cooling vent mode on/off
 `fireplace_mode` | Turn Fireplace vent mode on/off
 
-
-**Services**
+## Services
 
 Name | Description | Fields
 -- | -- | --
-`set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=off)
-`set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=High)
-`set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Comfort)
-`set_cooling_mode` | Set cooling mode | value: `integer` (0=On, 1=off)
+`set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=Off)
+`set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
+`set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Cool)
+`set_cooling_mode` | Set cooling mode | value: `integer` (0=On, 1=Off)
 
-## Confirmed supported devices
+## Supported devices
 
-Model | Control system versions
--- | --
-[LOKE01/LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.1
-
+Model | Confirmed supported control system versions | Unsupported control system versions
+-- | -- | --
+[LOKE01/LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5
 
 ## Prequisites
+
 1. Connect HRV to local network . See instructions in user manual
 2. Take note of the assigned IP adress of the HRV system
 
 ## Installation
+
 1. In the HA UI go to "HACS" and add this repository
 2. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Saleryd HRV".
 3. Click install
 
-
 ## Configuration
+
 ### configuration.yaml
 
 Configuration in congfiguration.yaml is not supported
 
-
 ### Configuration in the UI
+
 Setting | Description
 -- | --
 IP | IP adress of the HRV system on the local network
 PORT | Port number of websocket, default 3001
 
+## Troubleshooting
 
-## Troubleshooting ##
-### Can't connect to HRV system ###
+### Can't connect to HRV system
+
 * Confirm system is connected and UI is reachable on the local network. Follow steps in the manual.
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser. 3001 is probably default
 * The system HRV system can only handle a few connected clients. Shut down any additional clients/browsers and try again
 
+## Related projects
 
-## Related projects ##
 https://github.com/bj00rn/pysaleryd
 
 [saleryd_ftx]: https://github.com/bj00rn/ha-saleryd-ftx

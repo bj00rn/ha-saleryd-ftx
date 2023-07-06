@@ -2,7 +2,7 @@ set_fireplace_mode:
   description: Set fireplace mode on or off
   fields:
     value:
-      description: desired value (0=Off,1=On)
+      description: desired mode (0=Off,1=On)
       example: "1"
       required: true
       selector:
@@ -14,7 +14,7 @@ set_cooling_mode:
   description: Set cooling mode on or off
   fields:
     value:
-      description: desired value (0=Off,1=On)
+      description: desired mode (0=Off,1=On)
       example: "1"
       required: true
       selector:
@@ -26,7 +26,7 @@ set_ventilation_mode:
   description: Set ventilation mode
   fields:
     value:
-      description: desired value (0=Home,1=Away,2=High)
+      description: desired mode (0=Home,1=Away,2=Boost)
       example: "1"
       required: true
       selector:
@@ -38,7 +38,7 @@ set_temperature_mode:
   description: Set temperature mode
   fields:
     value:
-      description: desired value (0=Cooling,1=Economy,2=Comfort)
+      description: desired mode (0=Normal,1=Economy,2=Cool)
       example: "1"
       required: true
       selector:
