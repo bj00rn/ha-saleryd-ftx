@@ -66,7 +66,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             and self._expire_key
             and self.coordinator.data.get(self._expire_key)
         ):
-            attrs = {"time_left": self.coordinator.data.get(self._expire_key)}
+            attrs = {"minutes_left": self.coordinator.data.get(self._expire_key)}
             return attrs
         return None
 
@@ -114,7 +114,7 @@ class SalerydLokeBoostModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     _state_when_on = VENTILATION_MODE_BOOST
     _state_when_off = VENTILATION_MODE_HOME
     _can_expire = True
-    _expire_key = "*MI"
+    _expire_key = "*FI"
 
 
 switches = {

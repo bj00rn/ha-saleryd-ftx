@@ -1,5 +1,7 @@
 """Sensor platform"""
 
+from typing import Any
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
@@ -80,6 +82,24 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         if value:
             value = value[0] if isinstance(value, list) else value
             return self._translate_value(value)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any] | None:
+        attrs = {}
+        value = self.coordinator.data.get(self.entity_description.key)
+        if value:
+            value = value[0] if isinstance(value, list) else value
+
+        if self.entity_description.key == "MT":
+            if value == TEMPERATURE_MODE_COOL:
+                attrs["target_temperature"] = self.coordinator.data.get("TF")[0]
+            elif value == TEMPERATURE_MODE_ECO:
+                attrs["target_temperature"] = self.coordinator.data.get("TE")[0]
+            elif value == TEMPERATURE_MODE_NORMAL:
+                attrs["target_temperature"] = self.coordinator.data.get("TD")[0]
+        elif self.entity_description.key == "MF" and value == VENTILATION_MODE_BOOST:
+            attrs["minutes_left"] = self.coordinator.data.get("*FI")
+        return attrs
 
 
 sensors = {
