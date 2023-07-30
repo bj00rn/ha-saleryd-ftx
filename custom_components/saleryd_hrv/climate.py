@@ -46,7 +46,6 @@ class SalerydVentilation(_SalerydClimate):
             "set_cooling_mode",
             {"value": self.hvac_modes.index(hvac_mode)},
             blocking=True,
-            limit=10,
         )
         self.schedule_update_ha_state(force_refresh=True)
 
@@ -86,7 +85,6 @@ class SalerydVentilation(_SalerydClimate):
             "set_temperature_mode",
             {"value": self.preset_modes.index(preset_mode)},
             blocking=True,
-            limit=10,
         )
         self.schedule_update_ha_state(force_refresh=True)
 
@@ -102,7 +100,6 @@ class SalerydVentilation(_SalerydClimate):
             "set_ventilation_mode",
             {"value": self.fan_modes.index(fan_mode)},
             blocking=True,
-            limit=10,
         )
         self.schedule_update_ha_state(force_refresh=True)
 
