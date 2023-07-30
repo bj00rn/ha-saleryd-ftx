@@ -1,4 +1,5 @@
 set_fireplace_mode:
+  name: Set fireplace mode
   description: Set fireplace mode on or off
   fields:
     value:
@@ -11,6 +12,7 @@ set_fireplace_mode:
           max: 1
           mode: slider
 set_cooling_mode:
+  name: Set cooling mode
   description: Set cooling mode on or off
   fields:
     value:
@@ -23,6 +25,7 @@ set_cooling_mode:
           max: 1
           mode: slider
 set_ventilation_mode:
+  name: Set ventilation mode
   description: Set ventilation mode
   fields:
     value:
@@ -35,6 +38,7 @@ set_ventilation_mode:
           max: 2
           mode: slider
 set_temperature_mode:
+  name: Set temperature mode
   description: Set temperature mode
   fields:
     value:

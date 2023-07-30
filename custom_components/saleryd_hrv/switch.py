@@ -44,7 +44,6 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             self._service_turn_on,
             {"value": self._state_when_on},
             blocking=True,
-            limit=10,
         )
         self.schedule_update_ha_state(force_refresh=True)
 
@@ -55,7 +54,6 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             self._service_turn_off,
             {"value": self._state_when_off},
             blocking=True,
-            limit=10,
         )
         self.schedule_update_ha_state(force_refresh=True)
 
