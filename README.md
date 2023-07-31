@@ -54,7 +54,9 @@ Name | Description | Fields
 
 Model | Confirmed supported control system versions | Unsupported control system versions
 -- | -- | --
-[LOKE01/LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5
+[LOKE01/LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5*
+
+\* connectivity issues in versions below 4.1.5
 
 ## Prequisites
 
