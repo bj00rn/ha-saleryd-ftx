@@ -6,11 +6,11 @@
   ],
   "config_flow": true,
   "documentation": "https://github.com/bj00rn/ha-saleryd-ftx",
+  "integration_type": "device",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/bj00rn/ha-saleryd-ftx",
   "requirements": [
     "pysaleryd>=3.0.6"
   ],
-  "type": "device",
   "version": "2.2.0"
 }
