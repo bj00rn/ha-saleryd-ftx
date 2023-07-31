@@ -1,12 +1,11 @@
 ## Developing with Visual Studio Code + devcontainer
 
-The easiest way to get started with custom integration development is to use Visual Studio Code with devcontainers. This approach will create a preconfigured development environment with all the tools you need.
+This approach will create a preconfigured development environment with all the tools you need.
 
-In the container you will have a dedicated Home Assistant core instance running with your custom component code. You can configure this instance by updating the `./devcontainer/configuration.yaml` file.
+The devcontainer has a Home Assistant core instance with the integration available ready to be added. The instance can be configured in the `./devcontainer/config/configuration.yaml` file.
 
 **Prerequisites**
 
-- [git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - Docker
   -  For Linux, macOS, or Windows 10 Pro/Enterprise/Education use the [current release version of Docker](https://docs.docker.com/install/)
   -   Windows 10 Home requires [WSL 2](https://docs.microsoft.com/windows/wsl/wsl2-install) and the current Edge version of Docker Desktop (see instructions [here](https://docs.docker.com/docker-for-windows/wsl-tech-preview/)). This can also be used for Windows Pro/Enterprise/Education.
@@ -19,42 +18,52 @@ In the container you will have a dedicated Home Assistant core instance running 
 
 **Getting started:**
 
-1. Fork the repository.
-2. Clone the repository to your computer.
-3. Open the repository using Visual Studio code.
+- Open the repository root folder using Visual Studio code.
 
-When you open this repository with Visual Studio code you are asked to "Reopen in Container", this will start the build of the container.
+Visual Studio code will ask "Reopen in Container", this will start the build of the container.
 
 _If you don't see this notification, open the command palette and select `Remote-Containers: Reopen Folder in Container`._
 
-### Tasks
+### Start devcontainer
 
-The devcontainer comes with some useful tasks to help you with development, you can start these tasks by opening the command palette and select `Tasks: Run Task` then select the task you want to run.
+Open the command palette and select `Tasks: Run Task` then select `Run Home Assistant on port 8123` this will start the Home Assistant instance.
 
-When a task is currently running (like `Run Home Assistant on port 9123` for the docs), it can be restarted by opening the command palette and selecting `Tasks: Restart Running Task`, then select the task you want to restart.
+The devcontainer can be restarted by opening the command palette and selecting `Tasks: Restart Running Task`, then select the task `Run Home Assistant on port 8123`.
 
-The available tasks are:
-
-Task | Description
--- | --
-Run Home Assistant on port 9123 | Launch Home Assistant with your custom component code and the configuration defined in `.devcontainer/configuration.yaml`.
-Run Home Assistant configuration against /config | Check the configuration.
-Upgrade Home Assistant to latest dev | Upgrade the Home Assistant core version in the container to the latest version of the `dev` branch.
-Install a specific version of Home Assistant | Install a specific version of Home Assistant core in the container.
+When the devcontainer is running, open a browser and navigate to `http://localhost:8123` and finish configuration of the instance.
 
 ### Step by Step debugging
 
-With the development container,
-you can test your custom component in Home Assistant with step by step debugging.
+Modify the `configuration.yaml` file in `.devcontainer/config` folder.
 
-You need to modify the `configuration.yaml` file in `.devcontainer` folder
-by uncommenting the line:
+With the devcontainer running you can debug your code in vscode with step by step debugging.
+
+Enable Step by Step debugging by uncommenting the line:
 
 ```yaml
 # debugpy:
 ```
 
-Then launch the task `Run Home Assistant on port 9123`, and launch the debugger
+Then launch the task `Run Home Assistant on port 8123`, and launch the debugger
 with the existing debugging configuration `Python: Attach Local`.
 
 For more information, look at [the Remote Python Debugger integration documentation](https://www.home-assistant.io/integrations/debugpy/).
+
+### Set log level
+
+Modify the `configuration.yaml` file in `.devcontainer/config` folder.
+
+Enable debug logging by uncommenting the line:
+
+```yaml
+  # logs:
+    # custom_components.saleryd_hrv: debug
+```
+
+### Running tests
+Test cases are automatically detected by vscode and can be triggered under `Testing` section in vscode.
+
+### Reset Home Assistant instance
+Home Assistant instance data is kept in `.devcontainer/config` directory. When the container is started for the first time an empty Home Assistant instance will be initialized in this directory.
+
+To reset the instance revert/delete any the data in this folder and rebuild devcontainer by invoking the `Dev Containers: Rebuild Container` command from vscode command palette.

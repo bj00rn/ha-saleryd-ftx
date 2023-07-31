@@ -1,42 +1,74 @@
 {
-	"name": "SalerydLoke integration development",
+	"name": "henricm/ha-saleryd-ftx",
 	"image": "mcr.microsoft.com/devcontainers/python:0-3.10-bullseye",
 	"forwardPorts": [
 		8123,
 		5678
 	],
+	"portsAttributes": {
+		"8123": {
+			"label": "Home Assistant",
+			"onAutoForward": "notify"
+		}
+	},
 	"containerEnv": {
 		"TZ": "Europe/Stockholm"
 	},
-	"postCreateCommand": "scripts/setup",
+	"postCreateCommand": [
+		".devcontainer/scripts/setup",
+		"git config --global --add safe.directory ${containerWorkspaceFolder}"
+	],
 	"customizations": {
 		"vscode": {
 			"extensions": [
 				"ms-python.python",
+				"ms-python.flake8",
+				"ms-python.mypy",
+				"ms-python.isort",
 				"ms-python.pylint",
-				"github.vscode-pull-request-github",
-				"ryanluker.vscode-coverage-gutters",
 				"ms-python.vscode-pylance",
-				"ms-python.black"
+				"ryanluker.vscode-coverage-gutters",
+				"ms-python.black-formatter"
 			],
 			"settings": {
-				"files.eol": "\n",
+				"python.testing.unittestArgs": [
+					"-v",
+					"-s",
+					".",
+					"-p",
+					"test_*.py"
+				],
 				"editor.tabSize": 4,
+				"editor.rulers": [
+					88
+				],
+				"editor.formatOnSave": false,
+				"files.eol": "auto",
+				"files.trimTrailingWhitespace": true,
+				"python.testing.pytestEnabled": true,
+				"python.testing.unittestEnabled": false,
+				"python.testing.pytestArgs": [
+					"."
+				],
 				"python.pythonPath": "/usr/bin/python3",
 				"python.analysis.autoSearchPaths": false,
 				"python.linting.pylintEnabled": true,
+				"python.linting.mypyEnabled": true,
 				"python.linting.enabled": true,
-				"python.formatting.provider": "black",
-				"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
-				"editor.formatOnPaste": false,
-				"editor.formatOnSave": true,
-				"editor.formatOnType": true,
-				"files.trimTrailingWhitespace": true
+				"[python]": {
+					"editor.defaultFormatter": "ms-python.black-formatter",
+					"editor.formatOnSave": true,
+					"editor.insertSpaces": true,
+					"editor.detectIndentation": false,
+					"editor.codeActionsOnSave": [
+						"source.organizeImports"
+					]
+				}
 			}
 		}
 	},
 	"remoteUser": "vscode",
 	"features": {
-		"rust": "latest"
+		"ghcr.io/devcontainers/features/rust:1": {}
 	}
 }
