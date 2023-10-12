@@ -16,9 +16,11 @@
 
 Name | Description | Unit |
 -- | -- | --
+`boost_mode_minutes_left` | minutes left until boost mode expires | `min`
 `extract_fan_speed` | fan speed | `%`
 `supply_fan_speed`  | fan speed | `%`
 `filter_months_left` | filter months left | `m`
+`fireplace_mode_minutes_left` | minutes left until fireplace mode expires | `min`
 `heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm`
 `heat_exchanger_rotor_speed_percent` | rotor speed of heat exchanger | `%`
 `heater_air_temperature` | air temperature at heater | `°C`

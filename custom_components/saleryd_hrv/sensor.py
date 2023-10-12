@@ -215,6 +215,28 @@ sensors = {
             native_unit_of_measurement=UnitOfTime.MONTHS,
         ),
     },
+    "boost_mode_minutes_left": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="*FI",
+            icon="mdi:wrench-clock",
+            name="Boost mode minutes left",
+            state_class=SensorStateClass.MEASUREMENT,
+            device_class=SensorDeviceClass.DURATION,
+            native_unit_of_measurement=UnitOfTime.MINUTES,
+        ),
+    },
+    "fireplace_mode_minutes_left": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="*ME",
+            icon="mdi:wrench-clock",
+            name="Fireplace mode minutes left",
+            state_class=SensorStateClass.MEASUREMENT,
+            device_class=SensorDeviceClass.DURATION,
+            native_unit_of_measurement=UnitOfTime.MINUTES,
+        ),
+    },
     "control_system_name": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
