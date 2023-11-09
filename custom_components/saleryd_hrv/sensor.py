@@ -1,5 +1,7 @@
 """Sensor platform"""
 
+from datetime import timedelta
+import logging
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -18,7 +20,7 @@ from homeassistant.const import (
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from homeassistant.util import slugify
+from homeassistant.util import Throttle, slugify
 
 from .const import (
     CLIENT_STATE,
@@ -26,14 +28,20 @@ from .const import (
     DOMAIN,
     HEATER_MODE_HIGH,
     HEATER_MODE_LOW,
+    ISSUE_URL,
+    SUPPORTED_FIRMWARES,
     TEMPERATURE_MODE_COOL,
     TEMPERATURE_MODE_ECO,
     TEMPERATURE_MODE_NORMAL,
+    UNSUPPORTED_FIRMWARES,
     VENTILATION_MODE_AWAY,
     VENTILATION_MODE_BOOST,
     VENTILATION_MODE_HOME,
+    WARNING_POWER_OFF,
 )
 from .entity import SalerydLokeEntity
+
+_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
@@ -50,12 +58,45 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
         super().__init__(coordinator, entry_id, entity_description)
 
+    @Throttle(min_time=timedelta(minutes=1))
+    def _log_unknown_sensor_value(self, value):
+        _LOGGER.warning(
+            "Unknown value [%s] for sensor [%s] [%s], feel free to file an issue with the integration at %s and provide this message.",
+            value,
+            self.entity_description.name,
+            self.entity_description.key,
+            ISSUE_URL,
+        )
+
+    @Throttle(min_time=timedelta(days=1))
+    def _log_unsupported_firmware(self, version):
+        """Write to logs if firmware version is unsupported"""
+        _LOGGER.error(
+            "Your control system version is (%s). This integration is incompatible with the following versions: %s",
+            version,
+            ", ".join(UNSUPPORTED_FIRMWARES),
+        )
+
+    @Throttle(min_time=timedelta(days=1))
+    def _log_unknown_firmware(self, version):
+        _LOGGER.warning(
+            "Unknown support for your control system version (%s), feel free to file an issue with the integration at %s and provide this message. This integration has been verified to work with the following versions: %s",
+            version,
+            ISSUE_URL,
+            ", ".join(SUPPORTED_FIRMWARES),
+        )
+
     def _translate_value(self, value):
+        if value is None:
+            return value
+
         if self.entity_description.key == "MG":
             if value == HEATER_MODE_LOW:
                 return 900
             elif value == HEATER_MODE_HIGH:
                 return 1800
+            else:
+                self._log_unknown_sensor_value(value)
 
         if self.entity_description.key == "MT":
             if value == TEMPERATURE_MODE_NORMAL:
@@ -64,6 +105,8 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 return "Eco"
             elif value == TEMPERATURE_MODE_COOL:
                 return "Cool"
+            else:
+                self._log_unknown_sensor_value(value)
 
         if self.entity_description.key == "MF":
             if value == VENTILATION_MODE_HOME:
@@ -72,6 +115,20 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 return "Away"
             elif value == VENTILATION_MODE_BOOST:
                 return "Boost"
+            else:
+                self._log_unknown_sensor_value(value)
+
+        if self.entity_description.key == "*EB":
+            if isinstance(value, str):
+                if WARNING_POWER_OFF in value:
+                    return "Power off"
+            self._log_unknown_sensor_value(value)
+
+        if self.entity_description.key == "*SC":
+            if value not in SUPPORTED_FIRMWARES:
+                self._log_unknown_firmware(value)
+            if value in UNSUPPORTED_FIRMWARES:
+                self._log_unsupported_firmware(value)
 
         return value
 
@@ -275,6 +332,15 @@ sensors = {
             name="System version",
             device_class=SensorDeviceClass.ENUM,
             entity_category=EntityCategory.DIAGNOSTIC,
+        ),
+    },
+    "control_system_warning": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="*EB",
+            icon="mdi:alert",
+            name="System warning",
+            device_class=SensorDeviceClass.ENUM,
         ),
     },
 }

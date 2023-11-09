@@ -18,32 +18,12 @@ from .const import (
     DOMAIN,
     PLATFORMS,
     STARTUP_MESSAGE,
-    SUPPORTED_FIRMWARES,
-    UNSUPPORTED_FIRMWARES,
 )
 from .coordinator import SalerydLokeDataUpdateCoordinator
 
 SCAN_INTERVAL = timedelta(seconds=5)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
-
-
-def log_unsupported_firmware(data):
-    """Write to logs if firmware version is unsupported"""
-    version = data.get("*SC")
-    if version:
-        if version not in SUPPORTED_FIRMWARES:
-            _LOGGER.warning(
-                "Your control system version is (%s). This integration has been verified to work with the following versions: %s",
-                version,
-                ", ".join(SUPPORTED_FIRMWARES),
-            )
-        if version in UNSUPPORTED_FIRMWARES:
-            _LOGGER.error(
-                "Your control system version is (%s). This integration is incompatible with the following versions: %s",
-                version,
-                ", ".join(UNSUPPORTED_FIRMWARES),
-            )
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
@@ -70,11 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         update_interval=SCAN_INTERVAL,
     )
 
-    await asyncio.sleep(
-        SCAN_INTERVAL.seconds
-    )  # sleep to ensure coordinator collects all data
     await coordinator.async_config_entry_first_refresh()
-    log_unsupported_firmware(coordinator.data)
 
     hass.data[DOMAIN][entry.entry_id] = coordinator
 
