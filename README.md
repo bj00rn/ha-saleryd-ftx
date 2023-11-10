@@ -87,10 +87,18 @@ PORT | Port number of websocket, default 3001
 ## Troubleshooting
 
 ### Can't connect to HRV system
-
+* Check the homeassistant logs
 * Confirm system is connected and UI is reachable on the local network. Follow steps in the manual.
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser. 3001 is probably default
 * The system HRV system can only handle a few connected clients. Shut down any additional clients/browsers and try again
+
+### Enable debug logging
+Add component to the [logger](https://www.home-assistant.io/integrations/logger/) section of homeassistant configuration.yaml.
+```yaml
+logger:
+  logs:
+    custom_components.saleryd_hrv: debug
+```
 
 ## Related projects
 
