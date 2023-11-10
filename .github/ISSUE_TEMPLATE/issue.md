@@ -18,7 +18,7 @@ Issues not containing the minimum requirements will be closed:
 
 ## Home Assistant version
 ```text
-Add Hone assitant version number here
+Add Home Assitant version number here
 ```
 
 
@@ -28,7 +28,7 @@ The version number can be found in HACS check the home assistant logs.
 -->
 
 ```text
-Add your version number here
+Add component version number here
 ```
 
 
