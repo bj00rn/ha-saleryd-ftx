@@ -10,7 +10,7 @@
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/bj00rn/ha-saleryd-ftx/issues",
   "requirements": [
-    "pysaleryd>=3.0.6"
+    "pysaleryd>=3.1.0"
   ],
   "version": "2.3.0-rc.1"
 }

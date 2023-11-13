@@ -37,7 +37,6 @@ from .const import (
     VENTILATION_MODE_AWAY,
     VENTILATION_MODE_BOOST,
     VENTILATION_MODE_HOME,
-    WARNING_POWER_OFF,
 )
 from .entity import SalerydLokeEntity
 
@@ -90,6 +89,10 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         if value is None:
             return value
 
+        if self.entity_description.key == "*EB":
+            return any(value)
+
+        value = value[0] if isinstance(value, list) else value
         if self.entity_description.key == "MG":
             if value == HEATER_MODE_LOW:
                 return 900
@@ -118,12 +121,6 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
             else:
                 self._log_unknown_sensor_value(value)
 
-        if self.entity_description.key == "*EB":
-            if isinstance(value, str):
-                if WARNING_POWER_OFF in value:
-                    return "Power off"
-            self._log_unknown_sensor_value(value)
-
         if self.entity_description.key == "*SC":
             if value not in SUPPORTED_FIRMWARES:
                 self._log_unknown_firmware(value)
@@ -136,14 +133,18 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
     def native_value(self):
         """Return the native value of the sensor."""
         value = self.coordinator.data.get(self.entity_description.key)
-        if value:
-            value = value[0] if isinstance(value, list) else value
-            return self._translate_value(value)
+        return self._translate_value(value)
 
     @property
     def extra_state_attributes(self) -> dict[str, Any] | None:
         attrs = {}
+
         value = self.coordinator.data.get(self.entity_description.key)
+
+        if self.entity_description.key == "*EB" and isinstance(value, list):
+            for error in value:
+                attrs[error] = True
+
         if value:
             value = value[0] if isinstance(value, list) else value
 
@@ -156,6 +157,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 attrs["target_temperature"] = self.coordinator.data.get("TD")[0]
         elif self.entity_description.key == "MF" and value == VENTILATION_MODE_BOOST:
             attrs["minutes_left"] = self.coordinator.data.get("*FI")
+
         return attrs
 
 
