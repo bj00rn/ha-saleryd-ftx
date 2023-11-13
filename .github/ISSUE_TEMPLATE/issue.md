@@ -11,7 +11,7 @@ Issues not containing the minimum requirements will be closed:
 
 -->
 
-## Prerequisites 
+## Prerequisites
 - [ ] I have searched for similar issues
 - [ ] I have enabled [debug logging](https://github.com/bj00rn/ha-saleryd-ftx/blob/master/README.md#enable-debug-logging), and checked the logs for any issues.
 
