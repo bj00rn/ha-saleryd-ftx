@@ -1,6 +1,6 @@
 {
-	"name": "henricm/ha-saleryd-ftx",
-	"image": "mcr.microsoft.com/devcontainers/python:0-3.10-bullseye",
+	"name": "bj00rn/ha-saleryd-ftx",
+	"image": "mcr.microsoft.com/devcontainers/python:0-3.11-bullseye",
 	"forwardPorts": [
 		8123,
 		5678
