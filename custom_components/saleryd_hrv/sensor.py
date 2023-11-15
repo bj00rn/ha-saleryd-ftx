@@ -26,6 +26,8 @@ from .const import (
     CLIENT_STATE,
     DEFAULT_NAME,
     DOMAIN,
+    HEATER_ACTIVE_MODE_OFF,
+    HEATER_ACTIVE_MODE_ON,
     HEATER_MODE_HIGH,
     HEATER_MODE_LOW,
     ISSUE_URL,
@@ -131,6 +133,14 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 return "Off"
             elif value == SYSTEM_ACTIVE_MODE_RESET:
                 return "Reset"
+            else:
+                self._log_unknown_sensor_value(value)
+
+        if self.entity_description.key == "MH":
+            if value == HEATER_ACTIVE_MODE_ON:
+                return "On"
+            elif value == HEATER_ACTIVE_MODE_OFF:
+                return "Off"
             else:
                 self._log_unknown_sensor_value(value)
 
@@ -364,6 +374,15 @@ sensors = {
             key="MP",
             icon="mdi:power",
             name="System active",
+            device_class=SensorDeviceClass.ENUM,
+        ),
+    },
+    "heater_active": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="MH",
+            icon="mdi:heating-coil",
+            name="Heater active",
             device_class=SensorDeviceClass.ENUM,
         ),
     },
