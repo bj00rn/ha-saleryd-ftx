@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
       - uses: wagoid/commitlint-github-action@v5
         with:
-          configFile: "./.github/commitlint.config.js"
+          configFile: "../.github/commitlint.config.js"
 
   pre-commit:
     runs-on: ubuntu-latest
