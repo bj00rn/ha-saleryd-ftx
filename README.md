@@ -14,43 +14,47 @@
 
 ## Sensors
 
-Name | Description | Unit |
--- | -- | --
-`boost_mode_minutes_left` | minutes left until boost mode expires | `min`
-`extract_fan_speed` | fan speed | `%`
-`supply_fan_speed`  | fan speed | `%`
-`filter_months_left` | filter months left | `m`
-`fireplace_mode_minutes_left` | minutes left until fireplace mode expires | `min`
-`heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm`
-`heat_exchanger_rotor_speed_percent` | rotor speed of heat exchanger | `%`
-`heater_air_temperature` | air temperature at heater | `°C`
-`heater_power` | power setting of heater | `W`
-`heater_temperature_percent` | heater temperature (power?) | `%`
-`product_number` | product number | `str`
-`supply_air_temperature` | supply air temperature | `°C`
-`system_name` | control system name | `str`
-`system_version` | control system version | `str`
-`temperature_mode` | current temperature mode setting | `str`
-`ventilation_mode` | current ventilation mode setting | `str`
+Name | Description | Unit | State attributes
+-- | -- | -- | --
+`boost_mode_minutes_left` | minutes left until boost mode expires | `min` |
+`extract_fan_speed` | fan speed | `%` |
+`filter_months_left` | filter months left | `m` |
+`fireplace_mode_minutes_left` | minutes left until fireplace mode expires | `min` |
+`heat_exchanger_rotor_speed_percent` | rotor speed of heat exchanger | `%` |
+`heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm` |
+`heater_active` | electric heater active | boolean |
+`heater_air_temperature` | air temperature at heater | `°C` |
+`heater_power` | power setting of heater | `W` |
+`heater_temperature_percent` | heater temperature (power?) | `%` |
+`product_number` | product number | `str` |
+`supply_air_temperature` | supply air temperature | `°C` |
+`supply_fan_speed`  | fan speed | `%` |
+`system_active` | status of the system | `On` \| `Off` \| `Reset` |
+`system_name` | control system name | `str` |
+`system_version` | control system version | `str` |
+`system_warning` | system warning | boolean | system error codes
+`temperature_mode` | current temperature mode setting | `str` |
+`ventilation_mode` | current ventilation mode setting | `str` |
+
 
 ## Switches
 
-Switch | Description
--- | --
-`home_mode` | Turn Home vent mode on/off
+Switch | Description | State attributes
+-- | -- | --
 `away_mode` | Turn Away vent mode on/off
-`boost_mode` | Turn Boost vent mode on/off
+`boost_mode` | Turn Boost vent mode on/off | minutes left
 `cooling_mode` | Turn Cooling vent mode on/off
-`fireplace_mode` | Turn Fireplace vent mode on/off
+`fireplace_mode` | Turn Fireplace vent mode on/off | minutes left
+`home_mode` | Turn Home vent mode on/off
 
 ## Services
 
 Name | Description | Fields
 -- | -- | --
-`set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=Off)
-`set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
-`set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Cool)
 `set_cooling_mode` | Set cooling mode | value: `integer` (0=On, 1=Off)
+`set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=Off)
+`set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Cool)
+`set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
 
 ## Supported devices
 
