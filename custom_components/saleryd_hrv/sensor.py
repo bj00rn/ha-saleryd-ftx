@@ -30,6 +30,9 @@ from .const import (
     HEATER_MODE_LOW,
     ISSUE_URL,
     SUPPORTED_FIRMWARES,
+    SYSTEM_ACTIVE_MODE_OFF,
+    SYSTEM_ACTIVE_MODE_ON,
+    SYSTEM_ACTIVE_MODE_RESET,
     TEMPERATURE_MODE_COOL,
     TEMPERATURE_MODE_ECO,
     TEMPERATURE_MODE_NORMAL,
@@ -118,6 +121,16 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 return "Away"
             elif value == VENTILATION_MODE_BOOST:
                 return "Boost"
+            else:
+                self._log_unknown_sensor_value(value)
+
+        if self.entity_description.key == "MP":
+            if value == SYSTEM_ACTIVE_MODE_ON:
+                return "On"
+            elif value == SYSTEM_ACTIVE_MODE_OFF:
+                return "Off"
+            elif value == SYSTEM_ACTIVE_MODE_RESET:
+                return "Reset"
             else:
                 self._log_unknown_sensor_value(value)
 
@@ -342,6 +355,15 @@ sensors = {
             key="*EB",
             icon="mdi:alert",
             name="System warning",
+            device_class=SensorDeviceClass.ENUM,
+        ),
+    },
+    "control_system_active": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key="MP",
+            icon="mdi:power",
+            name="System active",
             device_class=SensorDeviceClass.ENUM,
         ),
     },
