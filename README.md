@@ -33,6 +33,7 @@ Name | Description | Unit | State attributes
 `system_name` | control system name | `str` |
 `system_version` | control system version | `str` |
 `system_warning` | system warning | boolean | system error codes
+`target_temperature` | target air temperature | `°C` |
 `temperature_mode` | current temperature mode setting | `str` |
 `ventilation_mode` | current ventilation mode setting | `str` |
 

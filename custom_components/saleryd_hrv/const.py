@@ -37,7 +37,8 @@ If you have any issues with this you need to open an issue here:
 """
 
 # Other constants
-CLIENT_STATE = "*HRV_CLIENT_STATE"
+KEY_CLIENT_STATE = "*HRV_CLIENT_STATE"
+KEY_TARGET_TEMPERATURE = "*TARGET_TEMPERATURE"
 
 TEMPERATURE_MODE_NORMAL = 0
 TEMPERATURE_MODE_ECO = 1

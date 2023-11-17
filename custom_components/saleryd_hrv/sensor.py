@@ -23,7 +23,6 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import Throttle, slugify
 
 from .const import (
-    CLIENT_STATE,
     DEFAULT_NAME,
     DOMAIN,
     HEATER_ACTIVE_MODE_OFF,
@@ -31,6 +30,8 @@ from .const import (
     HEATER_MODE_HIGH,
     HEATER_MODE_LOW,
     ISSUE_URL,
+    KEY_CLIENT_STATE,
+    KEY_TARGET_TEMPERATURE,
     SUPPORTED_FIRMWARES,
     SYSTEM_ACTIVE_MODE_OFF,
     SYSTEM_ACTIVE_MODE_ON,
@@ -98,6 +99,19 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
             return any(value)
 
         value = value[0] if isinstance(value, list) else value
+
+        if self.entity_description.key == KEY_TARGET_TEMPERATURE:
+            try:
+                temperature_mode = self.coordinator.data.get("MT")[0]
+                if temperature_mode == TEMPERATURE_MODE_COOL:
+                    return self.coordinator.data.get("TF")[0]
+                elif temperature_mode == TEMPERATURE_MODE_ECO:
+                    return self.coordinator.data.get("TE")[0]
+                elif temperature_mode == TEMPERATURE_MODE_NORMAL:
+                    return self.coordinator.data.get("TD")[0]
+            except TypeError as exc:
+                _LOGGER.debug(exc)
+
         if self.entity_description.key == "MG":
             if value == HEATER_MODE_LOW:
                 return 900
@@ -277,6 +291,17 @@ sensors = {
             device_class=SensorDeviceClass.ENUM,
         ),
     },
+    "target_temperature": {
+        "klass": SalerydLokeSensor,
+        "description": SensorEntityDescription(
+            key=KEY_TARGET_TEMPERATURE,
+            icon="mdi:home-thermometer",
+            name="Target temperature",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    },
     "temperature_mode": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
@@ -342,7 +367,7 @@ sensors = {
     "connection_state": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
-            key=CLIENT_STATE,
+            key=KEY_CLIENT_STATE,
             icon="mdi:wrench-clock",
             name="Connection state",
             device_class=SensorDeviceClass.ENUM,
