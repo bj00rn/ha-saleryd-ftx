@@ -186,12 +186,15 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
             value = value[0] if isinstance(value, list) else value
 
         if self.entity_description.key == "MT":
-            if value == TEMPERATURE_MODE_COOL:
-                attrs["target_temperature"] = self.coordinator.data.get("TF")[0]
-            elif value == TEMPERATURE_MODE_ECO:
-                attrs["target_temperature"] = self.coordinator.data.get("TE")[0]
-            elif value == TEMPERATURE_MODE_NORMAL:
-                attrs["target_temperature"] = self.coordinator.data.get("TD")[0]
+            try:
+                if value == TEMPERATURE_MODE_COOL:
+                    attrs["target_temperature"] = self.coordinator.data.get("TF")[0]
+                elif value == TEMPERATURE_MODE_ECO:
+                    attrs["target_temperature"] = self.coordinator.data.get("TE")[0]
+                elif value == TEMPERATURE_MODE_NORMAL:
+                    attrs["target_temperature"] = self.coordinator.data.get("TD")[0]
+            except TypeError as exc:
+                _LOGGER.debug(exc)
         elif self.entity_description.key == "MF" and value == VENTILATION_MODE_BOOST:
             attrs["minutes_left"] = self.coordinator.data.get("*FI")
 
