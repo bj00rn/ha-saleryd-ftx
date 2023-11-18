@@ -92,14 +92,6 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         )
 
     def _translate_value(self, value):
-        if value is None:
-            return value
-
-        if self.entity_description.key == "*EB":
-            return any(value)
-
-        value = value[0] if isinstance(value, list) else value
-
         if self.entity_description.key == KEY_TARGET_TEMPERATURE:
             try:
                 temperature_mode = self.coordinator.data.get("MT")[0]
@@ -111,6 +103,14 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                     return self.coordinator.data.get("TD")[0]
             except TypeError as exc:
                 _LOGGER.debug(exc)
+
+        if self.entity_description.key == "*EB":
+            return any(value)
+
+        if value is None:
+            return value
+
+        value = value[0] if isinstance(value, list) else value
 
         if self.entity_description.key == "MG":
             if value == HEATER_MODE_LOW:
