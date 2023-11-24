@@ -4,8 +4,13 @@ set -e
 
 cd "$(dirname "$0")/../"
 
+# upgrade pip and clear cache
+rm -rf $(pip cache dir)
+pip install --no-cache-dir -r ../requirements_pip.txt
+
 # install development dependencies
-python3 -m pip install -r ../requirements_dev.txt
+pip install --no-cache-dir -r ../requirements_dev.txt
 
 # install pre-commit git hooks
 pre-commit install
+pre-commit install --hook-type commit-msg
