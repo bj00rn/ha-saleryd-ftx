@@ -104,11 +104,11 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
             except TypeError as exc:
                 _LOGGER.debug(exc)
 
-        if self.entity_description.key == "*EB":
-            return any(value)
-
         if value is None:
             return value
+
+        if self.entity_description.key == "*EB":
+            return any(value)
 
         value = value[0] if isinstance(value, list) else value
 
