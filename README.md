@@ -10,9 +10,24 @@
 
 ## Disclaimer
 
- This integration has been developed for LOKE1 HRV system. *Use at own risk*. I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
+ This integration has been developed for LOKE1 HRV system for personal use.
+ 
+ Be careful when altering settings on your ventilation system. Improper settings on your ventilation system can over time damage your house and personal health.
+ 
+ *Use at own risk*.
+ 
+ I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
 
-## Sensors
+## Motivation
+Monitor and control HRV system from Home Assistant.
+
+### Ideas for automations
+- `airflow/temperature/cooling based on prescence or schedule.`
+- `cooling/temperature mode based on external temperature sensors.`
+- `remote control using dashboard or physical controls`
+- `...`
+
+## Integration sensors
 
 Name | Description | Unit | State attributes
 -- | -- | -- | --
@@ -38,7 +53,7 @@ Name | Description | Unit | State attributes
 `ventilation_mode` | current ventilation mode setting | `str` |
 
 
-## Switches
+## Integration switches
 
 Switch | Description | State attributes
 -- | -- | --
@@ -48,7 +63,7 @@ Switch | Description | State attributes
 `fireplace_mode` | Turn Fireplace vent mode on/off | minutes left
 `home_mode` | Turn Home vent mode on/off
 
-## Services
+## Integration services
 
 Name | Description | Fields
 -- | -- | --
@@ -96,6 +111,11 @@ PORT | Port number of websocket, default 3001
 * Confirm system is connected and UI is reachable on the local network. Follow steps in the manual.
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser. 3001 is probably default
 * The system HRV system can only handle a few connected clients. Shut down any additional clients/browsers and try again
+
+### Contributing
+Issues and PRs welcome!
+
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### Enable debug logging
 Add component to the [logger](https://www.home-assistant.io/integrations/logger/) section of homeassistant configuration.yaml.
