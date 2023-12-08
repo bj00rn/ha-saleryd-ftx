@@ -1,3 +1,5 @@
 -r requirements_test.txt
 homeassistant==2023.9.0
 pre-commit
+# https://github.com/home-assistant/core/issues/95192
+urllib3>=1.26.5,<2

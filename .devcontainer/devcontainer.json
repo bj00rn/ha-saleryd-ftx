@@ -8,7 +8,7 @@
 	"portsAttributes": {
 		"8123": {
 			"label": "Home Assistant",
-			"onAutoForward": "notify"
+			"onAutoForward": "openBrowserOnce"
 		}
 	},
 	"containerEnv": {
