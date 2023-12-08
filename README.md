@@ -11,11 +11,11 @@
 ## Disclaimer
 
  This integration has been developed for LOKE1 HRV system for personal use.
- 
+
  Be careful when altering settings on your ventilation system. Improper settings on your ventilation system can over time damage your house and personal health.
- 
+
  *Use at own risk*.
- 
+
  I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
 
 ## Motivation
