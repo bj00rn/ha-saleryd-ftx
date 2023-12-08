@@ -88,15 +88,15 @@ Model | Confirmed supported control system versions | Unsupported control system
 
 ## Installation
 
-1. In the HA UI go to "HACS" and add this repository
-2. In the HA UI go to "Configuration" -> "Integrations" click "+" and search for "Saleryd HRV".
-3. Click install
+1. In Home Assistant go to `HACS` -> `Integrations` and add this repository as a `custom repository`.
+2. In Home Assistant go to `Configuration` -> `Integrations` click `+` and search for `Saleryd HRV`.
+3. Click install.
 
 ## Configuration
 
 ### configuration.yaml
 
-Configuration in congfiguration.yaml is not supported
+Configuration in `congfiguration.yaml` is not supported
 
 ### Configuration in the UI
 
@@ -108,10 +108,10 @@ PORT | Port number of websocket, default 3001
 ## Troubleshooting
 
 ### Can't connect to HRV system
-* Check the homeassistant logs
-* Confirm system is connected and UI is reachable on the local network. Follow steps in the manual.
-* Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser. 3001 is probably default
-* The system HRV system can only handle a few connected clients. Shut down any additional clients/browsers and try again
+* Check the Home Assitant `logs`
+* Confirm system is connected and the UI portal is reachable on the local network. Follow steps in the manual.
+* Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser.
+* The system HRV system can only handle a few connected clients. Shut down any additional clients/browsers and try again.
 
 ### Contributing
 Issues and PRs welcome!
