@@ -8,14 +8,14 @@
 
 *Component to integrate with [Saleryd HRV Systems](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
 
-## Disclaimer
+## :warning: Disclaimer :warning:
 
- This integration has been developed for LOKE1 HRV system for personal use.
- 
- Be careful when altering settings on your ventilation system. Improper settings on your ventilation system can over time damage your house and personal health.
- 
+ This integration has been developed for my HRV system for personal use.
+
+:biohazard: Be careful when altering settings on your ventilation system. Improper settings on your ventilation system can over time damage your house and personal health.
+
  *Use at own risk*.
- 
+
  I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
 
 ## Motivation
@@ -111,7 +111,7 @@ PORT | Port number of websocket, default 3001
 * Check the Home Assitant `logs`
 * Confirm system is connected and the UI portal is reachable on the local network. Follow steps in the manual.
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser.
-* The system HRV system can only handle a few connected clients. Shut down any additional clients/browsers and try again.
+* The system HRV can only handle a few connected clients. Shut down any additional clients/browsers and try again.
 
 ### Contributing
 Issues and PRs welcome!
