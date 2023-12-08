@@ -21,7 +21,7 @@ from .const import (
 )
 from .coordinator import SalerydLokeDataUpdateCoordinator
 
-SCAN_INTERVAL = timedelta(seconds=5)
+SCAN_INTERVAL = timedelta(seconds=30)
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
 
