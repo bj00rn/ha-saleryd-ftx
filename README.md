@@ -8,15 +8,15 @@
 
 *Component to integrate with [Saleryd HRV Systems](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
 
-## :warning: Disclaimer :warning:
+## :warning: Disclaimer
 
- This integration has been developed for my HRV system for personal use.
+:nerd_face: This integration has been developed for my HRV system for personal use.
 
 :biohazard: Be careful when altering settings on your ventilation system. Improper settings on your ventilation system can over time damage your house and personal health.
 
- *Use at own risk*.
+:bomb: *Use at own risk*.
 
- I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
+:grey_exclamation: I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
 
 ## Motivation
 Monitor and control HRV system from Home Assistant.
