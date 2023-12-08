@@ -22,8 +22,9 @@
 Monitor and control HRV system from Home Assistant.
 
 ### Ideas for automations
-- `airflow/temperature/cooling based on prescence or schedule.`
-- `cooling/temperature mode based on external temperature sensors.`
+- `airflow/temperature/cooling based on presence/schedule.`
+- `cooling/temperature mode based on external temperature/humidity sensors or alarm system state`
+- `energy price integration`
 - `remote control using dashboard or physical controls`
 - `...`
 
