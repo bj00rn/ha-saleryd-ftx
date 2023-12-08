@@ -45,7 +45,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             {"value": self._state_when_on},
             blocking=True,
         )
-        self.schedule_update_ha_state(force_refresh=True)
+        self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs) -> None:
         """Turn on the switch."""
@@ -55,7 +55,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             {"value": self._state_when_off},
             blocking=True,
         )
-        self.schedule_update_ha_state(force_refresh=True)
+        self.schedule_update_ha_state()
 
     @property
     def extra_state_attributes(self):
@@ -86,7 +86,7 @@ class SalerydLokeCoolingModeBinarySwitch(SalerydLokeBinarySwitch):
 
 
 class SalerydLokeVentilationModeBinarySwitch(SalerydLokeBinarySwitch):
-    """Cooling switch class."""
+    """Ventilation mode switch class."""
 
     _service_turn_on = "set_ventilation_mode"
     _service_turn_off = "set_ventilation_mode"
