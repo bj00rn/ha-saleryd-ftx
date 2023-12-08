@@ -2,7 +2,11 @@ name: Create release
 
 on:
   workflow_dispatch:
-
+    inputs:
+      pre_release:
+        type: boolean
+        description: "pre-release?"
+        required: true
 jobs:
   release:
     runs-on: "ubuntu-latest"
@@ -16,6 +20,8 @@ jobs:
           output-file: "false"
           preset: conventionalcommits
           version-file: "custom_components/saleryd_hrv/manifest.json"
+          pre-release: ${{ inputs.pre_release }}
+          skip-ci: false
 
       - name: Create Release
         uses: ncipollo/release-action@v1
@@ -26,3 +32,4 @@ jobs:
           tag: ${{ steps.changelog.outputs.tag }}
           body: ${{ steps.changelog.outputs.clean_changelog }}
           name: ${{ steps.changelog.outputs.tag }}
+          prerelease: ${{ inputs.pre_release }}
