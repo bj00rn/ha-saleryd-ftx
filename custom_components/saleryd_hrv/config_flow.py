@@ -1,6 +1,7 @@
 """Adds config flow for SalerydLoke."""
 import logging
 
+import async_timeout
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
@@ -32,10 +33,11 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
         if user_input is not None:
             try:
-                await self._test_connection(
-                    user_input[CONF_WEBSOCKET_IP], user_input[CONF_WEBSOCKET_PORT]
-                )
-            except Exception as exc:
+                async with async_timeout.timeout(10):
+                    await self._test_connection(
+                        user_input[CONF_WEBSOCKET_IP], user_input[CONF_WEBSOCKET_PORT]
+                    )
+            except TimeoutError:
                 self._errors["base"] = "connect"
             else:
                 return self.async_create_entry(
@@ -77,7 +79,6 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _test_connection(self, ip, port):
         """Return true if connection is working"""
-
         try:
             async with Client(ip, port, async_create_clientsession(self.hass)):
                 return True

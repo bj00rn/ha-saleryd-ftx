@@ -5,6 +5,7 @@ import asyncio
 from datetime import timedelta
 import logging
 
+import async_timeout
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -38,17 +39,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     port = entry.data.get(CONF_WEBSOCKET_PORT)
 
     session = async_create_clientsession(hass, raise_for_status=True)
-    client = Client(url, port, session)
+    client = Client(url, port, session, SCAN_INTERVAL)
     try:
-        await client.connect()
-    except (asyncio.TimeoutError, TimeoutError) as ex:
+        async with async_timeout.timeout(10):
+            await client.connect()
+    except TimeoutError as ex:
         raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
 
-    coordinator = SalerydLokeDataUpdateCoordinator(
-        hass,
-        client,
-        update_interval=SCAN_INTERVAL,
-    )
+    coordinator = SalerydLokeDataUpdateCoordinator(hass, client)
 
     await coordinator.async_config_entry_first_refresh()
 
