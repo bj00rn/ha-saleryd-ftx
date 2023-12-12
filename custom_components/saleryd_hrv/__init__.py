@@ -39,7 +39,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     port = entry.data.get(CONF_WEBSOCKET_PORT)
 
     session = async_create_clientsession(hass, raise_for_status=True)
-    client = Client(url, port, session, SCAN_INTERVAL)
+    client = Client(url, port, session, SCAN_INTERVAL.seconds)
     try:
         async with async_timeout.timeout(10):
             await client.connect()
