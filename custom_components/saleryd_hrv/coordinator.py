@@ -14,11 +14,12 @@ _LOGGER: logging.Logger = logging.getLogger(__package__)
 class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
-    def __init__(self, hass: HomeAssistant, client: Client, update_interval) -> None:
+    def __init__(self, hass: HomeAssistant, client: Client) -> None:
         """Initialize."""
         self.platforms = []
         self.client = client
-        super().__init__(hass, _LOGGER, name=DOMAIN, update_interval=update_interval)
+        self.client.add_handler(self.async_set_updated_data)
+        super().__init__(hass, _LOGGER, name=DOMAIN)
 
     def inject_virtual_keys(self, data):
         """Inject additional keys for virtual sensors not present in the data set"""
@@ -27,6 +28,12 @@ class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
 
     async def _async_update_data(self):
         """Fetch the latest data from the source."""
-        data = self.client.data
+        data = self.client.data.copy()
         self.inject_virtual_keys(data)
         return data
+
+    def async_set_updated_data(self, data) -> None:
+        _LOGGER.debug("Received data")
+        _data = data.copy()
+        self.inject_virtual_keys(_data)
+        return super().async_set_updated_data(_data)
