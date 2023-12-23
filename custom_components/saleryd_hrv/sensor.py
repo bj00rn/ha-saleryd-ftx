@@ -113,10 +113,11 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         value = value[0] if isinstance(value, list) else value
 
         if self.entity_description.key == "MG":
+            heater_percent = self.coordinator.data.get("*MJ") / 100
             if value == HEATER_MODE_LOW:
-                return 900
+                return heater_percent * 900
             elif value == HEATER_MODE_HIGH:
-                return 1800
+                return heater_percent * 1800
             else:
                 self._log_unknown_sensor_value(value)
 
@@ -242,13 +243,12 @@ sensors = {
             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         ),
     },
-    "heater_temperature_percent": {
+    "heater_power_percent": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
             key="*MJ",
             icon="mdi:heating-coil",
-            name="Heater temperature percent",
-            device_class=SensorDeviceClass.POWER_FACTOR,
+            name="Heater power percent",
             state_class=SensorStateClass.MEASUREMENT,
             native_unit_of_measurement=PERCENTAGE,
         ),
@@ -261,8 +261,8 @@ sensors = {
             name="Heater power",
             device_class=SensorDeviceClass.POWER,
             state_class=SensorStateClass.MEASUREMENT,
+            suggested_display_precision=0,
             native_unit_of_measurement=UnitOfPower.WATT,
-            entity_category=EntityCategory.DIAGNOSTIC,
         ),
     },
     "supply_fan_speed": {

@@ -38,10 +38,10 @@ Name | Description | Unit | State attributes
 `fireplace_mode_minutes_left` | minutes left until fireplace mode expires | `min` |
 `heat_exchanger_rotor_speed_percent` | rotor speed of heat exchanger | `%` |
 `heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm` |
-`heater_active` | electric heater active | boolean |
+`heater_active` | auxillary heater active | boolean |
 `heater_air_temperature` | air temperature at heater | `°C` |
-`heater_power` | power setting of heater | `W` |
-`heater_temperature_percent` | heater temperature (power?) | `%` |
+`heater_power` | auxillary heater power | `W` |
+`heater_power_percent` | auxillary heater power | `%` |
 `product_number` | product number | `str` |
 `supply_air_temperature` | supply air temperature | `°C` |
 `supply_fan_speed`  | fan speed | `%` |
