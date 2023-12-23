@@ -43,7 +43,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     try:
         async with async_timeout.timeout(10):
             await client.connect()
-    except TimeoutError as ex:
+    except (TimeoutError, asyncio.CancelledError) as ex:
         raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
 
     coordinator = SalerydLokeDataUpdateCoordinator(hass, client)
