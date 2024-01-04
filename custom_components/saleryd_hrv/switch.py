@@ -13,6 +13,7 @@ from .const import (
     DEFAULT_NAME,
     DOMAIN,
     KEY_COOKING_MODE,
+    LOGGER,
     MODE_OFF,
     MODE_ON,
     SERVICE_SET_COOLING_MODE,
@@ -96,6 +97,8 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
 class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
     """Emulate virtual cooking mode switch to deactivate fireplace mode before timer expires."""
 
+    THRESHOLD = 3
+
     def __init__(self, coordinator, entry_id, entity_description) -> None:
         self.unsubscribe = None
         super().__init__(coordinator, entry_id, entity_description)
@@ -119,7 +122,12 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
         if self._attr_is_on:
             if not event.data["new_state"].state.isnumeric():
                 return
-            if float(event.data["new_state"].state) < 3:
+            if float(event.data["new_state"].state) < self.THRESHOLD:
+                LOGGER.debug(
+                    "Deactivating fireplace mode, since time left [%s] < threshold [%s]",
+                    event.data["new_state"].state,
+                    self.THRESHOLD,
+                )
                 self.hass.services.call(
                     DOMAIN,
                     SERVICE_SET_FIREPLACE_MODE,

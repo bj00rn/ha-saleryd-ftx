@@ -3,7 +3,6 @@ Custom integration to integrate Saleryd HRV system with Home Assistant.
 """
 import asyncio
 from datetime import timedelta
-import logging
 
 import async_timeout
 from homeassistant.config_entries import ConfigEntry
@@ -17,6 +16,7 @@ from .const import (
     CONF_WEBSOCKET_IP,
     CONF_WEBSOCKET_PORT,
     DOMAIN,
+    LOGGER,
     PLATFORMS,
     SERVICE_SET_COOLING_MODE,
     SERVICE_SET_FIREPLACE_MODE,
@@ -28,8 +28,6 @@ from .coordinator import SalerydLokeDataUpdateCoordinator
 
 SCAN_INTERVAL = timedelta(seconds=30)
 
-_LOGGER: logging.Logger = logging.getLogger(__package__)
-
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Set up this integration using UI."""
@@ -37,7 +35,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
 
     integration = await async_get_integration(hass, DOMAIN)
-    _LOGGER.info(STARTUP_MESSAGE, integration.version)
+    LOGGER.info(STARTUP_MESSAGE, integration.version)
 
     url = entry.data.get(CONF_WEBSOCKET_IP)
     port = entry.data.get(CONF_WEBSOCKET_PORT)
@@ -50,7 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     except (TimeoutError, asyncio.CancelledError) as ex:
         raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
 
-    coordinator = SalerydLokeDataUpdateCoordinator(hass, client)
+    coordinator = SalerydLokeDataUpdateCoordinator(hass, client, LOGGER)
 
     await coordinator.async_config_entry_first_refresh()
 
@@ -66,27 +64,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     # Register services
     async def control_request(key, value=None):
-        _LOGGER.info("Sending control request %s with payload %s", key, value)
+        LOGGER.debug("Sending control request %s with payload %s", key, value)
         await client.send_command(key, value)
 
     async def set_fireplace_mode(call):
         value = call.data.get("value")
-        _LOGGER.info("Sending set fire mode request of %s", value)
+        LOGGER.debug("Sending set fire mode request of %s", value)
         await control_request("MB", value)
 
     async def set_ventilation_mode(call):
         value = call.data.get("value")
-        _LOGGER.info("Sending set ventilation mode request of %s", value)
+        LOGGER.debug("Sending set ventilation mode request of %s", value)
         await control_request("MF", value)
 
     async def set_temperature_mode(call):
         value = call.data.get("value")
-        _LOGGER.info("Sending set temperature mode request of %s", value)
+        LOGGER.debug("Sending set temperature mode request of %s", value)
         await control_request("MT", value)
 
     async def set_cooling_mode(call):
         value = call.data.get("value")
-        _LOGGER.info("Sending set cooling mode request of %s", value)
+        LOGGER.debug("Sending set cooling mode request of %s", value)
         await control_request("MK", value)
 
     hass.services.async_register(DOMAIN, SERVICE_SET_FIREPLACE_MODE, set_fireplace_mode)

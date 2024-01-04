@@ -1,7 +1,6 @@
 """Sensor platform"""
 
 from datetime import timedelta
-import logging
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -30,6 +29,7 @@ from .const import (
     ISSUE_URL,
     KEY_CLIENT_STATE,
     KEY_TARGET_TEMPERATURE,
+    LOGGER,
     MODE_OFF,
     MODE_ON,
     SUPPORTED_FIRMWARES,
@@ -45,8 +45,6 @@ from .const import (
     VENTILATION_MODE_HOME,
 )
 from .entity import SalerydLokeEntity
-
-_LOGGER: logging.Logger = logging.getLogger(__package__)
 
 
 class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
@@ -65,7 +63,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
     @Throttle(min_time=timedelta(minutes=1))
     def _log_unknown_sensor_value(self, value):
-        _LOGGER.warning(
+        LOGGER.warning(
             "Unknown value [%s] for sensor [%s] [%s], feel free to file an issue with the integration at %s and provide this message.",
             value,
             self.entity_description.name,
@@ -76,7 +74,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
     @Throttle(min_time=timedelta(days=1))
     def _log_unsupported_firmware(self, version):
         """Write to logs if firmware version is unsupported"""
-        _LOGGER.error(
+        LOGGER.error(
             "Your control system version is (%s). This integration is incompatible with the following versions: %s",
             version,
             ", ".join(UNSUPPORTED_FIRMWARES),
@@ -84,7 +82,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
     @Throttle(min_time=timedelta(days=1))
     def _log_unknown_firmware(self, version):
-        _LOGGER.warning(
+        LOGGER.warning(
             "Unknown support for your control system version (%s), feel free to file an issue with the integration at %s and provide this message. This integration has been verified to work with the following versions: %s",
             version,
             ISSUE_URL,
@@ -102,7 +100,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 elif temperature_mode == TEMPERATURE_MODE_NORMAL:
                     return self.coordinator.data.get("TD")[0]
             except TypeError as exc:
-                _LOGGER.debug(exc)
+                LOGGER.debug(exc)
 
         if value is None:
             return value
@@ -199,7 +197,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 elif value == TEMPERATURE_MODE_NORMAL:
                     attrs["target_temperature"] = self.coordinator.data.get("TD")[0]
             except TypeError as exc:
-                _LOGGER.debug(exc)
+                LOGGER.debug(exc)
         elif self.entity_description.key == "MF" and value == VENTILATION_MODE_BOOST:
             minutes_left = self.coordinator.data.get("*FI")
             if minutes_left:

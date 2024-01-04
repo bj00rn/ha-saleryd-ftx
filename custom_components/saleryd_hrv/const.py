@@ -1,4 +1,6 @@
 """Constants for saleryd_hrv."""
+from logging import Logger, getLogger
+
 # Base component constants
 NAME = "Saleryd HRV integration"
 MANUFACTURER = "Saleryd"
@@ -64,3 +66,5 @@ SERVICE_SET_FIREPLACE_MODE = "set_fireplace_mode"
 SERVICE_SET_COOLING_MODE = "set_cooling_mode"
 SERVICE_SET_VENTILATION_MODE = "set_ventilation_mode"
 SERVICE_SET_TEMPERATURE_MODE = "set_temperature_mode"
+
+LOGGER: Logger = getLogger(__package__)

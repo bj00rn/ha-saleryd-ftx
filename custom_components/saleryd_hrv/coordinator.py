@@ -1,6 +1,6 @@
 """Data update coordinator"""
 
-import logging
+from logging import Logger
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -8,18 +8,16 @@ from pysaleryd.client import Client
 
 from .const import DOMAIN, KEY_CLIENT_STATE, KEY_TARGET_TEMPERATURE
 
-_LOGGER: logging.Logger = logging.getLogger(__package__)
-
 
 class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
     """Class to manage fetching data from the API."""
 
-    def __init__(self, hass: HomeAssistant, client: Client) -> None:
+    def __init__(self, hass: HomeAssistant, client: Client, logger: Logger) -> None:
         """Initialize."""
         self.platforms = []
         self.client = client
         self.client.add_handler(self.async_set_updated_data)
-        super().__init__(hass, _LOGGER, name=DOMAIN)
+        super().__init__(hass, logger, name=DOMAIN)
 
     def inject_virtual_keys(self, data):
         """Inject additional keys for virtual sensors not present in the data set"""
@@ -33,7 +31,7 @@ class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
         return data
 
     def async_set_updated_data(self, data) -> None:
-        _LOGGER.debug("Received data")
+        self.logger.debug("Received data")
         _data = data.copy()
         self.inject_virtual_keys(_data)
         return super().async_set_updated_data(_data)

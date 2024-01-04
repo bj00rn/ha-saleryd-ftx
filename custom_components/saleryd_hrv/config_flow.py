@@ -1,6 +1,4 @@
 """Adds config flow for SalerydLoke."""
-import logging
-
 import async_timeout
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
@@ -8,9 +6,7 @@ from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from pysaleryd.client import Client
 import voluptuous as vol
 
-from .const import CONF_WEBSOCKET_IP, CONF_WEBSOCKET_PORT, DOMAIN, NAME
-
-_LOGGER: logging.Logger = logging.getLogger(__package__)
+from .const import CONF_WEBSOCKET_IP, CONF_WEBSOCKET_PORT, DOMAIN, LOGGER, NAME
 
 
 class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -83,7 +79,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             async with Client(ip, port, async_create_clientsession(self.hass)):
                 return True
         except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.error("Could not connect", exc_info=True)
+            LOGGER.error("Could not connect", exc_info=True)
             raise e
 
 
