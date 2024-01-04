@@ -35,9 +35,11 @@ class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
 
     def turn_on(self, **kwargs: Any) -> None:
         self._attr_is_on = True
+        self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs: Any) -> None:
         self._attr_is_on = False
+        self.schedule_update_ha_state()
 
 
 class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):

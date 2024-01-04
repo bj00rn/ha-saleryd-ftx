@@ -19,6 +19,7 @@ class SaleryLokeVirtualEntity(Entity):
         self.entity_description = entity_description
         self._attr_name = entity_description.name
         self._attr_unique_id = f"{entry_id}_{slugify(entity_description.name)}"
+        self._attr_should_poll = False
 
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry_id)},
