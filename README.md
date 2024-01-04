@@ -93,12 +93,9 @@ Model | Confirmed supported control system versions | Unsupported control system
 
 \* connectivity issues in versions below 4.1.5
 
-## Prequisites
-
-1. Connect HRV to local network . See instructions in user manual
-2. Take note of the assigned IP adress of the HRV system
-
 ## Installation
+
+### Add repository to HACS
 
 1. In Home Assistant go to `HACS` -> `Integrations` and add this repository as a `custom repository`.
 2. In Home Assistant go to `Configuration` -> `Integrations` click `+` and search for `Saleryd HRV`.
@@ -106,31 +103,39 @@ Model | Confirmed supported control system versions | Unsupported control system
 
 ## Configuration
 
-### configuration.yaml
+### Prequisites
+
+1. Connect HRV system to your local WIFI network. See instructions in user manual.
+2. Take note of the assigned IP adress of the system
+
+### YAML Configuration
 
 Configuration in `congfiguration.yaml` is not supported
 
-### Configuration in the UI
+### UI Configuration
 
-Setting | Description
--- | --
-IP | IP adress of the HRV system on the local network
-PORT | Port number of websocket, default 3001
+Setting | Description | Default
+-- | -- | --
+IP | IP adress of the HRV system on the local WIFI network
+PORT | Port number for websocket connection | 3001
 
 ## Troubleshooting
 
 ### Can't connect to HRV system
+
 * Check the Home Assitant `logs`
 * Confirm system is connected and the UI portal is reachable on the local network. Follow steps in the manual.
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser.
 * The system HRV can only handle a few connected clients. Shut down any additional clients/browsers and try again.
 
 ### Contributing
+
 Issues and PRs welcome!
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### Enable debug logging
+
 Add component to the [logger](https://www.home-assistant.io/integrations/logger/) section of homeassistant configuration.yaml.
 ```yaml
 logger:
