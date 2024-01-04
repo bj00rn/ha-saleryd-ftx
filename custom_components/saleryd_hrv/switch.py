@@ -1,33 +1,56 @@
 """Switch platform"""
+from typing import Any, Coroutine
+
 from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,
     SwitchEntityDescription,
 )
+from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import slugify
 
 from .const import (
     DEFAULT_NAME,
     DOMAIN,
+    KEY_COOKING_MODE,
+    MODE_OFF,
+    MODE_ON,
+    SERVICE_SET_COOLING_MODE,
+    SERVICE_SET_FIREPLACE_MODE,
+    SERVICE_SET_VENTILATION_MODE,
     VENTILATION_MODE_AWAY,
     VENTILATION_MODE_BOOST,
     VENTILATION_MODE_HOME,
 )
-from .entity import SalerydLokeEntity
+from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
+
+
+class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
+    """Virtual switch base class"""
+
+    def __init__(self, coordinator, entry_id, entity_description) -> None:
+        self._attr_is_on = False
+        super().__init__(entry_id, entity_description)
+
+    def turn_on(self, **kwargs: Any) -> None:
+        self._attr_is_on = True
+
+    def turn_off(self, **kwargs: Any) -> None:
+        self._attr_is_on = False
 
 
 class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
     """Switch base class."""
 
-    _state_when_on = 1
-    _state_when_off = 0
+    _state_when_on = MODE_ON
+    _state_when_off = MODE_OFF
     _service_turn_on = ""
     _service_turn_off = ""
     _can_expire = False
     _expire_key = None
 
     def __init__(self, coordinator, entry_id, entity_description) -> None:
-        self.entity_id = f"switch.${DEFAULT_NAME}_${slugify(entity_description.name)}"
+        self.entity_id = f"switch.{DEFAULT_NAME}_{slugify(entity_description.name)}"
         super().__init__(coordinator, entry_id, entity_description)
 
     @property
@@ -69,11 +92,44 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         return None
 
 
+class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
+    """Emulate virtual cooking mode switch to deactivate fireplace mode before timer expires."""
+
+    def __init__(self, coordinator, entry_id, entity_description) -> None:
+        self.unsubscribe = None
+        super().__init__(coordinator, entry_id, entity_description)
+
+    async def async_added_to_hass(self) -> Coroutine[Any, Any, None]:
+        track_entity_id = (
+            f"sensor.{DEFAULT_NAME}_{slugify('Fireplace mode minutes left')}"
+        )
+        self._attr_is_on = False
+        self.unsubscribe = async_track_state_change_event(
+            self.hass, track_entity_id, self._maybe_cancel
+        )
+        return super().async_added_to_hass()
+
+    async def async_will_remove_from_hass(self) -> Coroutine[Any, Any, None]:
+        if self.unsubscribe:
+            self.unsubscribe()
+        return super().async_will_remove_from_hass()
+
+    def _maybe_cancel(self, event):
+        if self._attr_is_on:
+            if float(event.data["new_state"].state) < 2:
+                self.hass.services.call(
+                    DOMAIN,
+                    SERVICE_SET_FIREPLACE_MODE,
+                    {"value": MODE_OFF},
+                    blocking=True,
+                )
+
+
 class SalerydLokeFireplaceModeBinarySwitch(SalerydLokeBinarySwitch):
     """Fireplace mode switch class."""
 
-    _service_turn_on = "set_fireplace_mode"
-    _service_turn_off = "set_fireplace_mode"
+    _service_turn_on = SERVICE_SET_FIREPLACE_MODE
+    _service_turn_off = SERVICE_SET_FIREPLACE_MODE
     _can_expire = True
     _expire_key = "*ME"
 
@@ -81,15 +137,15 @@ class SalerydLokeFireplaceModeBinarySwitch(SalerydLokeBinarySwitch):
 class SalerydLokeCoolingModeBinarySwitch(SalerydLokeBinarySwitch):
     """Cooling switch class."""
 
-    _service_turn_on = "set_cooling_mode"
-    _service_turn_off = "set_cooling_mode"
+    _service_turn_on = SERVICE_SET_COOLING_MODE
+    _service_turn_off = SERVICE_SET_COOLING_MODE
 
 
 class SalerydLokeVentilationModeBinarySwitch(SalerydLokeBinarySwitch):
     """Ventilation mode switch class."""
 
-    _service_turn_on = "set_ventilation_mode"
-    _service_turn_off = "set_ventilation_mode"
+    _service_turn_on = SERVICE_SET_VENTILATION_MODE
+    _service_turn_off = SERVICE_SET_VENTILATION_MODE
 
 
 class SalerydLokeHomeModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
@@ -158,6 +214,15 @@ switches = {
             key="MF",
             icon="mdi:fan",
             name="Boost mode",
+            device_class=SwitchDeviceClass.SWITCH,
+        ),
+    },
+    "cooking_mode": {
+        "klass": SalerydLokeVirtualSwitch,
+        "description": SwitchEntityDescription(
+            key=KEY_COOKING_MODE,
+            icon="mdi:stove",
+            name="Cooking mode",
             device_class=SwitchDeviceClass.SWITCH,
         ),
     },

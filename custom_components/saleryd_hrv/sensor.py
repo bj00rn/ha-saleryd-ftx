@@ -25,13 +25,13 @@ from homeassistant.util import Throttle, slugify
 from .const import (
     DEFAULT_NAME,
     DOMAIN,
-    HEATER_ACTIVE_MODE_OFF,
-    HEATER_ACTIVE_MODE_ON,
     HEATER_MODE_HIGH,
     HEATER_MODE_LOW,
     ISSUE_URL,
     KEY_CLIENT_STATE,
     KEY_TARGET_TEMPERATURE,
+    MODE_OFF,
+    MODE_ON,
     SUPPORTED_FIRMWARES,
     SYSTEM_ACTIVE_MODE_OFF,
     SYSTEM_ACTIVE_MODE_ON,
@@ -59,7 +59,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         entity_description: SensorEntityDescription,
     ) -> None:
         """Initialize the sensor."""
-        self.entity_id = f"sensor.${DEFAULT_NAME}_${slugify(entity_description.name)}"
+        self.entity_id = f"sensor.{DEFAULT_NAME}_{slugify(entity_description.name)}"
 
         super().__init__(coordinator, entry_id, entity_description)
 
@@ -152,9 +152,9 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 self._log_unknown_sensor_value(value)
 
         if self.entity_description.key == "MH":
-            if value == HEATER_ACTIVE_MODE_ON:
+            if value == MODE_ON:
                 return "On"
-            elif value == HEATER_ACTIVE_MODE_OFF:
+            elif value == MODE_OFF:
                 return "Off"
             else:
                 self._log_unknown_sensor_value(value)
