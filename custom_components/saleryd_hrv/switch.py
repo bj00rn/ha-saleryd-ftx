@@ -108,16 +108,18 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
         self.unsubscribe = async_track_state_change_event(
             self.hass, track_entity_id, self._maybe_cancel
         )
-        return super().async_added_to_hass()
+        await super().async_added_to_hass()
 
     async def async_will_remove_from_hass(self) -> Coroutine[Any, Any, None]:
         if self.unsubscribe:
             self.unsubscribe()
-        return super().async_will_remove_from_hass()
+        await super().async_will_remove_from_hass()
 
     def _maybe_cancel(self, event):
         if self._attr_is_on:
-            if float(event.data["new_state"].state) < 2:
+            if not event.data["new_state"].state.isnumeric():
+                return
+            if float(event.data["new_state"].state) < 3:
                 self.hass.services.call(
                     DOMAIN,
                     SERVICE_SET_FIREPLACE_MODE,
