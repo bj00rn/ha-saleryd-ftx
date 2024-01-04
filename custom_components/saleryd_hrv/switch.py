@@ -30,6 +30,7 @@ class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
 
     def __init__(self, coordinator, entry_id, entity_description) -> None:
         self._attr_is_on = False
+        self.entity_id = f"switch.{DEFAULT_NAME}_{slugify(entity_description.name)}"
         super().__init__(entry_id, entity_description)
 
     def turn_on(self, **kwargs: Any) -> None:
