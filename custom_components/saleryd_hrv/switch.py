@@ -218,7 +218,7 @@ switches = {
         ),
     },
     "cooking_mode": {
-        "klass": SalerydLokeVirtualSwitch,
+        "klass": SalerydLokeCookingModeSwitch,
         "description": SwitchEntityDescription(
             key=KEY_COOKING_MODE,
             icon="mdi:stove",
