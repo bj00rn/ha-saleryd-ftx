@@ -19,16 +19,20 @@
 :grey_exclamation: I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
 
 ## Motivation
+
 Monitor and control HRV system from Home Assistant.
 
 ### Ideas for automations
+
 - `airflow/temperature/cooling based on presence/schedule.`
 - `cooling/temperature mode based on external temperature/humidity sensors or alarm system state`
 - `energy price integration`
 - `remote control using dashboard or physical controls`
 - `...`
 
-## Integration sensors
+## Features
+
+### Sensors
 
 Name | Description | Unit | State attributes
 -- | -- | -- | --
@@ -54,7 +58,7 @@ Name | Description | Unit | State attributes
 `ventilation_mode` | current ventilation mode setting | `str` |
 
 
-## Integration switches
+## Switches
 
 Switch | Description | State attributes
 -- | -- | --
@@ -72,6 +76,14 @@ Name | Description | Fields
 `set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=Off)
 `set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Cool)
 `set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
+
+## Experimental features
+
+### Switches
+
+Switch | Description | State attributes
+-- | -- | --
+`cooking_mode` | Turn cooking mode on/off. Emulates cooking mode when fireplace mode is active. Automatically disables fireplace mode before timer expires to reset rotary heat exchanger to normal operation.
 
 ## Supported devices
 

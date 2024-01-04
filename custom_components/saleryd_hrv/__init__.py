@@ -18,6 +18,10 @@ from .const import (
     CONF_WEBSOCKET_PORT,
     DOMAIN,
     PLATFORMS,
+    SERVICE_SET_COOLING_MODE,
+    SERVICE_SET_FIREPLACE_MODE,
+    SERVICE_SET_TEMPERATURE_MODE,
+    SERVICE_SET_VENTILATION_MODE,
     STARTUP_MESSAGE,
 )
 from .coordinator import SalerydLokeDataUpdateCoordinator
@@ -85,10 +89,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         _LOGGER.info("Sending set cooling mode request of %s", value)
         await control_request("MK", value)
 
-    hass.services.async_register(DOMAIN, "set_fireplace_mode", set_fireplace_mode)
-    hass.services.async_register(DOMAIN, "set_cooling_mode", set_cooling_mode)
-    hass.services.async_register(DOMAIN, "set_ventilation_mode", set_ventilation_mode)
-    hass.services.async_register(DOMAIN, "set_temperature_mode", set_temperature_mode)
+    hass.services.async_register(DOMAIN, SERVICE_SET_FIREPLACE_MODE, set_fireplace_mode)
+    hass.services.async_register(DOMAIN, SERVICE_SET_COOLING_MODE, set_cooling_mode)
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_VENTILATION_MODE, set_ventilation_mode
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_TEMPERATURE_MODE, set_temperature_mode
+    )
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True

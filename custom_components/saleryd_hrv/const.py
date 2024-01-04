@@ -36,9 +36,10 @@ If you have any issues with this you need to open an issue here:
 -------------------------------------------------------------------
 """
 
-# Other constants
+# Virtual keys, ie not present in data
 KEY_CLIENT_STATE = "*HRV_CLIENT_STATE"
 KEY_TARGET_TEMPERATURE = "*TARGET_TEMPERATURE"
+KEY_COOKING_MODE = "*COOKING_MODE"
 
 TEMPERATURE_MODE_NORMAL = 0
 TEMPERATURE_MODE_ECO = 1
@@ -55,5 +56,11 @@ SYSTEM_ACTIVE_MODE_ON = 1
 SYSTEM_ACTIVE_MODE_OFF = 0
 SYSTEM_ACTIVE_MODE_RESET = 2
 
-HEATER_ACTIVE_MODE_ON = 1
-HEATER_ACTIVE_MODE_OFF = 0
+MODE_ON = 1
+MODE_OFF = 0
+
+# Services
+SERVICE_SET_FIREPLACE_MODE = "set_fireplace_mode"
+SERVICE_SET_COOLING_MODE = "set_cooling_mode"
+SERVICE_SET_VENTILATION_MODE = "set_ventilation_mode"
+SERVICE_SET_TEMPERATURE_MODE = "set_temperature_mode"
