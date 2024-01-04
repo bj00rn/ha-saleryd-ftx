@@ -22,12 +22,12 @@
       "name": "Python: Attach Remote",
       "type": "python",
       "request": "attach",
-      "port": 5678,
-      "host": "homeassistant.local",
+      "port": 5678, // set your pdb port here
+      "host": "homeassistant.local", // set your host here
       "pathMappings": [
         {
           "localRoot": "${workspaceFolder}",
-          "remoteRoot": "/usr/src/homeassistant"
+          "remoteRoot": "/config" // set to path of folder containing custom_components
         }
       ]
     }
