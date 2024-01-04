@@ -71,7 +71,6 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             {"value": self._state_when_on},
             blocking=True,
         )
-        self.schedule_update_ha_state()
 
     def turn_off(self, **kwargs) -> None:
         """Turn on the switch."""
@@ -81,7 +80,6 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             {"value": self._state_when_off},
             blocking=True,
         )
-        self.schedule_update_ha_state()
 
     @property
     def extra_state_attributes(self):
