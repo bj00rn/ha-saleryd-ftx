@@ -112,6 +112,10 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
         value = value[0] if isinstance(value, list) else value
 
+        if self.entity_description.key in ["*ME", "*FI"] and not value:
+            # return None if time left is 0
+            return None
+
         if self.entity_description.key == "MG":
             heater_percent = self.coordinator.data.get("*MJ") / 100
             if value == HEATER_MODE_LOW:
@@ -197,7 +201,9 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
             except TypeError as exc:
                 _LOGGER.debug(exc)
         elif self.entity_description.key == "MF" and value == VENTILATION_MODE_BOOST:
-            attrs["minutes_left"] = self.coordinator.data.get("*FI")
+            minutes_left = self.coordinator.data.get("*FI")
+            if minutes_left:
+                attrs["minutes_left"] = minutes_left
 
         return attrs
 
