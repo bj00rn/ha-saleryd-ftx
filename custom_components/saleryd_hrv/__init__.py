@@ -46,21 +46,19 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         async with async_timeout.timeout(10):
             await client.connect()
     except (TimeoutError, asyncio.CancelledError) as ex:
+        client.disconnect()
         raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
-
-    coordinator = SalerydLokeDataUpdateCoordinator(hass, client, LOGGER)
-
-    await coordinator.async_config_entry_first_refresh()
-
-    hass.data[DOMAIN][entry.entry_id] = coordinator
-
-    # Setup platforms
-    for platform in PLATFORMS:
-        if entry.options.get(platform, True):
-            coordinator.platforms.append(platform)
-            hass.async_add_job(
-                hass.config_entries.async_forward_entry_setup(entry, platform)
-            )
+    else:
+        coordinator = SalerydLokeDataUpdateCoordinator(hass, client, LOGGER)
+        await coordinator.async_config_entry_first_refresh()
+        hass.data[DOMAIN][entry.entry_id] = coordinator
+        # Setup platforms
+        for platform in PLATFORMS:
+            if entry.options.get(platform, True):
+                coordinator.platforms.append(platform)
+                hass.async_add_job(
+                    hass.config_entries.async_forward_entry_setup(entry, platform)
+                )
 
     # Register services
     async def control_request(key, value=None):
