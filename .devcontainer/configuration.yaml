@@ -3,7 +3,7 @@ default_config:
 logger:
   default: info
   logs:
-    custom_components.saleryd_hrv: info
+    custom_components.saleryd_hrv: info # set to debug to enable debug logging
 
-# If you need to debug uncomment the line below (doc: https://www.home-assistant.io/integrations/debugpy/)
 debugpy:
+  wait: False # set to true to allow breakpoints in async_setup or similar and debug the loading of the integration.

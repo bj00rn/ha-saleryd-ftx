@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
 
-set -e
-
-cd "$(dirname "$0")/../"
+set -ex
 
 # upgrade pip and clear cache
 rm -rf $(pip cache dir)
-pip install --no-cache-dir -r ../requirements_pip.txt
+pip install --no-cache-dir -r requirements_pip.txt
 
 # install development dependencies
-pip install --no-cache-dir -r ../requirements_dev.txt
+pip install --no-cache-dir -r requirements_dev.txt
 
 # install pre-commit git hooks
+git config --global --add safe.directory $(pwd)
 pre-commit install
 pre-commit install --hook-type commit-msg
