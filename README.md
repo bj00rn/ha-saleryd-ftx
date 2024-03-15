@@ -95,11 +95,19 @@ Model | Confirmed supported control system versions | Unsupported control system
 
 ## Installation
 
-### Add repository to HACS
+## HACS Install
 
 1. In Home Assistant go to `HACS` -> `Integrations` and add this repository as a `custom repository`.
 2. In Home Assistant go to `Configuration` -> `Integrations` click `+` and search for `Saleryd HRV`.
 3. Click install.
+4. Restart Home Assistant.
+
+## Manual ZIP install
+
+1. Download release .zip file from [releases](https://github.com/bj00rn/ha-saleryd-ftx/releases) page.
+2. Copy the `saleryd_hrv` directory from the release archive to the `/custom_components` directory in your Home Assistant server.
+3. Restart Home Assistant.
+
 
 ## Configuration
 
@@ -113,6 +121,8 @@ Model | Confirmed supported control system versions | Unsupported control system
 Configuration in `congfiguration.yaml` is not supported
 
 ### UI Configuration
+
+* [Add Intergration](https://www.home-assistant.io/getting-started/integration/) to Home Assistant.
 
 Setting | Description | Default
 -- | -- | --
