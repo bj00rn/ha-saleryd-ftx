@@ -1,6 +1,7 @@
 """
 Custom integration to integrate Saleryd HRV system with Home Assistant.
 """
+
 import asyncio
 from datetime import timedelta
 

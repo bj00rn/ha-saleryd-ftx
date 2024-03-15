@@ -1,4 +1,5 @@
 """Test saleryd_hrv switch."""
+
 from unittest.mock import call, patch
 
 from homeassistant.components.switch import SERVICE_TURN_OFF, SERVICE_TURN_ON

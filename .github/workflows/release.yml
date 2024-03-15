@@ -14,7 +14,7 @@ jobs:
       - name: Checkout repository
         id: checkout
         uses: "actions/checkout@v4"
-      
+
       - name: Changelog action
         id: changelog
         uses: TriPSs/conventional-changelog-action@v4

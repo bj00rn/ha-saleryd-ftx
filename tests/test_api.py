@@ -1,4 +1,5 @@
 """Tests for saleryd_hrv api."""
+
 import asyncio
 
 import aiohttp

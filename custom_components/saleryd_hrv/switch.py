@@ -1,4 +1,5 @@
 """Switch platform"""
+
 from typing import Any, Coroutine
 
 from homeassistant.components.switch import (

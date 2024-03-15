@@ -1,4 +1,5 @@
 """Adds config flow for SalerydLoke."""
+
 import async_timeout
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME

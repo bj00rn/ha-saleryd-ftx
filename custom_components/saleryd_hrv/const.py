@@ -1,4 +1,5 @@
 """Constants for saleryd_hrv."""
+
 from logging import Logger, getLogger
 
 # Base component constants
