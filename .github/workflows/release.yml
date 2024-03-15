@@ -28,6 +28,7 @@ jobs:
 
       - name: "ZIP the integration directory"
         id: zip_release
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
         shell: "bash"
         run: |
           mkdir "${{ github.workspace }}/dist"
