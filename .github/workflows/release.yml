@@ -33,7 +33,7 @@ jobs:
         run: |
           mkdir "${{ github.workspace }}/dist"
           cd "${{ github.workspace }}/custom_components/saleryd_hrv"
-          zip saleryd_hrv.zip -r ./ "${{ github.workspace }}/dist/saleryd_hrv_${{  steps.changelog.outputs.tag }}.zip"
+          zip "${{ github.workspace }}/dist/saleryd_hrv_${{  steps.changelog.outputs.tag }}.zip" -r ./ 
 
       - name: Create Release
         id: create_release
