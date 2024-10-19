@@ -78,6 +78,9 @@ Name | Description | Fields
 `set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
 `set_system_active_mode` | Set system active mode. (Maintenance settings must be unlocked first) | value: `integer` (0=Off,1=On,2=Reset)
 `unlock_maintenance_settings` | Unlock maintenance settings | value: `text` (maintenance password)
+`set_target_temperature_normal` | Set target temperature for normal temperature mode. (Maintenance settings must be unlocked first) | value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_cool` | Set target temperature for cool temperature mode. (Maintenance settings must be unlocked first) | value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_economy` | Set target temperature for economy temperature mode. (Maintenance settings must be unlocked first) | value: `number` (temperature 10-30 degrees celcius)
 
 ## Experimental features
 
