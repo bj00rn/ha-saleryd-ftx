@@ -21,8 +21,10 @@ from .const import (
     PLATFORMS,
     SERVICE_SET_COOLING_MODE,
     SERVICE_SET_FIREPLACE_MODE,
+    SERVICE_SET_SYSTEM_ACTIVE_MODE,
     SERVICE_SET_TEMPERATURE_MODE,
     SERVICE_SET_VENTILATION_MODE,
+    SERVICE_UNLOCK_MAINTENANCE_SETTINGS,
     STARTUP_MESSAGE,
 )
 from .coordinator import SalerydLokeDataUpdateCoordinator
@@ -86,6 +88,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         LOGGER.debug("Sending set cooling mode request of %s", value)
         await control_request("MK", value)
 
+    async def unlock_maintenance_settings(call):
+        value = call.data.get("value")
+        LOGGER.debug(
+            "Sending unlock maintenance settings request with passsword <redacted>"
+        )
+        await control_request("IP", value)
+
+    async def set_system_active_mode(call):
+        value = call.data.get("value")
+        LOGGER.debug("Sending system active mode request of %s", value)
+        await control_request("MP", value)
+
     hass.services.async_register(DOMAIN, SERVICE_SET_FIREPLACE_MODE, set_fireplace_mode)
     hass.services.async_register(DOMAIN, SERVICE_SET_COOLING_MODE, set_cooling_mode)
     hass.services.async_register(
@@ -93,6 +107,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     )
     hass.services.async_register(
         DOMAIN, SERVICE_SET_TEMPERATURE_MODE, set_temperature_mode
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_SYSTEM_ACTIVE_MODE, set_system_active_mode
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_UNLOCK_MAINTENANCE_SETTINGS, unlock_maintenance_settings
     )
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))

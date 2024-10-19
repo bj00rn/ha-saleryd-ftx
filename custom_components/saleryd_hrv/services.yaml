@@ -54,3 +54,29 @@ set_temperature_mode:
           min: 0
           max: 2
           mode: slider
+set_system_active_mode:
+  name: Set system active mode
+  description: Set system active mode
+  fields:
+    value:
+      name: Value
+      description: desired mode (0=Off,1=On,2=Reset)
+      example: "1"
+      required: true
+      selector:
+        number:
+          min: 0
+          max: 2
+          mode: slider
+unlock_maintenance_settings:
+  name: Unlock maintenance settings
+  description: Unlock maintenance settings
+  fields:
+    value:
+      name: Value
+      description: Maintenance password
+      example: "6666"
+      required: true
+      selector:
+        text:
+          type: password
