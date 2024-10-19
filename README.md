@@ -76,6 +76,8 @@ Name | Description | Fields
 `set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=Off)
 `set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Cool)
 `set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
+`set_system_active_mode` | Set system active mode. (Maintenance settings must be unlocked first) | value: `integer` (0=Off,1=On,2=Reset)
+`unlock_maintenance_settings` | Unlock maintenance settings | value: `text` (maintenance password)
 
 ## Experimental features
 

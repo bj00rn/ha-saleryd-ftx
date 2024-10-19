@@ -67,5 +67,7 @@ SERVICE_SET_FIREPLACE_MODE = "set_fireplace_mode"
 SERVICE_SET_COOLING_MODE = "set_cooling_mode"
 SERVICE_SET_VENTILATION_MODE = "set_ventilation_mode"
 SERVICE_SET_TEMPERATURE_MODE = "set_temperature_mode"
+SERVICE_UNLOCK_MAINTENANCE_SETTINGS = "unlock_maintenance_settings"
+SERVICE_SET_SYSTEM_ACTIVE_MODE = "set_system_active_mode"
 
 LOGGER: Logger = getLogger(__package__)
