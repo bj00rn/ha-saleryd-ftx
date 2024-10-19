@@ -80,3 +80,45 @@ unlock_maintenance_settings:
       selector:
         text:
           type: password
+set_target_temperature_normal:
+  name: Set normal target temperature
+  description: Set target temperature for normal temperature mode
+  fields:
+    value:
+      name: Value
+      description: target temperature
+      example: "18"
+      required: true
+      selector:
+        number:
+          min: 10
+          max: 30
+          mode: slider
+set_target_temperature_cool:
+  name: Set cool target temperature
+  description: Set target temperature for cool temperature mode
+  fields:
+    value:
+      name: Value
+      description: target temperature
+      example: "18"
+      required: true
+      selector:
+        number:
+          min: 10
+          max: 30
+          mode: slider
+set_target_temperature_economy:
+  name: Set economy target temperature
+  description: Set target temperature for economy temperature mode
+  fields:
+    value:
+      name: Value
+      description: target temperature
+      example: "18"
+      required: true
+      selector:
+        number:
+          min: 10
+          max: 30
+          mode: slider

@@ -22,6 +22,9 @@ from .const import (
     SERVICE_SET_COOLING_MODE,
     SERVICE_SET_FIREPLACE_MODE,
     SERVICE_SET_SYSTEM_ACTIVE_MODE,
+    SERVICE_SET_TARGET_TEMPERATURE_COOL,
+    SERVICE_SET_TARGET_TEMPERATURE_ECONOMY,
+    SERVICE_SET_TARGET_TEMPERATURE_NORMAL,
     SERVICE_SET_TEMPERATURE_MODE,
     SERVICE_SET_VENTILATION_MODE,
     SERVICE_UNLOCK_MAINTENANCE_SETTINGS,
@@ -100,6 +103,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         LOGGER.debug("Sending system active mode request of %s", value)
         await control_request("MP", value)
 
+    async def set_target_temperature_cool(call):
+        value = call.data.get("value")
+        LOGGER.debug("Sending set target temperature for cool mode of %s", value)
+        await control_request("TF", value)
+
+    async def set_target_temperature_normal(call):
+        value = call.data.get("value")
+        LOGGER.debug("Sending set target temperature for normal mode of %s", value)
+        await control_request("TD", value)
+
+    async def set_target_temperature_economy(call):
+        value = call.data.get("value")
+        LOGGER.debug("Sending set target temperature for economy mode of %s", value)
+        await control_request("TE", value)
+
     hass.services.async_register(DOMAIN, SERVICE_SET_FIREPLACE_MODE, set_fireplace_mode)
     hass.services.async_register(DOMAIN, SERVICE_SET_COOLING_MODE, set_cooling_mode)
     hass.services.async_register(
@@ -108,11 +126,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     hass.services.async_register(
         DOMAIN, SERVICE_SET_TEMPERATURE_MODE, set_temperature_mode
     )
+
     hass.services.async_register(
         DOMAIN, SERVICE_SET_SYSTEM_ACTIVE_MODE, set_system_active_mode
     )
     hass.services.async_register(
         DOMAIN, SERVICE_UNLOCK_MAINTENANCE_SETTINGS, unlock_maintenance_settings
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_TARGET_TEMPERATURE_NORMAL, set_target_temperature_normal
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_TARGET_TEMPERATURE_COOL, set_target_temperature_cool
+    )
+    hass.services.async_register(
+        DOMAIN, SERVICE_SET_TARGET_TEMPERATURE_ECONOMY, set_target_temperature_economy
     )
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
