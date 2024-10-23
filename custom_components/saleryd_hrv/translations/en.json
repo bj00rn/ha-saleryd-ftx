@@ -40,6 +40,13 @@
                 "single_instance_allowed": "Only a single instance is allowed.",
                 "reconfigure_successful": "Reconfiguration successful"
             }
+        },
+        "error": {
+            "connect": "Could not connect. Verify connection details"
+        },
+        "abort": {
+            "single_instance_allowed": "Only a single instance is allowed.",
+            "reconfigure_successful": "Reconfiguration successful"
         }
     }
 }
