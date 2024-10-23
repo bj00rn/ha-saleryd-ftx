@@ -5,29 +5,41 @@
                 "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
                 "data": {
                     "name": "Name",
-                    "websocket_ip": "Websocket IP adress for the HRV web interface, ie 192.168.1.151",
+                    "websocket_ip": "IP adress",
                     "websocket_port": "Port",
-                    "enable_maintenance_settings": "Enable maintenance settings? Enables altering HRV system configuration from Home Assistant. Don't change these settings unless you know what you are doing.",
-                    "maintenance_password": "Maintenance password. Required for maintenance settings"
+                    "enable_maintenance_settings": "Enable maintenance settings?",
+                    "maintenance_password": "Maintenance password"
+                },
+                "data_description": {
+                    "websocket_ip": "IP adress of the HRV system on the local network",
+                    "websocket_port": "Port. Default is 3001",
+                    "enable_maintenance_settings": "Enable altering HRV system configuration from Home Assistant. Don't alter maintenance settings unless you know what you are doing",
+                    "maintenance_password": "Required for maintenance settings"
                 }
             },
             "reconfigure_confirm": {
                 "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
                 "data": {
                     "name": "Name",
-                    "websocket_ip": "Websocket IP adress for the HRV web interface, ie 192.168.1.151",
+                    "websocket_ip": "IP adress",
                     "websocket_port": "Port",
-                    "enable_maintenance_settings": "Enable maintenance settings? Enables altering HRV system configuration from Home Assistant. Don't change these settings unless you know what you are doing.",
-                    "maintenance_password": "Maintenance password. Required for maintenance settings"
+                    "enable_maintenance_settings": "Enable maintenance settings?",
+                    "maintenance_password": "Maintenance password"
+                },
+                "data_description": {
+                    "websocket_ip": "IP adress of the HRV system on the local network",
+                    "websocket_port": "Port. Default is 3001",
+                    "enable_maintenance_settings": "Enable altering HRV system configuration from Home Assistant. Don't alter maintenance settings unless you know what you are doing",
+                    "maintenance_password": "Required for maintenance settings"
                 }
+            },
+            "error": {
+                "connect": "Could not connect. Verify connection details"
+            },
+            "abort": {
+                "single_instance_allowed": "Only a single instance is allowed.",
+                "reconfigure_successful": "Reconfiguration successful"
             }
-        },
-        "error": {
-            "connect": "Could not connect. Verify connection details"
-        },
-        "abort": {
-            "single_instance_allowed": "Only a single instance is allowed.",
-            "reconfigure_successful": "Reconfiguration successful"
         }
     }
 }
