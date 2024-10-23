@@ -11,6 +11,8 @@ ATTRIBUTION = "Data provided by Saleryd HRV"
 ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
 SUPPORTED_FIRMWARES = ["4.1.5"]
 UNSUPPORTED_FIRMWARES = ["4.1.1"]
+CONFIG_VERSION = 2
+
 # Icons
 ICON = "mdi:format-quote-close"
 
@@ -25,6 +27,8 @@ PLATFORMS = [SENSOR, SWITCH]
 CONF_ENABLED = "enabled"
 CONF_WEBSOCKET_IP = "websocket_ip"
 CONF_WEBSOCKET_PORT = "websocket_port"
+CONF_MAINTENANCE_PASSWORD = "maintenance_password"
+CONF_ENABLE_MAINTENANCE_SETTINGS = "enable_maintenance_settings"
 
 # Defaults
 DEFAULT_NAME = DOMAIN

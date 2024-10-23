@@ -76,11 +76,10 @@ Name | Description | Fields
 `set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=Off)
 `set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Cool)
 `set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
-`set_system_active_mode` | Set system active mode. (Maintenance settings must be unlocked first) | value: `integer` (0=Off,1=On,2=Reset)
-`unlock_maintenance_settings` | Unlock maintenance settings | value: `text` (maintenance password)
-`set_target_temperature_normal` | Set target temperature for normal temperature mode. (Maintenance settings must be unlocked first) | value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_cool` | Set target temperature for cool temperature mode. (Maintenance settings must be unlocked first) | value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_economy` | Set target temperature for economy temperature mode. (Maintenance settings must be unlocked first) | value: `number` (temperature 10-30 degrees celcius)
+`set_system_active_mode` | Set system active mode. (Maintenance settings must be enabled) | value: `integer` (0=Off,1=On,2=Reset)
+`set_target_temperature_normal` | Set target temperature for normal temperature mode. (Maintenance settings must be enabled) | value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_cool` | Set target temperature for cool temperature mode. (Maintenance settings must be enabled) | value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_economy` | Set target temperature for economy temperature mode. (Maintenance settings must be enabled) | value: `number` (temperature 10-30 degrees celcius)
 
 ## Experimental features
 
@@ -131,17 +130,23 @@ Configuration in `congfiguration.yaml` is not supported
 
 Setting | Description | Default
 -- | -- | --
-IP | IP adress of the HRV system on the local WIFI network
-PORT | Port number for websocket connection | 3001
+Websocket IP | IP adress of the HRV system on the local WIFI network
+Port | Port number for websocket connection | 3001
+Enable maintenance settings | Enable altering HRV system configuration from Home Assistant. Don't change these settings unless you know what you are doing | False
+Maintenance password | Maintenance password. Required for maintenance settings |
 
 ## Troubleshooting
 
-### Can't connect to HRV system
+### I can't connect to HRV system
 
 * Check the Home Assitant `logs`
 * Confirm system is connected and the UI portal is reachable on the local network. Follow steps in the manual.
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser.
 * The system HRV can only handle a few connected clients. Shut down any additional clients/browsers and try again.
+
+### I can't modify maintenance settings
+* Ensure maintenance settings are enabled in integration configuration
+* Ensure maintenace password is correct
 
 ### Contributing
 
