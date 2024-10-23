@@ -32,13 +32,6 @@
                     "enable_maintenance_settings": "Enable altering HRV system configuration from Home Assistant. Don't alter maintenance settings unless you know what you are doing",
                     "maintenance_password": "Required for maintenance settings"
                 }
-            },
-            "error": {
-                "connect": "Could not connect. Verify connection details"
-            },
-            "abort": {
-                "single_instance_allowed": "Only a single instance is allowed.",
-                "reconfigure_successful": "Reconfiguration successful"
             }
         },
         "error": {
