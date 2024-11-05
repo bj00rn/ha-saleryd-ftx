@@ -2,7 +2,7 @@
     "config": {
         "step": {
             "user": {
-                "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
+                "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below",
                 "data": {
                     "name": "Name",
                     "websocket_ip": "IP adress",
@@ -17,8 +17,8 @@
                     "maintenance_password": "Required for maintenance settings"
                 }
             },
-            "reconfigure_confirm": {
-                "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below. If you need help with the configuration have a look here: https://github.com/bj00rn/ha-saleryd-ftx",
+            "reconfigure": {
+                "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below.",
                 "data": {
                     "name": "Name",
                     "websocket_ip": "IP adress",
