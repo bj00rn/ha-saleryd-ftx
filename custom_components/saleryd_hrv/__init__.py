@@ -40,7 +40,11 @@ SCAN_INTERVAL = timedelta(seconds=30)
 async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Migrate config entry."""
 
-    if entry.version == 1:
+    if entry.version is not None and entry.version > CONFIG_VERSION:
+        # This means the user has downgraded from a future version
+        return False
+
+    if entry.version is None or entry.version == 1:
         new_data = entry.data.copy()
         new_data |= {
             CONF_ENABLE_MAINTENANCE_SETTINGS: False,

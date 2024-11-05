@@ -22,6 +22,21 @@ from .const import (
     NAME,
 )
 
+RECONFIG_DATA = {
+    vol.Required(CONF_WEBSOCKET_IP): str,
+    vol.Required(CONF_WEBSOCKET_PORT): int,
+    vol.Optional(CONF_ENABLE_MAINTENANCE_SETTINGS): vol.Coerce(bool),
+    vol.Optional(CONF_MAINTENANCE_PASSWORD): str,
+}
+
+CONFIG_DATA = {
+    vol.Required(CONF_NAME): str,
+    **RECONFIG_DATA,
+}
+
+CONFIG_SCHEMA = vol.Schema({**CONFIG_DATA})
+RECONFIG_SCHEMA = vol.Schema({**RECONFIG_DATA})
+
 
 class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for SalerydLoke."""
@@ -55,74 +70,72 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     title=user_input[CONF_NAME], data=user_input
                 )
 
-            return await self._show_config_form("user", user_input)
+            return self.async_show_form(
+                data_schema=self.add_suggested_values_to_schema(
+                    CONFIG_SCHEMA, user_input
+                ),
+                errors=self._errors,
+            )
+        else:
+            suggested_values = {
+                CONF_NAME: NAME,
+                CONF_WEBSOCKET_IP: "192.168.1.151",
+                CONF_WEBSOCKET_PORT: 3001,
+                CONF_ENABLE_MAINTENANCE_SETTINGS: False,
+                CONF_MAINTENANCE_PASSWORD: "",
+            }
 
-        user_input = {}
-        # Provide defaults for form
-        user_input[CONF_WEBSOCKET_IP] = "192.168.1.151"
-        user_input[CONF_WEBSOCKET_PORT] = 3001
-        user_input[CONF_NAME] = NAME
-        user_input[CONF_ENABLE_MAINTENANCE_SETTINGS] = False
-        user_input[CONF_MAINTENANCE_PASSWORD] = ""
-
-        return await self._show_config_form("user", user_input)
+            return self.async_show_form(
+                data_schema=self.add_suggested_values_to_schema(
+                    CONFIG_SCHEMA, suggested_values
+                ),
+                errors=self._errors,
+            )
 
     async def async_step_reconfigure(
-        self, entry_data: Mapping[str, Any]
+        self, user_input: Mapping[str, Any]
     ) -> config_entries.ConfigFlowResult:
         """Handle a reconfiguration flow initialized by the user."""
         config_entry = self.hass.config_entries.async_get_entry(
             self.context["entry_id"]
         )
         self._config_entry = config_entry
-        return await self.async_step_reconfigure_confirm()
+        return await self.async_step_reconfigure_confirm(user_input)
 
     async def async_step_reconfigure_confirm(
         self, user_input: dict[str, Any] | None = None
     ) -> config_entries.ConfigFlowResult:
         """Handle a reconfiguration flow initialized by the user."""
-        if not user_input:
-            return await self._show_config_form(
-                step_id="reconfigure_confirm", user_input={**self._config_entry.data}
-            )
-        return self.async_update_reload_and_abort(
-            self._config_entry,
-            data=user_input,
-            reason="reconfigure_successful",
-        )
+        self._errors = {}
 
-    async def _show_config_form(
-        self, step_id, user_input
-    ):  # pylint: disable=unused-argument
-        """Show the configuration form to edit configuration data."""
-        return self.async_show_form(
-            step_id=step_id,
-            data_schema=vol.Schema(
-                {
-                    vol.Required(
-                        CONF_NAME,
-                        default=user_input[CONF_NAME],
-                    ): str,
-                    vol.Required(
-                        CONF_WEBSOCKET_IP,
-                        default=user_input[CONF_WEBSOCKET_IP],
-                    ): str,
-                    vol.Required(
-                        CONF_WEBSOCKET_PORT,
-                        default=user_input[CONF_WEBSOCKET_PORT],
-                    ): int,
-                    vol.Optional(
-                        CONF_ENABLE_MAINTENANCE_SETTINGS,
-                        default=user_input[CONF_ENABLE_MAINTENANCE_SETTINGS],
-                    ): vol.Coerce(bool),
-                    vol.Optional(
-                        CONF_MAINTENANCE_PASSWORD,
-                        default=user_input[CONF_MAINTENANCE_PASSWORD],
-                    ): str,
-                }
-            ),
-            errors=self._errors,
-        )
+        if user_input is not None:
+            try:
+                async with async_timeout.timeout(10):
+                    await self._test_connection(
+                        user_input[CONF_WEBSOCKET_IP], user_input[CONF_WEBSOCKET_PORT]
+                    )
+            except TimeoutError:
+                self._errors["base"] = "connect"
+            else:
+                return self.async_update_reload_and_abort(
+                    self._config_entry,
+                    data=user_input,
+                    reason="reconfigure_successful",
+                )
+
+            return self.async_show_form(
+                data_schema=self.add_suggested_values_to_schema(
+                    RECONFIG_SCHEMA, user_input
+                ),
+                errors=self._errors,
+            )
+        else:
+            return self.async_show_form(
+                data_schema=self.add_suggested_values_to_schema(
+                    RECONFIG_SCHEMA, self._config_entry.data
+                ),
+                errors=self._errors,
+            )
 
     async def _test_connection(self, ip, port):
         """Return true if connection is working"""
