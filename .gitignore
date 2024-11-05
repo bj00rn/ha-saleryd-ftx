@@ -6,4 +6,5 @@ venv
 .idea
 
 # home assistant data
-hass
+.devcontainer/config/*
+!.devcontainer/config/configuration.yaml

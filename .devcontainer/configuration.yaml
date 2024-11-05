@@ -1,9 +1,0 @@
-default_config:
-
-logger:
-  default: info
-  logs:
-    custom_components.saleryd_hrv: info # set to debug to enable debug logging
-
-debugpy:
-  wait: False # set to true to allow breakpoints in async_setup or similar and debug the loading of the integration.
