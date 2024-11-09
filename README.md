@@ -30,7 +30,7 @@ Monitor and control HRV system from Home Assistant.
 - `remote control using dashboard or physical controls`
 - `...`
 
-## Features
+## Integration features
 
 ### Sensors
 
@@ -62,13 +62,14 @@ Name | Description | Unit | State attributes
 
 Switch | Description | State attributes
 -- | -- | --
-`away_mode` | Turn Away vent mode on/off
-`boost_mode` | Turn Boost vent mode on/off | minutes left
-`cooling_mode` | Turn Cooling vent mode on/off
-`fireplace_mode` | Turn Fireplace vent mode on/off | minutes left
-`home_mode` | Turn Home vent mode on/off
+`home_mode` | Turn `home` ventilation mode on/off
+`away_mode` | Turn `away` ventilation mode on/off
+`boost_mode` | Turn `boost` ventilation mode on/off | minutes left
+`cooling_mode` | Turn `cooling` mode on/off
+`fireplace_mode` | Turn `fireplace` mode on/off | minutes left
 
-## Integration services
+
+## Services
 
 Name | Description | Fields
 -- | -- | --
@@ -87,7 +88,7 @@ Name | Description | Fields
 
 Switch | Description | State attributes
 -- | -- | --
-`cooking_mode` | Turn cooking mode on/off. Emulates cooking mode when fireplace mode is active. Automatically disables fireplace mode before timer expires to reset rotary heat exchanger to normal operation.
+`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking `mode is active, automatically deactivates `fireplace` mode before timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
 
 ## Supported devices
 
@@ -130,9 +131,10 @@ Configuration in `congfiguration.yaml` is not supported
 
 Setting | Description | Default
 -- | -- | --
-Websocket IP | IP adress of the HRV system on the local WIFI network
+Name | System name. Must be unique. |
+Websocket IP | IP adress of the HRV system on the local WIFI network |
 Port | Port number for websocket connection | 3001
-Enable maintenance settings | Enable altering HRV system configuration from Home Assistant. Don't change these settings unless you know what you are doing | False
+Enable maintenance settings | Enable altering HRV system configuration set by the installer from Home Assistant. Don't alter these settings unless you know what you are doing | False
 Maintenance password | Maintenance password. Required for maintenance settings |
 
 ## Troubleshooting
