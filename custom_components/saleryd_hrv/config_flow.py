@@ -17,9 +17,9 @@ from .const import (
     CONF_WEBSOCKET_IP,
     CONF_WEBSOCKET_PORT,
     CONFIG_VERSION,
+    DEFAULT_NAME,
     DOMAIN,
     LOGGER,
-    NAME,
 )
 
 RECONFIG_DATA = {
@@ -78,7 +78,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             )
         else:
             suggested_values = {
-                CONF_NAME: NAME,
+                CONF_NAME: DEFAULT_NAME,
                 CONF_WEBSOCKET_IP: "192.168.1.151",
                 CONF_WEBSOCKET_PORT: 3001,
                 CONF_ENABLE_MAINTENANCE_SETTINGS: False,
@@ -117,9 +117,11 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             except TimeoutError:
                 self._errors["base"] = "connect"
             else:
+                new_data = self._config_entry.data.copy()
+                new_data |= {**user_input}
                 return self.async_update_reload_and_abort(
                     self._config_entry,
-                    data=user_input,
+                    data=new_data,
                     reason="reconfigure_successful",
                 )
 

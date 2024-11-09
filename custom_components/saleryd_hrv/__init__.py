@@ -65,7 +65,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
         hass.data.setdefault(DOMAIN, {})
 
     integration = await async_get_integration(hass, DOMAIN)
-    LOGGER.info(STARTUP_MESSAGE, integration.version)
+    LOGGER.info(STARTUP_MESSAGE, integration.name, integration.version)
 
     url = entry.data.get(CONF_WEBSOCKET_IP)
     port = entry.data.get(CONF_WEBSOCKET_PORT)

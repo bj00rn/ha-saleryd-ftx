@@ -3,7 +3,6 @@
 from logging import Logger, getLogger
 
 # Base component constants
-NAME = "Saleryd HRV integration"
 MANUFACTURER = "Saleryd"
 DOMAIN = "saleryd_hrv"
 DOMAIN_DATA = f"{DOMAIN}_data"
@@ -36,7 +35,7 @@ DEFAULT_NAME = DOMAIN
 # Messages
 STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
-{NAME} %s
+%s %s
 This is a custom integration!
 If you have any issues with this you need to open an issue here:
 {ISSUE_URL}
