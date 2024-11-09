@@ -16,18 +16,17 @@ fi
 ## without resulting to symlinks.
 export PYTHONPATH="${PYTHONPATH}:${PWD}/custom_components"
 
-DEBUG_ARGS=""
+HASS_ARGS="-m homeassistant --config ${PWD}/.devcontainer/config"
+DEBUG_ARGS="-Xfrozen_modules=off -m debugpy --listen 0.0.0.0:5678"
 
 if [[ ! -z "$DEBUG" ]]; then
   # debug with debugpy
-  DEBUG_ARGS="-Xfrozen_modules=off -m debugpy --listen 0.0.0.0:5678"
-  if [[ ! -z "$DEBUG_WAIT" ]]; then
+  python $DEBUG_ARGS $HASS_ARGS
+elif [[ ! -z "$DEBUG_WAIT" ]]; then
     # wait for debugger connection
-    DEBUG_ARGS="$DEBUG_ARGS --wait-for-client"
-  fi
+    echo "Waiting for debugger to connect.."
+    python $DEBUG_ARGS --wait-for-client $HASS_ARGS
+else
+  # Run Home Assistant
+  python $HASS_ARGS
 fi
-
-# Start Home Assistant
-echo "$DEBUG_ARGS" -m homeassistant --config "${PWD}/.devcontainer/config"
-
-python3 $DEBUG_ARGS -m homeassistant --config "${PWD}/.devcontainer/config" && echo "Waiting for debugger.."
