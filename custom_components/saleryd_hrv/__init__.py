@@ -42,7 +42,11 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if entry.version is not None and entry.version > CONFIG_VERSION:
         # This means the user has downgraded from a future version
-        LOGGER.error("Downgrading from version %s to %s is not allowed")
+        LOGGER.error(
+            "Downgrading from version %s to %s is not allowed",
+            CONFIG_VERSION,
+            entry.version,
+        )
         return False
 
     if entry.version is None or entry.version < 2:
@@ -59,6 +63,13 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             entry, data=new_data, version=CONFIG_VERSION
         )
 
+    return True
+
+
+async def async_setup(hass: HomeAssistant, processed_config):
+    "Setup integration"
+    integration = await async_get_integration(hass, DOMAIN)
+    LOGGER.info(STARTUP_MESSAGE, integration.name, integration.version)
     return True
 
 
