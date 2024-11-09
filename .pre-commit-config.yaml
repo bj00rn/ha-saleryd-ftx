@@ -12,6 +12,7 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        exclude: CHANGELOG.md
       - id: check-ast
       - id: check-case-conflict
       - id: check-docstring-first
@@ -23,6 +24,7 @@ repos:
         args:
           - --fix=lf
       - id: end-of-file-fixer
+        exclude: CHANGELOG.md
       - id: requirements-txt-fixer
         files: requirements.txt|requirements-dev.txt
       - id: debug-statements
