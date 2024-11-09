@@ -1,3 +1,5 @@
+## [4.0.4](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4-rc.1...v4.0.4) (2024-11-09)
+
 ## [4.0.4-rc.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4-rc.0...v4.0.4-rc.1) (2024-11-09)
 
 
@@ -26,12 +28,4 @@
 ### Bug Fixes
 
 * upgrade dependency ([98b2735](https://github.com/bj00rn/ha-saleryd-ftx/commit/98b273586070778614e2a46a90b893031d289f5d))
-
-## [4.0.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.0...v4.0.1) (2024-11-05)
-
-
-### Bug Fixes
-
-* handle case where version is None in migration ([31126c2](https://github.com/bj00rn/ha-saleryd-ftx/commit/31126c29ec3908d8c18354841b5a5d6789de0c2c))
-* rework config flow ([cd85d32](https://github.com/bj00rn/ha-saleryd-ftx/commit/cd85d32c97750aa74e4190e8ff9dcbdf9bbb9669))
 
