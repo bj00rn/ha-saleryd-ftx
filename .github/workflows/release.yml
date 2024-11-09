@@ -20,7 +20,6 @@ jobs:
         uses: TriPSs/conventional-changelog-action@v4
         with:
           github-token: ${{ secrets.github_token }}
-          output-file: "false"
           preset: conventionalcommits
           version-file: "custom_components/saleryd_hrv/manifest.json"
           pre-release: ${{ inputs.pre_release }}
@@ -40,6 +39,7 @@ jobs:
         uses: ncipollo/release-action@v1
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
         with:
+          allowUpdates: true
           token: ${{ secrets.github_token }}
           commit: ${{ github.sha }}
           tag: ${{ steps.changelog.outputs.tag }}
