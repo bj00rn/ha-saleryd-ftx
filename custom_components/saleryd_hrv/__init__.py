@@ -42,16 +42,21 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     if entry.version is not None and entry.version > CONFIG_VERSION:
         # This means the user has downgraded from a future version
+        LOGGER.error("Downgrading from version %s to %s is not allowed")
         return False
 
-    if entry.version is None or entry.version == 1:
+    if entry.version is None or entry.version < 2:
         new_data = entry.data.copy()
         new_data |= {
             CONF_ENABLE_MAINTENANCE_SETTINGS: False,
             CONF_MAINTENANCE_PASSWORD: None,
         }
 
-        LOGGER.info("Upgrading entry from version 1")
+        LOGGER.info("Upgrading entry to version 2")
+        hass.config_entries.async_update_entry(
+            entry, data=new_data, version=2
+        )
+
         hass.config_entries.async_update_entry(
             entry, data=new_data, version=CONFIG_VERSION
         )
