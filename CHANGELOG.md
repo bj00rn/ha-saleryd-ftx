@@ -1,3 +1,11 @@
+## [4.0.4-rc.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4-rc.0...v4.0.4-rc.1) (2024-11-09)
+
+
+### Bug Fixes
+
+* fix migrations ([291d8df](https://github.com/bj00rn/ha-saleryd-ftx/commit/291d8df0e71c4eb9b385c68a7b0b8f70d126e502))
+* name being dropped in data on reconfigure ([3cbf320](https://github.com/bj00rn/ha-saleryd-ftx/commit/3cbf32041e13e63a218d0247377116ee5b7f9bf3))
+
 ## [4.0.4-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.3...v4.0.4-rc.0) (2024-11-09)
 
 
@@ -26,6 +34,4 @@
 
 * handle case where version is None in migration ([31126c2](https://github.com/bj00rn/ha-saleryd-ftx/commit/31126c29ec3908d8c18354841b5a5d6789de0c2c))
 * rework config flow ([cd85d32](https://github.com/bj00rn/ha-saleryd-ftx/commit/cd85d32c97750aa74e4190e8ff9dcbdf9bbb9669))
-
-## [4.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v3.2.1-rc.0...v4.0.0) (2024-10-23)
 
