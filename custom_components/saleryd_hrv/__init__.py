@@ -53,9 +53,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         }
 
         LOGGER.info("Upgrading entry to version 2")
-        hass.config_entries.async_update_entry(
-            entry, data=new_data, version=2
-        )
+        hass.config_entries.async_update_entry(entry, data=new_data, version=2)
 
         hass.config_entries.async_update_entry(
             entry, data=new_data, version=CONFIG_VERSION
