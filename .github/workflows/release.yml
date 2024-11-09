@@ -1,4 +1,5 @@
 name: Create release
+run-name: Create ${{ inputs.pre_release  && 'pre-release' || 'release' }} by @${{ github.actor }}
 
 on:
   workflow_dispatch:
