@@ -10,7 +10,7 @@ ATTRIBUTION = "Data provided by Saleryd HRV"
 ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
 SUPPORTED_FIRMWARES = ["4.1.5"]
 UNSUPPORTED_FIRMWARES = ["4.1.1"]
-CONFIG_VERSION = 2
+CONFIG_VERSION = 3
 
 # Icons
 ICON = "mdi:format-quote-close"

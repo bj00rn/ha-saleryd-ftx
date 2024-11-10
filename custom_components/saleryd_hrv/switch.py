@@ -243,7 +243,7 @@ switches = {
 
 async def async_setup_entry(hass, entry, async_add_entities):
     """Setup sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = hass.data[DOMAIN][entry.unique_id]
 
     entities = [
         switch.get("klass")(coordinator, entry.entry_id, switch.get("description"))

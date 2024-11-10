@@ -7,6 +7,7 @@ from datetime import timedelta
 
 import async_timeout
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
@@ -19,6 +20,7 @@ from .const import (
     CONF_WEBSOCKET_IP,
     CONF_WEBSOCKET_PORT,
     CONFIG_VERSION,
+    DEFAULT_NAME,
     DOMAIN,
     LOGGER,
     PLATFORMS,
@@ -59,8 +61,13 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         LOGGER.info("Upgrading entry to version 2")
         hass.config_entries.async_update_entry(entry, data=new_data, version=2)
 
+    if entry.version is None or entry.version < 3:
+        unique_id = entry.data.get(CONF_NAME, DEFAULT_NAME)
+        LOGGER.info("Upgrading entry to version 3, setting unique_id to %s", unique_id)
         hass.config_entries.async_update_entry(
-            entry, data=new_data, version=CONFIG_VERSION
+            entry,
+            version=3,
+            unique_id=unique_id,
         )
 
     return True
@@ -74,9 +81,8 @@ async def async_setup(hass: HomeAssistant, processed_config):
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Set up this integration using UI."""
-    if hass.data.get(DOMAIN) is None:
-        hass.data.setdefault(DOMAIN, {})
+    """Set up the integration from ConfigEntry."""
+    hass.data.setdefault(DOMAIN, {})
 
     url = entry.data.get(CONF_WEBSOCKET_IP)
     port = entry.data.get(CONF_WEBSOCKET_PORT)
@@ -92,7 +98,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
     else:
         coordinator = SalerydLokeDataUpdateCoordinator(hass, client, LOGGER)
         await coordinator.async_config_entry_first_refresh()
-        hass.data[DOMAIN][entry.entry_id] = coordinator
+        hass.data[DOMAIN][entry.unique_id] = coordinator
 
         # Setup platforms
         await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -183,10 +189,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Handle removal of an entry."""
+    """Handle unload of an entry."""
 
     # disconnect client
-    coordinator: SalerydLokeDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: SalerydLokeDataUpdateCoordinator = hass.data[DOMAIN][entry.unique_id]
     coordinator.client.disconnect()
 
     # remove services
