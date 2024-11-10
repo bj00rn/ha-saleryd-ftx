@@ -423,7 +423,7 @@ sensors = {
 
 async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback):
     """Setup sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = hass.data[DOMAIN][entry.unique_id]
 
     entities = [
         sensor.get("klass")(coordinator, entry.entry_id, sensor.get("description"))

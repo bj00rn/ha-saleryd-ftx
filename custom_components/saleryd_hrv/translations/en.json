@@ -38,8 +38,9 @@
             "connect": "Could not connect. Verify connection details"
         },
         "abort": {
-            "single_instance_allowed": "Only a single instance is allowed.",
-            "reconfigure_successful": "Reconfiguration successful"
+            "single_instance_allowed": "Only a single instance is allowed",
+            "reconfigure_successful": "Reconfiguration successful",
+            "already_configured": "An instance with the same name is already configured"
         }
     }
 }

@@ -38,7 +38,8 @@ CONFIG_SCHEMA = vol.Schema({**CONFIG_DATA})
 RECONFIG_SCHEMA = vol.Schema({**RECONFIG_DATA})
 
 
-class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+@config_entries.HANDLERS.register(DOMAIN)
+class SalerydLokeFlowHandler(config_entries.ConfigFlow):
     """Config flow for SalerydLoke."""
 
     VERSION = CONFIG_VERSION
@@ -53,7 +54,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         """Handle a flow initialized by the user."""
         self._errors = {}
 
-        # Comment the next 2 lines if multiple instances of the integration is allowed:
+        # Comment the next 2 lines if multiple instances of the integration is allowed
         if self._async_current_entries():
             return self.async_abort(reason="single_instance_allowed")
 
@@ -66,6 +67,9 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             except TimeoutError:
                 self._errors["base"] = "connect"
             else:
+                await self.async_set_unique_id(user_input[CONF_NAME])
+                self._abort_if_unique_id_configured()
+
                 return self.async_create_entry(
                     title=user_input[CONF_NAME], data=user_input
                 )
