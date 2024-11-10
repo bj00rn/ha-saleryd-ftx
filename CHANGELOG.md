@@ -1,3 +1,10 @@
+## [4.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4...v4.1.0) (2024-11-10)
+
+
+### Features
+
+* set unique_id from entry name to prepare ([4611ea5](https://github.com/bj00rn/ha-saleryd-ftx/commit/4611ea55ba20149a103d79bc4236560d7b31cb20))
+
 ## [4.0.4](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4-rc.1...v4.0.4) (2024-11-09)
 
 ## [4.0.4-rc.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4-rc.0...v4.0.4-rc.1) (2024-11-09)
@@ -21,11 +28,4 @@
 ### Bug Fixes
 
 * pin dependency <6 ([e45b012](https://github.com/bj00rn/ha-saleryd-ftx/commit/e45b012793b8dbae83b13a267b32ab1cb0515e3e))
-
-## [4.0.2](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.1...v4.0.2) (2024-11-06)
-
-
-### Bug Fixes
-
-* upgrade dependency ([98b2735](https://github.com/bj00rn/ha-saleryd-ftx/commit/98b273586070778614e2a46a90b893031d289f5d))
 
