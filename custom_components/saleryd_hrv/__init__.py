@@ -2,21 +2,28 @@
 Custom integration to integrate Saleryd HRV system with Home Assistant.
 """
 
+from __future__ import annotations
+
 import asyncio
 from datetime import timedelta
 
 import async_timeout
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
-from homeassistant.core import HomeAssistant
-from homeassistant.exceptions import ConfigEntryNotReady
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
+from homeassistant.const import CONF_DEVICE, CONF_NAME
+from homeassistant.core import HomeAssistant, ServiceCall
+from homeassistant.exceptions import ConfigEntryNotReady, HomeAssistantError
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.loader import async_get_integration
+from homeassistant.util import slugify
 from pysaleryd.client import Client
+
+type SalerydLokeConfigurationEntry = ConfigEntry[SalerydLokeDataUpdateCoordinator]
 
 from .const import (
     CONF_ENABLE_MAINTENANCE_SETTINGS,
     CONF_MAINTENANCE_PASSWORD,
+    CONF_VALUE,
     CONF_WEBSOCKET_IP,
     CONF_WEBSOCKET_PORT,
     CONFIG_VERSION,
@@ -62,7 +69,7 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.config_entries.async_update_entry(entry, data=new_data, version=2)
 
     if entry.version is None or entry.version < 3:
-        unique_id = entry.data.get(CONF_NAME, DEFAULT_NAME)
+        unique_id = slugify(entry.data.get(CONF_NAME, DEFAULT_NAME))
         LOGGER.info("Upgrading entry to version 3, setting unique_id to %s", unique_id)
         hass.config_entries.async_update_entry(
             entry,
@@ -73,93 +80,73 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     return True
 
 
-async def async_setup(hass: HomeAssistant, processed_config):
-    "Setup integration"
-    integration = await async_get_integration(hass, DOMAIN)
-    LOGGER.info(STARTUP_MESSAGE, integration.name, integration.version)
-    return True
+def _get_entry_from_service_data(
+    hass: HomeAssistant, call: ServiceCall
+) -> SalerydLokeDataUpdateCoordinator:
+    """Return coordinator for entry id."""
+    device_id = call.get(CONF_DEVICE)
+    device_registry = dr.async_get(hass)
+    device = device_registry.async_get(device_id)
+    if device is None:
+        raise HomeAssistantError(f"Cannot find device {device_id} is not found")
+    if device.disabled:
+        raise HomeAssistantError(f"Device {device_id} is disabled")
+
+    entry = hass.config_entries.async_get_entry(device.primary_config_entry)
+    if entry is None or entry.state is not ConfigEntryState.LOADED:
+        raise HomeAssistantError(
+            f"Config entry for device {device_id} is not found or not loaded"
+        )
+    return entry
 
 
-async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
-    """Set up the integration from ConfigEntry."""
-    hass.data.setdefault(DOMAIN, {})
+def setup_hass_services(hass: HomeAssistant) -> None:
+    """Register ingegration services."""
 
-    url = entry.data.get(CONF_WEBSOCKET_IP)
-    port = entry.data.get(CONF_WEBSOCKET_PORT)
-
-    session = async_create_clientsession(hass, raise_for_status=True)
-    client = Client(url, port, session, SCAN_INTERVAL.seconds)
-    try:
-        async with async_timeout.timeout(10):
-            await client.connect()
-    except (TimeoutError, asyncio.CancelledError) as ex:
-        client.disconnect()
-        raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
-    else:
-        coordinator = SalerydLokeDataUpdateCoordinator(hass, client, LOGGER)
-        await coordinator.async_config_entry_first_refresh()
-        hass.data[DOMAIN][entry.unique_id] = coordinator
-
-        # Setup platforms
-        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
-    async def control_request(key, value=None, authenticate=False):
+    async def control_request(call: ServiceCall, key, authenticate=False):
         """Helper for system control calls"""
+        entry = _get_entry_from_service_data(hass, call.data)
+        value = call.data.get(CONF_VALUE)
+        coordinator: SalerydLokeDataUpdateCoordinator = entry.runtime_data
         if authenticate:
             maintenance_password = entry.data.get(CONF_MAINTENANCE_PASSWORD)
             LOGGER.debug("Unlock maintenance settings control request")
-            await client.send_command("IP", maintenance_password)
+            await coordinator.client.send_command("IP", maintenance_password)
 
         LOGGER.debug("Sending control request %s with payload %s", key, value)
-        await client.send_command(key, value)
+        await coordinator.client.send_command(key, value)
 
-    async def set_fireplace_mode(call):
+    async def set_fireplace_mode(call: ServiceCall):
         """Set fireplace mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending set fire mode request of %s", value)
-        await control_request("MB", value)
+        await control_request(call, "MB")
 
-    async def set_ventilation_mode(call):
+    async def set_ventilation_mode(call: ServiceCall):
         """Set ventilation mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending set ventilation mode request of %s", value)
-        await control_request("MF", value)
+        await control_request(call, "MF")
 
-    async def set_temperature_mode(call):
+    async def set_temperature_mode(call: ServiceCall):
         """Set temperature mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending set temperature mode request of %s", value)
-        await control_request("MT", value)
+        await control_request(call, "MT")
 
-    async def set_cooling_mode(call):
+    async def set_cooling_mode(call: ServiceCall):
         """Set cooling mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending set cooling mode request of %s", value)
-        await control_request("MK", value)
+        await control_request(call, "MK")
 
-    async def set_system_active_mode(call):
+    async def set_system_active_mode(call: ServiceCall):
         """Set system active mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending system active mode request of %s", value)
-        await control_request("MP", value, True)
+        await control_request(call, "MP", True)
 
-    async def set_target_temperature_cool(call):
+    async def set_target_temperature_cool(call: ServiceCall):
         """Set target temperature for Cool temperature mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending set target temperature for Cool mode of %s", value)
-        await control_request("TF", value, True)
+        await control_request(call, "TF", True)
 
-    async def set_target_temperature_normal(call):
+    async def set_target_temperature_normal(call: ServiceCall):
         """Set target temperature for Normal temperature mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending set target temperature for Normal mode of %s", value)
-        await control_request("TD", value, True)
+        await control_request(call, "TD", True)
 
-    async def set_target_temperature_economy(call):
+    async def set_target_temperature_economy(call: ServiceCall):
         """Set target temperature for Economy temperature mode"""
-        value = call.data.get("value")
-        LOGGER.debug("Sending set target temperature for Economy mode of %s", value)
-        await control_request("TE", value, True)
+        await control_request(call, "TE", True)
 
     services = {
         SERVICE_SET_FIREPLACE_MODE: set_fireplace_mode,
@@ -177,12 +164,42 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 
     # register services
     for key, fn in services.items():
+        if hass.services.has_service(DOMAIN, key):
+            continue
         hass.services.async_register(DOMAIN, key, fn)
 
     # register maintenance services
-    if entry.data.get(CONF_ENABLE_MAINTENANCE_SETTINGS):
-        for key, fn in maintenance_services.items():
-            hass.services.async_register(DOMAIN, key, fn)
+    for key, fn in maintenance_services.items():
+        if hass.services.has_service(DOMAIN, key):
+            continue
+        hass.services.async_register(DOMAIN, key, fn)
+
+
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
+    """Set up the integration from ConfigEntry."""
+
+    integration = await async_get_integration(hass, DOMAIN)
+    LOGGER.info(STARTUP_MESSAGE, integration.name, integration.version)
+    setup_hass_services(hass)
+
+    url = entry.data.get(CONF_WEBSOCKET_IP)
+    port = entry.data.get(CONF_WEBSOCKET_PORT)
+
+    session = async_create_clientsession(hass, raise_for_status=True)
+    client = Client(url, port, session, SCAN_INTERVAL.seconds)
+    try:
+        async with async_timeout.timeout(10):
+            await client.connect()
+    except (TimeoutError, asyncio.CancelledError) as ex:
+        client.disconnect()
+        raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
+    else:
+        coordinator = SalerydLokeDataUpdateCoordinator(hass, client, LOGGER)
+        await coordinator.async_config_entry_first_refresh()
+        entry.runtime_data = coordinator
+
+        # Setup platforms
+        await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     entry.async_on_unload(entry.add_update_listener(async_reload_entry))
     return True
@@ -191,16 +208,28 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry):
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Handle unload of an entry."""
 
+    # unload platforms
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+
     # disconnect client
-    coordinator: SalerydLokeDataUpdateCoordinator = hass.data[DOMAIN][entry.unique_id]
+    coordinator: SalerydLokeDataUpdateCoordinator = entry.runtime_data
     coordinator.client.disconnect()
 
     # remove services
-    for key in hass.services.async_services().get(DOMAIN, dict()):
-        hass.services.async_remove(DOMAIN, key)
 
-    # unload platforms
-    return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    loaded_entries = [
+        entry
+        for entry in hass.config_entries.async_entries(DOMAIN)
+        if entry.state is ConfigEntryState.LOADED
+    ]
+    if len(loaded_entries) == 1:
+        # If this is the last loaded instance, deregister any services
+        # defined during integration setup:
+
+        for key in hass.services.async_services().get(DOMAIN, dict()):
+            hass.services.async_remove(DOMAIN, key)
+
+    return unload_ok
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
