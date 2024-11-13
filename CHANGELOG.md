@@ -1,3 +1,14 @@
+## [4.1.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.1.0...v4.1.1-rc.0) (2024-11-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* Target device must be specified in service calls
+
+### Features
+
+* support multiple instances ([1c4fac2](https://github.com/bj00rn/ha-saleryd-ftx/commit/1c4fac21fc92ed97b354b1f18e6140347b159539))
+
 ## [4.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4...v4.1.0) (2024-11-10)
 
 
@@ -21,11 +32,4 @@
 ### Bug Fixes
 
 * **workflows:** bump action ([d1f78f1](https://github.com/bj00rn/ha-saleryd-ftx/commit/d1f78f1f2bcd55e609899cc9a784151879162ced))
-
-## [4.0.3](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.2...v4.0.3) (2024-11-08)
-
-
-### Bug Fixes
-
-* pin dependency <6 ([e45b012](https://github.com/bj00rn/ha-saleryd-ftx/commit/e45b012793b8dbae83b13a267b32ab1cb0515e3e))
 
