@@ -7,11 +7,14 @@ from homeassistant.components.switch import (
     SwitchEntity,
     SwitchEntityDescription,
 )
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_DEVICE
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import slugify
 
 from .const import (
-    DEFAULT_NAME,
+    CONF_VALUE,
     DOMAIN,
     KEY_COOKING_MODE,
     LOGGER,
@@ -30,10 +33,11 @@ from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
 class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
     """Virtual switch base class"""
 
-    def __init__(self, coordinator, entry_id, entity_description) -> None:
+    def __init__(self, coordinator, entry: ConfigEntry, entity_description) -> None:
+        self._entry = entry
         self._attr_is_on = False
-        self.entity_id = f"switch.{DEFAULT_NAME}_{slugify(entity_description.name)}"
-        super().__init__(entry_id, entity_description)
+        self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
+        super().__init__(entry, entity_description)
 
     def turn_on(self, **kwargs: Any) -> None:
         self._attr_is_on = True
@@ -54,9 +58,9 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
     _can_expire = False
     _expire_key = None
 
-    def __init__(self, coordinator, entry_id, entity_description) -> None:
-        self.entity_id = f"switch.{DEFAULT_NAME}_{slugify(entity_description.name)}"
-        super().__init__(coordinator, entry_id, entity_description)
+    def __init__(self, coordinator, entry: ConfigEntry, entity_description) -> None:
+        self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
+        super().__init__(coordinator, entry, entity_description)
 
     @property
     def is_on(self):
@@ -70,7 +74,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         self.hass.services.call(
             DOMAIN,
             self._service_turn_on,
-            {"value": self._state_when_on},
+            {CONF_DEVICE: self.device_entry.id, CONF_VALUE: self._state_when_on},
             blocking=True,
         )
 
@@ -79,7 +83,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         self.hass.services.call(
             DOMAIN,
             self._service_turn_off,
-            {"value": self._state_when_off},
+            {CONF_DEVICE: self.device_entry.id, CONF_VALUE: self._state_when_off},
             blocking=True,
         )
 
@@ -100,23 +104,23 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
 
     THRESHOLD = 3
 
-    def __init__(self, coordinator, entry_id, entity_description) -> None:
-        self.unsubscribe = None
-        super().__init__(coordinator, entry_id, entity_description)
+    def __init__(self, coordinator, entry: ConfigEntry, entity_description) -> None:
+        self._unsubscribe = None
+        super().__init__(coordinator, entry, entity_description)
 
     async def async_added_to_hass(self) -> Coroutine[Any, Any, None]:
         track_entity_id = (
-            f"sensor.{DEFAULT_NAME}_{slugify('Fireplace mode minutes left')}"
+            f"sensor.{self._entry.unique_id}_{slugify('Fireplace mode minutes left')}"
         )
         self._attr_is_on = False
-        self.unsubscribe = async_track_state_change_event(
+        self._unsubscribe = async_track_state_change_event(
             self.hass, track_entity_id, self._maybe_cancel
         )
         await super().async_added_to_hass()
 
     async def async_will_remove_from_hass(self) -> Coroutine[Any, Any, None]:
-        if self.unsubscribe:
-            self.unsubscribe()
+        if self._unsubscribe:
+            self._unsubscribe()
         await super().async_will_remove_from_hass()
 
     def _maybe_cancel(self, event):
@@ -129,10 +133,11 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
                     event.data["new_state"].state,
                     self.THRESHOLD,
                 )
+
                 self.hass.services.call(
                     DOMAIN,
                     SERVICE_SET_FIREPLACE_MODE,
-                    {"value": MODE_OFF},
+                    {CONF_DEVICE: self.device_entry.id, CONF_VALUE: MODE_OFF},
                     blocking=True,
                 )
 
@@ -241,12 +246,14 @@ switches = {
 }
 
 
-async def async_setup_entry(hass, entry, async_add_entities):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities
+):
     """Setup sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.unique_id]
+    coordinator = entry.runtime_data
 
     entities = [
-        switch.get("klass")(coordinator, entry.entry_id, switch.get("description"))
+        switch.get("klass")(coordinator, entry, switch.get("description"))
         for switch in switches.values()
     ]
 

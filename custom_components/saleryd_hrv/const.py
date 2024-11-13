@@ -28,6 +28,7 @@ CONF_WEBSOCKET_IP = "websocket_ip"
 CONF_WEBSOCKET_PORT = "websocket_port"
 CONF_MAINTENANCE_PASSWORD = "maintenance_password"
 CONF_ENABLE_MAINTENANCE_SETTINGS = "enable_maintenance_settings"
+CONF_VALUE = "value"
 
 # Defaults
 DEFAULT_NAME = DOMAIN

@@ -112,7 +112,7 @@ class SalerydVentilation(_SalerydClimate):
 
 async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback):
     """Setup sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
 
     entities = [
         SalerydVentilation(

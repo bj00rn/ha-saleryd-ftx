@@ -54,10 +54,6 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
         """Handle a flow initialized by the user."""
         self._errors = {}
 
-        # Comment the next 2 lines if multiple instances of the integration is allowed
-        if self._async_current_entries():
-            return self.async_abort(reason="single_instance_allowed")
-
         if user_input is not None:
             try:
                 async with async_timeout.timeout(10):

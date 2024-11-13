@@ -6,11 +6,11 @@
 [![Project Maintenance][maintenance-shield]][user_profile]
 [![BuyMeCoffee][buymecoffeebadge]][buymecoffee]
 
-*Component to integrate with [Saleryd HRV Systems](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
+*Component to integrate with [Saleryd HRV unit](https://saleryd.se/produkt-kategori/ftx-ventilation/)*
 
 ## :warning: Disclaimer
 
-:nerd_face: This integration has been developed for my HRV system for personal use.
+:nerd_face: This integration has been developed for my HRV unit for personal use.
 
 :biohazard: Be careful when altering settings on your ventilation system. Improper settings on your ventilation system can over time damage your house and personal health.
 
@@ -20,7 +20,7 @@
 
 ## Motivation
 
-Monitor and control HRV system from Home Assistant.
+Monitor and control Saleryd HRV units from Home Assistant.
 
 ### Ideas for automations
 
@@ -73,14 +73,14 @@ Switch | Description | State attributes
 
 Name | Description | Fields
 -- | -- | --
-`set_cooling_mode` | Set cooling mode | value: `integer` (0=On, 1=Off)
-`set_fireplace_mode` | Set fireplace mode | value: `integer` (0=On, 1=Off)
-`set_temperature_mode` | Set temperature mode | value: `integer` (0=Normal,1=Economy,2=Cool)
-`set_ventilation_mode` | Set ventilation mode | value: `integer` (0=Home,1=Away,2=Boost)
-`set_system_active_mode` | Set system active mode. (Maintenance settings must be enabled) | value: `integer` (0=Off,1=On,2=Reset)
-`set_target_temperature_normal` | Set target temperature for normal temperature mode. (Maintenance settings must be enabled) | value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_cool` | Set target temperature for cool temperature mode. (Maintenance settings must be enabled) | value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_economy` | Set target temperature for economy temperature mode. (Maintenance settings must be enabled) | value: `number` (temperature 10-30 degrees celcius)
+`set_cooling_mode` | Set cooling mode | device: `str` target device, value: `integer` (0=On, 1=Off)
+`set_fireplace_mode` | Set fireplace mode | device: `str` target device, value: `integer` (0=On, 1=Off)
+`set_temperature_mode` | Set temperature mode | device: `str` target device, value: `integer` (0=Normal,1=Economy,2=Cool)
+`set_ventilation_mode` | Set ventilation mode | device: `str` target device, value: `integer` (0=Home,1=Away,2=Boost)
+`set_system_active_mode` | Set system active mode. (Maintenance settings must be enabled) | device: `str` target device, value: `integer` (0=Off,1=On,2=Reset)
+`set_target_temperature_normal` | Set target temperature for normal temperature mode. (Maintenance settings must be enabled) | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_cool` | Set target temperature for cool temperature mode. (Maintenance settings must be enabled) | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_economy` | Set target temperature for economy temperature mode. (Maintenance settings must be enabled) | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
 
 ## Experimental features
 

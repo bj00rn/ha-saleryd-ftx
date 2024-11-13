@@ -35,3 +35,7 @@ class SalerydLokeDataUpdateCoordinator(DataUpdateCoordinator):
         _data = data.copy()
         self.inject_virtual_keys(_data)
         return super().async_set_updated_data(_data)
+
+    async def send_command(self, key, data):
+        """Send command to client"""
+        await self.client.send_command(key, data)

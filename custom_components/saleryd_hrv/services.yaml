@@ -2,6 +2,13 @@ set_fireplace_mode:
   name: Set fireplace mode
   description: Set fireplace mode on or off
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: desired mode (0=Off,1=On)
@@ -16,6 +23,13 @@ set_cooling_mode:
   name: Set cooling mode
   description: Set cooling mode on or off
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: desired mode (0=Off,1=On)
@@ -30,6 +44,13 @@ set_ventilation_mode:
   name: Set ventilation mode
   description: Set ventilation mode
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: desired mode (0=Home,1=Away,2=Boost)
@@ -44,6 +65,13 @@ set_temperature_mode:
   name: Set temperature mode
   description: Set temperature mode
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: desired mode (0=Normal,1=Economy,2=Cool)
@@ -58,6 +86,13 @@ set_system_active_mode:
   name: Set system active mode
   description: Set system active mode
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: desired mode (0=Off,1=On,2=Reset)
@@ -72,6 +107,13 @@ unlock_maintenance_settings:
   name: Unlock maintenance settings
   description: Unlock maintenance settings
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: Maintenance password
@@ -84,6 +126,13 @@ set_target_temperature_normal:
   name: Set normal target temperature
   description: Set target temperature for normal temperature mode
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: target temperature
@@ -98,6 +147,13 @@ set_target_temperature_cool:
   name: Set cool target temperature
   description: Set target temperature for cool temperature mode
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: target temperature
@@ -112,6 +168,13 @@ set_target_temperature_economy:
   name: Set economy target temperature
   description: Set target temperature for economy temperature mode
   fields:
+    device:
+      name: Device
+      description: Target device
+      required: True
+      selector:
+        device:
+          integration: saleryd_hrv
     value:
       name: Value
       description: target temperature

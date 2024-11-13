@@ -9,6 +9,7 @@ from homeassistant.components.sensor import (
     SensorEntityDescription,
     SensorStateClass,
 )
+from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
     REVOLUTIONS_PER_MINUTE,
@@ -16,6 +17,7 @@ from homeassistant.const import (
     UnitOfTemperature,
     UnitOfTime,
 )
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
@@ -53,13 +55,13 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
     def __init__(
         self,
         coordinator: DataUpdateCoordinator,
-        entry_id,
+        entry: ConfigEntry,
         entity_description: SensorEntityDescription,
     ) -> None:
         """Initialize the sensor."""
-        self.entity_id = f"sensor.{DEFAULT_NAME}_{slugify(entity_description.name)}"
+        self.entity_id = f"sensor.{entry.unique_id}_{slugify(entity_description.name)}"
 
-        super().__init__(coordinator, entry_id, entity_description)
+        super().__init__(coordinator, entry, entity_description)
 
     @Throttle(min_time=timedelta(minutes=1))
     def _log_unknown_sensor_value(self, value):
@@ -421,12 +423,14 @@ sensors = {
 }
 
 
-async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback):
+async def async_setup_entry(
+    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+):
     """Setup sensor platform."""
-    coordinator = hass.data[DOMAIN][entry.unique_id]
+    coordinator = entry.runtime_data
 
     entities = [
-        sensor.get("klass")(coordinator, entry.entry_id, sensor.get("description"))
+        sensor.get("klass")(coordinator, entry, sensor.get("description"))
         for sensor in sensors.values()
     ]
 
