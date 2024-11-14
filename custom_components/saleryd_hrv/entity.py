@@ -23,10 +23,7 @@ class SaleryLokeVirtualEntity(Entity):
         self._attr_unique_id = f"{entry.unique_id}_{slugify(entity_description.name)}"
         self._attr_should_poll = False
         self._attr_device_info = DeviceInfo(
-            identifiers={
-                # Serial numbers are unique identifiers within a specific domain
-                (DOMAIN, entry.unique_id)
-            },
+            identifiers={(DOMAIN, entry.entry_id)},
             name=entry.data.get(CONF_NAME),
             manufacturer=MANUFACTURER,
         )
@@ -47,10 +44,7 @@ class SalerydLokeEntity(CoordinatorEntity):
         self._attr_name = entity_description.name
         self._attr_unique_id = f"{entry.unique_id}_{slugify(entity_description.name)}"
         self._attr_device_info = DeviceInfo(
-            identifiers={
-                # Serial numbers are unique identifiers within a specific domain
-                (DOMAIN, entry.unique_id)
-            },
+            identifiers={(DOMAIN, entry.entry_id)},
             name=entry.data.get(CONF_NAME),
             manufacturer=MANUFACTURER,
         )
