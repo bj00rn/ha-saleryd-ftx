@@ -19,8 +19,9 @@
 
 * support multiple instances ([1c4fac2](https://github.com/bj00rn/ha-saleryd-ftx/commit/1c4fac21fc92ed97b354b1f18e6140347b159539))
 
-## [4.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4...v4.1.0) (2024-11-10)
+## [~~4.1.0~~](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4...v4.1.0) (2024-11-10)
 
+This release was been revoked du to breaking existing installations.
 
 ### Features
 
