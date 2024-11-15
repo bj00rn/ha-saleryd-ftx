@@ -1,3 +1,5 @@
+## [5.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.0.1-rc.0...v5.1.0) (2024-11-15)
+
 ## [5.0.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.0.0...v5.0.1-rc.0) (2024-11-15)
 
 
@@ -30,11 +32,4 @@
 ### Features
 
 * support multiple instances ([1c4fac2](https://github.com/bj00rn/ha-saleryd-ftx/commit/1c4fac21fc92ed97b354b1f18e6140347b159539))
-
-## [4.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.0.4...v4.1.0) (2024-11-10)
-
-
-### Features
-
-* set unique_id from entry name to prepare ([4611ea5](https://github.com/bj00rn/ha-saleryd-ftx/commit/4611ea55ba20149a103d79bc4236560d7b31cb20))
 
