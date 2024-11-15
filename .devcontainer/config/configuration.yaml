@@ -2,6 +2,9 @@
 # Loads default set of integrations. Do not remove.
 default_config:
 
+ffmpeg:
+  ffmpeg_bin: /usr/bin/true
+
 # https://www.home-assistant.io/integrations/logger/
 logger:
   default: info

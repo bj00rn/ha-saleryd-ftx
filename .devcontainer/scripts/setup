@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 set -ex
+# install home assistant external dependencies
+sudo apt update
+sudo apt install -y --no-install-recommends libturbojpeg0 libpcap-dev
 
 # upgrade pip and clear cache
 rm -rf $(pip cache dir)
