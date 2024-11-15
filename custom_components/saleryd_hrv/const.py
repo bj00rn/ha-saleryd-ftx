@@ -10,7 +10,7 @@ ATTRIBUTION = "Data provided by Saleryd HRV"
 ISSUE_URL = "https://github.com/bj00rn/ha-saleryd-ftx/issues"
 SUPPORTED_FIRMWARES = ["4.1.5"]
 UNSUPPORTED_FIRMWARES = ["4.1.1"]
-CONFIG_VERSION = 3
+CONFIG_VERSION = 4
 
 # Icons
 ICON = "mdi:format-quote-close"
@@ -26,8 +26,8 @@ PLATFORMS = [SENSOR, SWITCH]
 CONF_ENABLED = "enabled"
 CONF_WEBSOCKET_IP = "websocket_ip"
 CONF_WEBSOCKET_PORT = "websocket_port"
-CONF_MAINTENANCE_PASSWORD = "maintenance_password"
-CONF_ENABLE_MAINTENANCE_SETTINGS = "enable_maintenance_settings"
+CONF_INSTALLER_PASSWORD = "installer_password"
+CONF_ENABLE_INSTALLER_SETTINGS = "enable_installer_settings"
 CONF_VALUE = "value"
 
 # Defaults
@@ -71,10 +71,13 @@ SERVICE_SET_FIREPLACE_MODE = "set_fireplace_mode"
 SERVICE_SET_COOLING_MODE = "set_cooling_mode"
 SERVICE_SET_VENTILATION_MODE = "set_ventilation_mode"
 SERVICE_SET_TEMPERATURE_MODE = "set_temperature_mode"
-SERVICE_UNLOCK_MAINTENANCE_SETTINGS = "unlock_maintenance_settings"
 SERVICE_SET_SYSTEM_ACTIVE_MODE = "set_system_active_mode"
 SERVICE_SET_TARGET_TEMPERATURE_COOL = "set_target_temperature_cool"
 SERVICE_SET_TARGET_TEMPERATURE_NORMAL = "set_target_temperature_normal"
 SERVICE_SET_TARGET_TEMPERATURE_ECONOMY = "set_target_temperature_economy"
 
 LOGGER: Logger = getLogger(__package__)
+
+# Deprecated constants kept for migrations
+DEPRECATED_CONF_MAINTENANCE_PASSWORD = "maintenance_password"
+DEPRECATED_CONF_ENABLE_MAINTENANCE_SETTINGS = "enable_maintenance_settings"

@@ -12,8 +12,8 @@ from pysaleryd.client import Client
 import voluptuous as vol
 
 from .const import (
-    CONF_ENABLE_MAINTENANCE_SETTINGS,
-    CONF_MAINTENANCE_PASSWORD,
+    CONF_ENABLE_INSTALLER_SETTINGS,
+    CONF_INSTALLER_PASSWORD,
     CONF_WEBSOCKET_IP,
     CONF_WEBSOCKET_PORT,
     CONFIG_VERSION,
@@ -25,8 +25,8 @@ from .const import (
 RECONFIG_DATA = {
     vol.Required(CONF_WEBSOCKET_IP): str,
     vol.Required(CONF_WEBSOCKET_PORT): int,
-    vol.Optional(CONF_ENABLE_MAINTENANCE_SETTINGS): vol.Coerce(bool),
-    vol.Optional(CONF_MAINTENANCE_PASSWORD): str,
+    vol.Optional(CONF_ENABLE_INSTALLER_SETTINGS): vol.Coerce(bool),
+    vol.Optional(CONF_INSTALLER_PASSWORD): str,
 }
 
 CONFIG_DATA = {
@@ -81,8 +81,8 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
                 CONF_NAME: DEFAULT_NAME,
                 CONF_WEBSOCKET_IP: "192.168.1.151",
                 CONF_WEBSOCKET_PORT: 3001,
-                CONF_ENABLE_MAINTENANCE_SETTINGS: False,
-                CONF_MAINTENANCE_PASSWORD: "",
+                CONF_ENABLE_INSTALLER_SETTINGS: False,
+                CONF_INSTALLER_PASSWORD: "",
             }
 
             return self.async_show_form(

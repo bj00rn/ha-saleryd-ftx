@@ -21,13 +21,15 @@ from pysaleryd.client import Client
 type SalerydLokeConfigurationEntry = ConfigEntry[SalerydLokeDataUpdateCoordinator]
 
 from .const import (
-    CONF_ENABLE_MAINTENANCE_SETTINGS,
-    CONF_MAINTENANCE_PASSWORD,
+    CONF_ENABLE_INSTALLER_SETTINGS,
+    CONF_INSTALLER_PASSWORD,
     CONF_VALUE,
     CONF_WEBSOCKET_IP,
     CONF_WEBSOCKET_PORT,
     CONFIG_VERSION,
     DEFAULT_NAME,
+    DEPRECATED_CONF_ENABLE_MAINTENANCE_SETTINGS,
+    DEPRECATED_CONF_MAINTENANCE_PASSWORD,
     DOMAIN,
     LOGGER,
     PLATFORMS,
@@ -61,8 +63,8 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if entry.version is None or entry.version < 2:
         new_data = entry.data.copy()
         new_data |= {
-            CONF_ENABLE_MAINTENANCE_SETTINGS: False,
-            CONF_MAINTENANCE_PASSWORD: None,
+            CONF_ENABLE_INSTALLER_SETTINGS: False,
+            CONF_INSTALLER_PASSWORD: None,
         }
 
         LOGGER.info("Upgrading entry to version 2")
@@ -75,6 +77,21 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             entry,
             version=3,
             unique_id=unique_id,
+        )
+
+    if entry.version is None or entry.version < 4:
+        new_data = entry.data.copy()
+        new_data[CONF_ENABLE_INSTALLER_SETTINGS] = new_data.pop(
+            DEPRECATED_CONF_ENABLE_MAINTENANCE_SETTINGS
+        )
+        new_data[CONF_INSTALLER_PASSWORD] = new_data.pop(
+            DEPRECATED_CONF_MAINTENANCE_PASSWORD
+        )
+
+        hass.config_entries.async_update_entry(
+            entry,
+            new_data,
+            version=4,
         )
 
     return True
@@ -103,15 +120,21 @@ def _get_entry_from_service_data(
 def setup_hass_services(hass: HomeAssistant) -> None:
     """Register ingegration services."""
 
-    async def control_request(call: ServiceCall, key, authenticate=False):
+    async def control_request(call: ServiceCall, key, installer_setting=False):
         """Helper for system control calls"""
         entry = _get_entry_from_service_data(hass, call.data)
         value = call.data.get(CONF_VALUE)
+        device = call.data.get(CONF_DEVICE)
         coordinator: SalerydLokeDataUpdateCoordinator = entry.runtime_data
-        if authenticate:
-            maintenance_password = entry.data.get(CONF_MAINTENANCE_PASSWORD)
-            LOGGER.debug("Unlock maintenance settings control request")
-            await coordinator.client.send_command("IP", maintenance_password)
+        if installer_setting:
+            installer_settings_enabled = entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS)
+            if not installer_settings_enabled:
+                raise HomeAssistantError(
+                    "Installer settings not enabled for device %s", device
+                )
+            installer_password = entry.data.get(CONF_INSTALLER_PASSWORD)
+            LOGGER.debug("Sending unlock installer settings control request")
+            await coordinator.client.send_command("IP", installer_password)
 
         LOGGER.debug("Sending control request %s with payload %s", key, value)
         await coordinator.client.send_command(key, value)
@@ -155,7 +178,7 @@ def setup_hass_services(hass: HomeAssistant) -> None:
         SERVICE_SET_TEMPERATURE_MODE: set_temperature_mode,
     }
 
-    maintenance_services = {
+    installer_services = {
         SERVICE_SET_SYSTEM_ACTIVE_MODE: set_system_active_mode,
         SERVICE_SET_TARGET_TEMPERATURE_COOL: set_target_temperature_cool,
         SERVICE_SET_TARGET_TEMPERATURE_ECONOMY: set_target_temperature_economy,
@@ -163,13 +186,7 @@ def setup_hass_services(hass: HomeAssistant) -> None:
     }
 
     # register services
-    for key, fn in services.items():
-        if hass.services.has_service(DOMAIN, key):
-            continue
-        hass.services.async_register(DOMAIN, key, fn)
-
-    # register maintenance services
-    for key, fn in maintenance_services.items():
+    for key, fn in (services | installer_services).items():
         if hass.services.has_service(DOMAIN, key):
             continue
         hass.services.async_register(DOMAIN, key, fn)

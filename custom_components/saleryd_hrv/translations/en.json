@@ -7,30 +7,30 @@
                     "name": "Name",
                     "websocket_ip": "IP adress",
                     "websocket_port": "Port",
-                    "enable_maintenance_settings": "Enable maintenance settings?",
-                    "maintenance_password": "Maintenance password"
+                    "enable_installer_settings": "Enable installer settings?",
+                    "installer_password": "Installer password"
                 },
                 "data_description": {
                     "websocket_ip": "IP adress of the HRV system on the local network",
                     "websocket_port": "Port. Default is 3001",
-                    "enable_maintenance_settings": "Enable altering HRV system configuration from Home Assistant. Don't alter maintenance settings unless you know what you are doing",
-                    "maintenance_password": "Required for maintenance settings"
+                    "enable_installer_settings": "Enable installer settings?",
+                    "installer_password": "Installer password"
                 }
             },
             "reconfigure": {
-                "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below.",
+                "description": "Follow instructions in manual to connect the HRV unit to local network and enter connection details below",
                 "data": {
                     "name": "Name",
                     "websocket_ip": "IP adress",
                     "websocket_port": "Port",
-                    "enable_maintenance_settings": "Enable maintenance settings?",
-                    "maintenance_password": "Maintenance password"
+                    "enable_installer_settings": "Enable installer settings?",
+                    "installer_password": "Installer password"
                 },
                 "data_description": {
                     "websocket_ip": "IP adress of the HRV system on the local network",
                     "websocket_port": "Port. Default is 3001",
-                    "enable_maintenance_settings": "Enable altering HRV system configuration from Home Assistant. Don't alter maintenance settings unless you know what you are doing",
-                    "maintenance_password": "Required for maintenance settings"
+                    "enable_installer_settings": "Alter installer settings from Home Assistant. Don't alter installer settings unless you know what you are doing",
+                    "installer_password": "Required for installer settings"
                 }
             }
         },

@@ -103,25 +103,6 @@ set_system_active_mode:
           min: 0
           max: 2
           mode: slider
-unlock_maintenance_settings:
-  name: Unlock maintenance settings
-  description: Unlock maintenance settings
-  fields:
-    device:
-      name: Device
-      description: Target device
-      required: True
-      selector:
-        device:
-          integration: saleryd_hrv
-    value:
-      name: Value
-      description: Maintenance password
-      example: "6666"
-      required: true
-      selector:
-        text:
-          type: password
 set_target_temperature_normal:
   name: Set normal target temperature
   description: Set target temperature for normal temperature mode

@@ -71,16 +71,24 @@ Switch | Description | State attributes
 
 ## Services
 
+### Normal operation
+
+Control normal operation of the unit
 Name | Description | Fields
 -- | -- | --
 `set_cooling_mode` | Set cooling mode | device: `str` target device, value: `integer` (0=On, 1=Off)
 `set_fireplace_mode` | Set fireplace mode | device: `str` target device, value: `integer` (0=On, 1=Off)
 `set_temperature_mode` | Set temperature mode | device: `str` target device, value: `integer` (0=Normal,1=Economy,2=Cool)
 `set_ventilation_mode` | Set ventilation mode | device: `str` target device, value: `integer` (0=Home,1=Away,2=Boost)
-`set_system_active_mode` | Set system active mode. (Maintenance settings must be enabled) | device: `str` target device, value: `integer` (0=Off,1=On,2=Reset)
-`set_target_temperature_normal` | Set target temperature for normal temperature mode. (Maintenance settings must be enabled) | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_cool` | Set target temperature for cool temperature mode. (Maintenance settings must be enabled) | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_economy` | Set target temperature for economy temperature mode. (Maintenance settings must be enabled) | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+
+### Installer settings
+Alter installer settings of the unit,  Installer settings must be enabled.
+Name | Description | Fields
+-- | -- | --
+`set_system_active_mode` | Set system active mode`*`| device: `str` target device, value: `integer` (0=Off,1=On,2=Reset)
+`set_target_temperature_normal` | Set target temperature for normal temperature mode`*`| device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_cool` | Set target temperature for cool temperature mode`*`| device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_economy` | Set target temperature for economy temperature mode`*`| device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
 
 ## Experimental features
 
@@ -134,8 +142,8 @@ Setting | Description | Default
 Name | System name. Must be unique. |
 Websocket IP | IP adress of the HRV system on the local WIFI network |
 Port | Port number for websocket connection | 3001
-Enable maintenance settings | Enable altering HRV system configuration set by the installer from Home Assistant. Don't alter these settings unless you know what you are doing | False
-Maintenance password | Maintenance password. Required for maintenance settings |
+Enable installer settings | Altering HRV system configuration set by the installer from Home Assistant. Don't alter these settings unless you know what you are doing | False
+Installer password | Installer password. Required for installer settings |
 
 ## Troubleshooting
 
@@ -146,9 +154,9 @@ Maintenance password | Maintenance password. Required for maintenance settings 
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser.
 * The system HRV can only handle a few connected clients. Shut down any additional clients/browsers and try again.
 
-### I can't modify maintenance settings
-* Ensure maintenance settings are enabled in integration configuration
-* Ensure maintenace password is correct
+### I can't modify installer settings
+* Ensure installer settings are enabled in integration configuration
+* Ensure installer password is correct
 
 ### Contributing
 
