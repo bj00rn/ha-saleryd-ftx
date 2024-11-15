@@ -84,13 +84,14 @@ async def async_migrate_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         new_data[CONF_ENABLE_INSTALLER_SETTINGS] = new_data.pop(
             DEPRECATED_CONF_ENABLE_MAINTENANCE_SETTINGS
         )
-        new_data[CONF_INSTALLER_PASSWORD] = new_data.pop(
-            DEPRECATED_CONF_MAINTENANCE_PASSWORD
-        )
+        if DEPRECATED_CONF_MAINTENANCE_PASSWORD in new_data:
+            new_data[CONF_INSTALLER_PASSWORD] = new_data.pop(
+                DEPRECATED_CONF_MAINTENANCE_PASSWORD
+            )
 
         hass.config_entries.async_update_entry(
             entry,
-            new_data,
+            data=new_data,
             version=4,
         )
 
@@ -130,7 +131,7 @@ def setup_hass_services(hass: HomeAssistant) -> None:
             installer_settings_enabled = entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS)
             if not installer_settings_enabled:
                 raise HomeAssistantError(
-                    "Installer settings not enabled for device %s", device
+                    f"Installer settings not enabled for device {device}"
                 )
             installer_password = entry.data.get(CONF_INSTALLER_PASSWORD)
             LOGGER.debug("Sending unlock installer settings control request")
