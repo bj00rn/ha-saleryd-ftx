@@ -1,6 +1,7 @@
 """Sensor platform"""
 
 from datetime import timedelta
+from enum import Enum
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -37,6 +38,29 @@ from .const import (
     VentilationModeEnum,
 )
 from .entity import SalerydLokeEntity
+
+
+class SalerydLokeEnumSensor(SalerydLokeEntity, SensorEntity):
+
+    def __init__(
+        self,
+        coordinator: DataUpdateCoordinator,
+        entry: ConfigEntry,
+        entity_description: SensorEntityDescription,
+        state_enum: Enum = ModeEnum,
+    ) -> None:
+        """Initialize the sensor."""
+        self._state_enum = state_enum
+        self._attr_options = [option.name for option in self._state_enum]
+        self._attr_device_class = SensorDeviceClass.ENUM
+        self.entity_id = f"sensor.{entry.unique_id}_{slugify(entity_description.name)}"
+        super().__init__(coordinator, entry, entity_description)
+
+    @property
+    def native_value(self):
+        """Return the native value of the sensor."""
+        value = self.coordinator.data.get(self.entity_description.key)[0]
+        return self._state_enum(value).name
 
 
 class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
@@ -114,18 +138,6 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
                 return heater_percent * 1800
             else:
                 self._log_unknown_sensor_value(value)
-
-        if self.entity_description.key == "MT":
-            return TemperatureModeEnum(value).name
-
-        if self.entity_description.key == "MP":
-            return SystemActiveModeEnum(value).name
-
-        if self.entity_description.key == "MF":
-            return VentilationModeEnum(value).name
-
-        if self.entity_description.key == "MH":
-            return ModeEnum(value).name
 
         if self.entity_description.key == "*SC":
             if value not in SUPPORTED_FIRMWARES:
@@ -255,15 +267,6 @@ sensors = {
             state_class=SensorStateClass.MEASUREMENT,
         ),
     },
-    "ventilation_mode": {
-        "klass": SalerydLokeSensor,
-        "description": SensorEntityDescription(
-            key="MF",
-            name="Ventilation mode",
-            icon="mdi:hvac",
-            device_class=SensorDeviceClass.ENUM,
-        ),
-    },
     "target_temperature": {
         "klass": SalerydLokeSensor,
         "description": SensorEntityDescription(
@@ -273,15 +276,6 @@ sensors = {
             device_class=SensorDeviceClass.TEMPERATURE,
             state_class=SensorStateClass.MEASUREMENT,
             native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-        ),
-    },
-    "temperature_mode": {
-        "klass": SalerydLokeSensor,
-        "description": SensorEntityDescription(
-            key="MT",
-            icon="mdi:home-thermometer",
-            name="Temperature mode",
-            device_class=SensorDeviceClass.ENUM,
         ),
     },
     "filter_months_left": {
@@ -366,24 +360,6 @@ sensors = {
             device_class=SensorDeviceClass.ENUM,
         ),
     },
-    "control_system_active": {
-        "klass": SalerydLokeSensor,
-        "description": SensorEntityDescription(
-            key="MP",
-            icon="mdi:power",
-            name="System active",
-            device_class=SensorDeviceClass.ENUM,
-        ),
-    },
-    "heater_active": {
-        "klass": SalerydLokeSensor,
-        "description": SensorEntityDescription(
-            key="MH",
-            icon="mdi:heating-coil",
-            name="Heater active",
-            device_class=SensorDeviceClass.ENUM,
-        ),
-    },
 }
 
 
@@ -398,4 +374,47 @@ async def async_setup_entry(
         for sensor in sensors.values()
     ]
 
+    enum_sensors = [
+        SalerydLokeEnumSensor(
+            coordinator,
+            entry,
+            SensorEntityDescription(
+                key="MT",
+                icon="mdi:home-thermometer",
+                name="Temperature mode",
+            ),
+            state_enum=TemperatureModeEnum,
+        ),
+        SalerydLokeEnumSensor(
+            coordinator,
+            entry,
+            SensorEntityDescription(
+                key="MH",
+                icon="mdi:heating-coil",
+                name="Heater active",
+            ),
+        ),
+        SalerydLokeEnumSensor(
+            coordinator,
+            entry,
+            SensorEntityDescription(
+                key="MP",
+                icon="mdi:power",
+                name="System active",
+            ),
+            SystemActiveModeEnum,
+        ),
+        SalerydLokeEnumSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key="MF",
+                name="Ventilation mode",
+                icon="mdi:hvac",
+            ),
+            state_enum=VentilationModeEnum,
+        ),
+    ]
+
     async_add_entities(entities)
+    async_add_entities(enum_sensors)
