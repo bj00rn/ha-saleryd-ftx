@@ -58,7 +58,7 @@ Name | Description | Unit | State attributes
 `ventilation_mode` | current ventilation mode setting | `str` |
 
 
-## Switches
+### Switches
 
 Switch | Description | State attributes
 -- | -- | --
@@ -68,6 +68,10 @@ Switch | Description | State attributes
 `cooling_mode` | Turn `cooling` mode on/off
 `fireplace_mode` | Turn `fireplace` mode on/off | minutes left
 
+### Select
+Switch | Description
+`ventilation_mode` | set ventilation mode
+`temperature_mode` | set temperature mode
 
 ## Services
 
@@ -82,13 +86,13 @@ Name | Description | Fields
 `set_ventilation_mode` | Set ventilation mode | device: `str` target device, value: `integer` (0=Home,1=Away,2=Boost)
 
 ### Installer settings
-Alter installer settings of the unit,  Installer settings must be enabled.
+Alter installer settings of the unit, Installer settings must be enabled.
 Name | Description | Fields
 -- | -- | --
-`set_system_active_mode` | Set system active mode`*`| device: `str` target device, value: `integer` (0=Off,1=On,2=Reset)
-`set_target_temperature_normal` | Set target temperature for normal temperature mode`*`| device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_cool` | Set target temperature for cool temperature mode`*`| device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
-`set_target_temperature_economy` | Set target temperature for economy temperature mode`*`| device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+`set_system_active_mode` | Set system active mode | device: `str` target device, value: `integer` (0=Off,1=On,2=Reset)
+`set_target_temperature_normal` | Set target temperature for normal temperature mode | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_cool` | Set target temperature for cool temperature mode | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
+`set_target_temperature_economy` | Set target temperature for economy temperature mode | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
 
 ## Experimental features
 
@@ -96,7 +100,7 @@ Name | Description | Fields
 
 Switch | Description | State attributes
 -- | -- | --
-`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking `mode is active, automatically deactivates `fireplace` mode before timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
+`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking mode` is active, it automatically deactivates `fireplace` mode before timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
 
 ## Supported devices
 
