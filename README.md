@@ -44,8 +44,7 @@ Name | Description | Unit | State attributes
 `heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm` |
 `heater_active` | auxillary heater active | boolean |
 `heater_air_temperature` | air temperature at heater | `°C` |
-`heater_power` | auxillary heater power | `W` |
-`heater_power_percent` | auxillary heater power | `%` |
+`heater_power_percent` | auxillary heater power | `%`, |
 `product_number` | product number | `str` |
 `supply_air_temperature` | supply air temperature | `°C` |
 `supply_fan_speed`  | fan speed | `%` |
@@ -56,7 +55,6 @@ Name | Description | Unit | State attributes
 `target_temperature` | target air temperature | `°C` |
 `temperature_mode` | current temperature mode setting | `str` |
 `ventilation_mode` | current ventilation mode setting | `str` |
-
 
 ### Switches
 
@@ -86,6 +84,7 @@ Name | Description | Fields
 `set_ventilation_mode` | Set ventilation mode | device: `str` target device, value: `integer` (0=Home,1=Away,2=Boost)
 
 ### Installer settings
+
 Alter installer settings of the unit, Installer settings must be enabled.
 Name | Description | Fields
 -- | -- | --
@@ -95,6 +94,12 @@ Name | Description | Fields
 `set_target_temperature_economy` | Set target temperature for economy temperature mode | device: `str` target device, value: `number` (temperature 10-30 degrees celcius)
 
 ## Experimental features
+
+### Sensors
+
+Name | Description | Unit | State attributes
+-- | -- | -- | --
+`heater_power` | Estimated auxillary heater power | `W` |
 
 ### Switches
 
@@ -124,7 +129,6 @@ Model | Confirmed supported control system versions | Unsupported control system
 1. Download release .zip file from [releases](https://github.com/bj00rn/ha-saleryd-ftx/releases) page.
 2. Copy the `saleryd_hrv` directory from the release archive to the `/custom_components` directory in your Home Assistant server.
 3. Restart Home Assistant.
-
 
 ## Configuration
 
