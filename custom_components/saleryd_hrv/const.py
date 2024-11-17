@@ -1,5 +1,6 @@
 """Constants for saleryd_hrv."""
 
+from enum import IntEnum
 from logging import Logger, getLogger
 
 # Base component constants
@@ -19,7 +20,8 @@ ICON = "mdi:format-quote-close"
 SENSOR = "sensor"
 SWITCH = "switch"
 CLIMATE = "climate"
-PLATFORMS = [SENSOR, SWITCH]
+SELECT = "select"
+PLATFORMS = [SENSOR, SWITCH, SELECT]
 
 
 # Configuration and options
@@ -48,23 +50,34 @@ KEY_CLIENT_STATE = "*HRV_CLIENT_STATE"
 KEY_TARGET_TEMPERATURE = "*TARGET_TEMPERATURE"
 KEY_COOKING_MODE = "*COOKING_MODE"
 
-TEMPERATURE_MODE_NORMAL = 0
-TEMPERATURE_MODE_ECO = 1
-TEMPERATURE_MODE_COOL = 2
 
-VENTILATION_MODE_HOME = 0
-VENTILATION_MODE_AWAY = 1
-VENTILATION_MODE_BOOST = 2
+class TemperatureModeEnum(IntEnum):
+    Normal = 0
+    Economy = 1
+    Cool = 2
 
-HEATER_MODE_LOW = 0
-HEATER_MODE_HIGH = 1
 
-SYSTEM_ACTIVE_MODE_ON = 1
-SYSTEM_ACTIVE_MODE_OFF = 0
-SYSTEM_ACTIVE_MODE_RESET = 2
+class VentilationModeEnum(IntEnum):
+    Home = 0
+    Away = 1
+    Boost = 2
 
-MODE_ON = 1
-MODE_OFF = 0
+
+class HeaterModeEnum(IntEnum):
+    Low = 0
+    High = 1
+
+
+class SystemActiveModeEnum(IntEnum):
+    Off = 0
+    On = 1
+    Reset = 2
+
+
+class ModeEnum(IntEnum):
+    On = 1
+    Off = 0
+
 
 # Services
 SERVICE_SET_FIREPLACE_MODE = "set_fireplace_mode"

@@ -24,27 +24,17 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
 from homeassistant.util import Throttle, slugify
 
 from .const import (
-    DEFAULT_NAME,
-    DOMAIN,
-    HEATER_MODE_HIGH,
-    HEATER_MODE_LOW,
     ISSUE_URL,
     KEY_CLIENT_STATE,
     KEY_TARGET_TEMPERATURE,
     LOGGER,
-    MODE_OFF,
-    MODE_ON,
     SUPPORTED_FIRMWARES,
-    SYSTEM_ACTIVE_MODE_OFF,
-    SYSTEM_ACTIVE_MODE_ON,
-    SYSTEM_ACTIVE_MODE_RESET,
-    TEMPERATURE_MODE_COOL,
-    TEMPERATURE_MODE_ECO,
-    TEMPERATURE_MODE_NORMAL,
     UNSUPPORTED_FIRMWARES,
-    VENTILATION_MODE_AWAY,
-    VENTILATION_MODE_BOOST,
-    VENTILATION_MODE_HOME,
+    HeaterModeEnum,
+    ModeEnum,
+    SystemActiveModeEnum,
+    TemperatureModeEnum,
+    VentilationModeEnum,
 )
 from .entity import SalerydLokeEntity
 
@@ -95,11 +85,11 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         if self.entity_description.key == KEY_TARGET_TEMPERATURE:
             try:
                 temperature_mode = self.coordinator.data.get("MT")[0]
-                if temperature_mode == TEMPERATURE_MODE_COOL:
+                if temperature_mode == TemperatureModeEnum.Cool:
                     return self.coordinator.data.get("TF")[0]
-                elif temperature_mode == TEMPERATURE_MODE_ECO:
+                elif temperature_mode == TemperatureModeEnum.Economy:
                     return self.coordinator.data.get("TE")[0]
-                elif temperature_mode == TEMPERATURE_MODE_NORMAL:
+                elif temperature_mode == TemperatureModeEnum.Normal:
                     return self.coordinator.data.get("TD")[0]
             except TypeError as exc:
                 LOGGER.debug(exc)
@@ -118,50 +108,24 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
         if self.entity_description.key == "MG":
             heater_percent = self.coordinator.data.get("*MJ") / 100
-            if value == HEATER_MODE_LOW:
+            if value == HeaterModeEnum.Low:
                 return heater_percent * 900
-            elif value == HEATER_MODE_HIGH:
+            elif value == HeaterModeEnum.High:
                 return heater_percent * 1800
             else:
                 self._log_unknown_sensor_value(value)
 
         if self.entity_description.key == "MT":
-            if value == TEMPERATURE_MODE_NORMAL:
-                return "Normal"
-            elif value == TEMPERATURE_MODE_ECO:
-                return "Eco"
-            elif value == TEMPERATURE_MODE_COOL:
-                return "Cool"
-            else:
-                self._log_unknown_sensor_value(value)
-
-        if self.entity_description.key == "MF":
-            if value == VENTILATION_MODE_HOME:
-                return "Home"
-            elif value == VENTILATION_MODE_AWAY:
-                return "Away"
-            elif value == VENTILATION_MODE_BOOST:
-                return "Boost"
-            else:
-                self._log_unknown_sensor_value(value)
+            return TemperatureModeEnum(value).name
 
         if self.entity_description.key == "MP":
-            if value == SYSTEM_ACTIVE_MODE_ON:
-                return "On"
-            elif value == SYSTEM_ACTIVE_MODE_OFF:
-                return "Off"
-            elif value == SYSTEM_ACTIVE_MODE_RESET:
-                return "Reset"
-            else:
-                self._log_unknown_sensor_value(value)
+            return SystemActiveModeEnum(value).name
+
+        if self.entity_description.key == "MF":
+            return VentilationModeEnum(value).name
 
         if self.entity_description.key == "MH":
-            if value == MODE_ON:
-                return "On"
-            elif value == MODE_OFF:
-                return "Off"
-            else:
-                self._log_unknown_sensor_value(value)
+            return ModeEnum(value).name
 
         if self.entity_description.key == "*SC":
             if value not in SUPPORTED_FIRMWARES:
@@ -192,15 +156,15 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
         if self.entity_description.key == "MT":
             try:
-                if value == TEMPERATURE_MODE_COOL:
+                if value == TemperatureModeEnum.Cool:
                     attrs["target_temperature"] = self.coordinator.data.get("TF")[0]
-                elif value == TEMPERATURE_MODE_ECO:
+                elif value == TemperatureModeEnum.Economy:
                     attrs["target_temperature"] = self.coordinator.data.get("TE")[0]
-                elif value == TEMPERATURE_MODE_NORMAL:
+                elif value == TemperatureModeEnum.Normal:
                     attrs["target_temperature"] = self.coordinator.data.get("TD")[0]
             except TypeError as exc:
                 LOGGER.debug(exc)
-        elif self.entity_description.key == "MF" and value == VENTILATION_MODE_BOOST:
+        elif self.entity_description.key == "MF" and value == VentilationModeEnum.Boost:
             minutes_left = self.coordinator.data.get("*FI")
             if minutes_left:
                 attrs["minutes_left"] = minutes_left

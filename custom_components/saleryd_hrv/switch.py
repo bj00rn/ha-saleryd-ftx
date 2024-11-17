@@ -18,14 +18,11 @@ from .const import (
     DOMAIN,
     KEY_COOKING_MODE,
     LOGGER,
-    MODE_OFF,
-    MODE_ON,
     SERVICE_SET_COOLING_MODE,
     SERVICE_SET_FIREPLACE_MODE,
     SERVICE_SET_VENTILATION_MODE,
-    VENTILATION_MODE_AWAY,
-    VENTILATION_MODE_BOOST,
-    VENTILATION_MODE_HOME,
+    ModeEnum,
+    VentilationModeEnum,
 )
 from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
 
@@ -51,8 +48,8 @@ class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
 class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
     """Switch base class."""
 
-    _state_when_on = MODE_ON
-    _state_when_off = MODE_OFF
+    _state_when_on = ModeEnum.On
+    _state_when_off = ModeEnum.Off
     _service_turn_on = ""
     _service_turn_off = ""
     _can_expire = False
@@ -137,7 +134,7 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
                 self.hass.services.call(
                     DOMAIN,
                     SERVICE_SET_FIREPLACE_MODE,
-                    {CONF_DEVICE: self.device_entry.id, CONF_VALUE: MODE_OFF},
+                    {CONF_DEVICE: self.device_entry.id, CONF_VALUE: ModeEnum.Off},
                     blocking=True,
                 )
 
@@ -168,22 +165,22 @@ class SalerydLokeVentilationModeBinarySwitch(SalerydLokeBinarySwitch):
 class SalerydLokeHomeModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     """Home mode switch"""
 
-    _state_when_on = VENTILATION_MODE_HOME
-    _state_when_off = VENTILATION_MODE_AWAY
+    _state_when_on = VentilationModeEnum.Home
+    _state_when_off = VentilationModeEnum.Away
 
 
 class SalerydLokeAwayModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     """Away mode switch"""
 
-    _state_when_on = VENTILATION_MODE_AWAY
-    _state_when_off = VENTILATION_MODE_HOME
+    _state_when_on = VentilationModeEnum.Away
+    _state_when_off = VentilationModeEnum.Home
 
 
 class SalerydLokeBoostModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
     """Boost mode switch"""
 
-    _state_when_on = VENTILATION_MODE_BOOST
-    _state_when_off = VENTILATION_MODE_HOME
+    _state_when_on = VentilationModeEnum.Boost
+    _state_when_off = VentilationModeEnum.Home
     _can_expire = True
     _expire_key = "*FI"
 
