@@ -1,3 +1,14 @@
+## [5.1.1-rc.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.1.1-rc.0...v5.1.1-rc.1) (2024-11-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove mode switches replaced by select. Remove state attributes
+
+### Features
+
+* major refactor ([a4f6662](https://github.com/bj00rn/ha-saleryd-ftx/commit/a4f6662c4a5de387f2f9ab3672b7f0dea20ef86e))
+
 ## [5.1.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.1.0...v5.1.1-rc.0) (2024-11-17)
 
 
@@ -20,12 +31,4 @@
 * broken migration ([b7f43db](https://github.com/bj00rn/ha-saleryd-ftx/commit/b7f43dbd331480e91e4a72e9673659a4b3f3efb4))
 
 ## [5.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.1.1-rc.1...v5.0.0) (2024-11-14)
-
-## [4.1.1-rc.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.1.1-rc.0...v4.1.1-rc.1) (2024-11-14)
-
-
-### Bug Fixes
-
-* revert changes to device id ([fbd0077](https://github.com/bj00rn/ha-saleryd-ftx/commit/fbd0077c8e6485e4c397230b52b465151b9d4846))
-* revert changes to enity unique_id and device identifiers ([015d80b](https://github.com/bj00rn/ha-saleryd-ftx/commit/015d80be2dd076794a6d586e5d0d318cb88a57f1))
 
