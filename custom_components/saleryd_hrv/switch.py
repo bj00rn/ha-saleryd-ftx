@@ -1,17 +1,18 @@
 """Switch platform"""
 
-from typing import Any, Coroutine
+from typing import TYPE_CHECKING, Any, Coroutine
 
 from homeassistant.components.switch import (
     SwitchDeviceClass,
     SwitchEntity,
     SwitchEntityDescription,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICE
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import slugify
+from pysaleryd.const import DataKeyEnum
+from pysaleryd.utils import SystemProperty
 
 from .const import (
     CONF_VALUE,
@@ -20,17 +21,23 @@ from .const import (
     LOGGER,
     SERVICE_SET_COOLING_MODE,
     SERVICE_SET_FIREPLACE_MODE,
-    SERVICE_SET_VENTILATION_MODE,
     ModeEnum,
-    VentilationModeEnum,
 )
 from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
+
+if TYPE_CHECKING:
+    from homeassistant.core import Event, EventStateChangedData
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+    from .data import SalerydLokeConfigEntry
 
 
 class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
     """Virtual switch base class"""
 
-    def __init__(self, coordinator, entry: ConfigEntry, entity_description) -> None:
+    def __init__(
+        self, coordinator, entry: "SalerydLokeConfigEntry", entity_description
+    ) -> None:
         self._entry = entry
         self._attr_is_on = False
         self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
@@ -48,23 +55,32 @@ class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
 class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
     """Switch base class."""
 
-    _state_when_on = ModeEnum.On
-    _state_when_off = ModeEnum.Off
-    _service_turn_on = ""
-    _service_turn_off = ""
-    _can_expire = False
-    _expire_key = None
-
-    def __init__(self, coordinator, entry: ConfigEntry, entity_description) -> None:
+    def __init__(
+        self,
+        coordinator,
+        entry: "SalerydLokeConfigEntry",
+        entity_description,
+        service_turn_on,
+        service_turn_off,
+        state_when_on=ModeEnum.On,
+        state_when_off=ModeEnum.Off,
+    ) -> None:
+        self._service_turn_on = service_turn_on
+        self._service_turn_off = service_turn_off
+        self._state_when_on = state_when_on
+        self._state_when_off = state_when_off
         self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
         super().__init__(coordinator, entry, entity_description)
 
     @property
     def is_on(self):
         """Return true if the switch is on."""
-        value = self.coordinator.data.get(self.entity_description.key)
-        if isinstance(value, list):
-            return value[0] == self._state_when_on
+        system_property = SystemProperty.from_str(
+            self.entity_description.key,
+            self.coordinator.data.get(self.entity_description.key, None),
+        )
+
+        return system_property.value == self._state_when_on
 
     def turn_on(self, **kwargs) -> None:
         """Turn on the switch."""
@@ -84,24 +100,13 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
             blocking=True,
         )
 
-    @property
-    def extra_state_attributes(self):
-        if (
-            self._can_expire
-            and self._expire_key
-            and self.coordinator.data.get(self._expire_key)
-        ):
-            attrs = {"minutes_left": self.coordinator.data.get(self._expire_key)}
-            return attrs
-        return None
-
 
 class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
     """Emulate virtual cooking mode switch to deactivate fireplace mode before timer expires."""
 
     THRESHOLD = 3
 
-    def __init__(self, coordinator, entry: ConfigEntry, entity_description) -> None:
+    def __init__(self, coordinator, entry, entity_description) -> None:
         self._unsubscribe = None
         super().__init__(coordinator, entry, entity_description)
 
@@ -120,13 +125,14 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
             self._unsubscribe()
         await super().async_will_remove_from_hass()
 
-    def _maybe_cancel(self, event):
+    def _maybe_cancel(self, event: "Event[EventStateChangedData]"):
         if self._attr_is_on:
             if not event.data["new_state"].state.isnumeric():
                 return
             if float(event.data["new_state"].state) < self.THRESHOLD:
+                LOGGER.info("Cooking mode triggered deactivation of fireplace mode")
                 LOGGER.debug(
-                    "Deactivating fireplace mode, since time left [%s] < threshold [%s]",
+                    "Cooking mode deactivating fireplace mode, since time left [%s] < threshold [%s]",
                     event.data["new_state"].state,
                     self.THRESHOLD,
                 )
@@ -139,119 +145,52 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
                 )
 
 
-class SalerydLokeFireplaceModeBinarySwitch(SalerydLokeBinarySwitch):
-    """Fireplace mode switch class."""
-
-    _service_turn_on = SERVICE_SET_FIREPLACE_MODE
-    _service_turn_off = SERVICE_SET_FIREPLACE_MODE
-    _can_expire = True
-    _expire_key = "*ME"
-
-
-class SalerydLokeCoolingModeBinarySwitch(SalerydLokeBinarySwitch):
-    """Cooling switch class."""
-
-    _service_turn_on = SERVICE_SET_COOLING_MODE
-    _service_turn_off = SERVICE_SET_COOLING_MODE
-
-
-class SalerydLokeVentilationModeBinarySwitch(SalerydLokeBinarySwitch):
-    """Ventilation mode switch class."""
-
-    _service_turn_on = SERVICE_SET_VENTILATION_MODE
-    _service_turn_off = SERVICE_SET_VENTILATION_MODE
-
-
-class SalerydLokeHomeModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
-    """Home mode switch"""
-
-    _state_when_on = VentilationModeEnum.Home
-    _state_when_off = VentilationModeEnum.Away
-
-
-class SalerydLokeAwayModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
-    """Away mode switch"""
-
-    _state_when_on = VentilationModeEnum.Away
-    _state_when_off = VentilationModeEnum.Home
-
-
-class SalerydLokeBoostModeBinarySwitch(SalerydLokeVentilationModeBinarySwitch):
-    """Boost mode switch"""
-
-    _state_when_on = VentilationModeEnum.Boost
-    _state_when_off = VentilationModeEnum.Home
-    _can_expire = True
-    _expire_key = "*FI"
-
-
-switches = {
-    "fireplace_mode": {
-        "klass": SalerydLokeFireplaceModeBinarySwitch,
-        "description": SwitchEntityDescription(
-            key="MB",
-            icon="mdi:fireplace",
-            name="Fireplace mode",
-            device_class=SwitchDeviceClass.SWITCH,
-        ),
-    },
-    "cooling_mode": {
-        "klass": SalerydLokeCoolingModeBinarySwitch,
-        "description": SwitchEntityDescription(
-            key="MK",
-            icon="mdi:snowflake",
-            name="Cooling mode",
-            device_class=SwitchDeviceClass.SWITCH,
-        ),
-    },
-    "home_mode": {
-        "klass": SalerydLokeHomeModeBinarySwitch,
-        "description": SwitchEntityDescription(
-            key="MF",
-            icon="mdi:home",
-            name="Home mode",
-            device_class=SwitchDeviceClass.SWITCH,
-        ),
-    },
-    "away_mode": {
-        "klass": SalerydLokeAwayModeBinarySwitch,
-        "description": SwitchEntityDescription(
-            key="MF",
-            icon="mdi:exit-run",
-            name="Away mode",
-            device_class=SwitchDeviceClass.SWITCH,
-        ),
-    },
-    "boost_mode": {
-        "klass": SalerydLokeBoostModeBinarySwitch,
-        "description": SwitchEntityDescription(
-            key="MF",
-            icon="mdi:fan",
-            name="Boost mode",
-            device_class=SwitchDeviceClass.SWITCH,
-        ),
-    },
-    "cooking_mode": {
-        "klass": SalerydLokeCookingModeSwitch,
-        "description": SwitchEntityDescription(
-            key=KEY_COOKING_MODE,
-            icon="mdi:stove",
-            name="Cooking mode",
-            device_class=SwitchDeviceClass.SWITCH,
-        ),
-    },
-}
-
-
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities
+    hass: HomeAssistant,
+    entry: "SalerydLokeConfigEntry",
+    async_add_entities: "AddEntitiesCallback",
 ):
     """Setup sensor platform."""
-    coordinator = entry.runtime_data
+    coordinator = entry.runtime_data.coordinator
 
-    entities = [
-        switch.get("klass")(coordinator, entry, switch.get("description"))
-        for switch in switches.values()
+    switches = [
+        # "fireplace_mode"
+        SalerydLokeBinarySwitch(
+            coordinator,
+            entry,
+            entity_description=SwitchEntityDescription(
+                key=DataKeyEnum.FIREPLACE_MODE,
+                icon="mdi:fireplace",
+                name="Fireplace mode",
+                device_class=SwitchDeviceClass.SWITCH,
+            ),
+            service_turn_on=SERVICE_SET_FIREPLACE_MODE,
+            service_turn_off=SERVICE_SET_FIREPLACE_MODE,
+        ),
+        # "cooling_mode"
+        SalerydLokeBinarySwitch(
+            coordinator,
+            entry,
+            entity_description=SwitchEntityDescription(
+                key=DataKeyEnum.COOLING_MODE,
+                icon="mdi:snowflake",
+                name="Cooling mode",
+                device_class=SwitchDeviceClass.SWITCH,
+            ),
+            service_turn_on=SERVICE_SET_COOLING_MODE,
+            service_turn_off=SERVICE_SET_COOLING_MODE,
+        ),
+        # "cooking_mode"
+        SalerydLokeCookingModeSwitch(
+            coordinator,
+            entry,
+            entity_description=SwitchEntityDescription(
+                key=KEY_COOKING_MODE,
+                icon="mdi:stove",
+                name="Cooking mode",
+                device_class=SwitchDeviceClass.SWITCH,
+            ),
+        ),
     ]
 
-    async_add_entities(entities)
+    async_add_entities(switches)

@@ -58,7 +58,7 @@ class TemperatureModeEnum(IntEnum):
 
 
 class VentilationModeEnum(IntEnum):
-    Home = 0
+    Normal = 0
     Away = 1
     Boost = 2
 
@@ -66,6 +66,11 @@ class VentilationModeEnum(IntEnum):
 class HeaterModeEnum(IntEnum):
     Low = 0
     High = 1
+
+
+class HeaterPowerEnum:
+    High = 1800
+    Low = 900
 
 
 class SystemActiveModeEnum(IntEnum):

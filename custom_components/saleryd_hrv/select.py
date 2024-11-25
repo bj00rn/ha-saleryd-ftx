@@ -3,11 +3,12 @@ from enum import IntEnum
 from typing import Any
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_DEVICE
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
+from pysaleryd.const import DataKeyEnum
+from pysaleryd.utils import SystemProperty
 
 from .const import (
     CONF_VALUE,
@@ -18,6 +19,7 @@ from .const import (
     VentilationModeEnum,
 )
 from .coordinator import SalerydLokeDataUpdateCoordinator
+from .data import SalerydLokeConfigEntry
 from .entity import SalerydLokeEntity
 
 
@@ -36,9 +38,11 @@ class SalerydLokeSelect(SalerydLokeEntity, SelectEntity):
 
     def _handle_coordinator_update(self) -> None:
         """Handle updated data from the coordinator."""
-        self._attr_current_option = self.OPTION_ENUM(
-            self.coordinator.data[self.entity_description.key][0]
-        ).name
+        system_property = SystemProperty.from_str(
+            self.entity_description.key,
+            self.coordinator.data.get(self.entity_description.key, None),
+        )
+        self._attr_current_option = self.OPTION_ENUM(system_property.value).name
         super()._handle_coordinator_update()
 
     def select_option(self, option) -> None:
@@ -62,21 +66,27 @@ class SalerydLokeTemperatureModeSelect(SalerydLokeSelect):
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant,
+    entry: "SalerydLokeConfigEntry",
+    async_add_entities: AddEntitiesCallback,
 ):
-    coordinator = entry.runtime_data
+    coordinator = entry.runtime_data.coordinator
     entites = [
         SalerydLokeTemperatureModeSelect(
             coordinator,
             entry,
             SelectEntityDescription(
-                key="MT", name="Temperature mode", icon="mdi:home-thermometer"
+                key=DataKeyEnum.MODE_TEMPERATURE,
+                name="Temperature mode",
+                icon="mdi:home-thermometer",
             ),
         ),
         SalerydLokeVentilationModeSelect(
             coordinator,
             entry,
-            SelectEntityDescription(key="MF", name="Ventilation mode", icon="mdi:hvac"),
+            SelectEntityDescription(
+                DataKeyEnum.MODE_FAN, name="Ventilation mode", icon="mdi:hvac"
+            ),
         ),
     ]
     async_add_entities(entites)

@@ -60,16 +60,13 @@ Name | Description | Unit | State attributes
 
 Switch | Description | State attributes
 -- | -- | --
-`home_mode` | Turn `home` ventilation mode on/off
-`away_mode` | Turn `away` ventilation mode on/off
-`boost_mode` | Turn `boost` ventilation mode on/off | minutes left
 `cooling_mode` | Turn `cooling` mode on/off
 `fireplace_mode` | Turn `fireplace` mode on/off | minutes left
 
 ### Select
 Switch | Description
-`ventilation_mode` | set ventilation mode
-`temperature_mode` | set temperature mode
+`ventilation_mode` | set ventilation mode normal/away/boost
+`temperature_mode` | set temperature mode cool/normal/economy
 
 ## Services
 
@@ -81,7 +78,7 @@ Name | Description | Fields
 `set_cooling_mode` | Set cooling mode | device: `str` target device, value: `integer` (0=On, 1=Off)
 `set_fireplace_mode` | Set fireplace mode | device: `str` target device, value: `integer` (0=On, 1=Off)
 `set_temperature_mode` | Set temperature mode | device: `str` target device, value: `integer` (0=Normal,1=Economy,2=Cool)
-`set_ventilation_mode` | Set ventilation mode | device: `str` target device, value: `integer` (0=Home,1=Away,2=Boost)
+`set_ventilation_mode` | Set ventilation mode | device: `str` target device, value: `integer` (0=Normal,1=Away,2=Boost)
 
 ### Installer settings
 
@@ -105,13 +102,14 @@ Name | Description | Unit | State attributes
 
 Switch | Description | State attributes
 -- | -- | --
-`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking mode` is active, it automatically deactivates `fireplace` mode before timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
+`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking mode` is active, it automatically deactivates `fireplace mode` before its timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
 
 ## Supported devices
 
 Model | Confirmed supported control system versions | Unsupported control system versions
 -- | -- | --
-[LOKE01/LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5*
+[LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5*
+[LOKE BASIC/LS-02](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
 
 \* connectivity issues in versions below 4.1.5
 
