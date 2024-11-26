@@ -77,7 +77,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         return self._get_extra_state_attributes(value)
 
 
-class SalerydHeaterPowerSensor(SalerydLokeSensor):
+class SalerydLokeEstimatedHeaterPowerSensor(SalerydLokeSensor):
 
     def _get_native_value(self, heater_power_percent: SystemProperty):
         heater_power_rating = SystemProperty.from_str(
@@ -90,6 +90,17 @@ class SalerydHeaterPowerSensor(SalerydLokeSensor):
                 return heater_power_percent.value * HeaterPowerEnum.Low * 100
             if heater_power_rating == HeaterPowerEnum.High:
                 return heater_power_percent * HeaterPowerEnum * 100
+
+        return None
+
+
+class SalerydLokeHeaterPowerRatingSensor(SalerydLokeSensor):
+
+    def _get_native_value(self, system_property):
+        if system_property.value == HeaterModeEnum.Low:
+            return HeaterPowerEnum.Low
+        if system_property.value == HeaterModeEnum.High:
+            return HeaterPowerEnum.High
 
         return None
 
@@ -245,7 +256,7 @@ async def async_setup_entry(
             ),
         ),
         # heater_power
-        SalerydHeaterPowerSensor(
+        SalerydLokeEstimatedHeaterPowerSensor(
             coordinator,
             entry,
             entity_description=SensorEntityDescription(
@@ -254,6 +265,20 @@ async def async_setup_entry(
                 name="Heater power",
                 device_class=SensorDeviceClass.POWER,
                 state_class=SensorStateClass.MEASUREMENT,
+                suggested_display_precision=0,
+                native_unit_of_measurement=UnitOfPower.WATT,
+            ),
+        ),
+        # heater_power_rating
+        SalerydLokeHeaterPowerRatingSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key=DataKeyEnum.MODE_HEATER_POWER_RATING,
+                icon="mdi:fuse-blade",
+                name="Heater power rating",
+                device_class=SensorDeviceClass.POWER,
+                entity_category=EntityCategory.DIAGNOSTIC,
                 suggested_display_precision=0,
                 native_unit_of_measurement=UnitOfPower.WATT,
             ),
@@ -437,6 +462,48 @@ async def async_setup_entry(
                 icon="mdi:heating-coil",
                 name="Heater active",
                 device_class=SensorDeviceClass.ENUM,
+            ),
+        ),
+        # normal mode target temperature
+        SalerydLokeSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key=DataKeyEnum.TARGET_TEMPERATURE_NORMAL,
+                icon="mdi:home-thermometer",
+                name="Normal temperature",
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                entity_category=EntityCategory.DIAGNOSTIC,
+            ),
+        ),
+        # Cool mode target temperature
+        SalerydLokeSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key=DataKeyEnum.TARGET_TEMPERATURE_COOL,
+                icon="mdi:home-thermometer",
+                name="Cool temperature",
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                entity_category=EntityCategory.DIAGNOSTIC,
+            ),
+        ),
+        # Economy mode target temperature
+        SalerydLokeSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key=DataKeyEnum.TARGET_TEMPERATURE_ECONOMY,
+                icon="mdi:home-thermometer",
+                name="Economy temperature",
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                entity_category=EntityCategory.DIAGNOSTIC,
             ),
         ),
     ]
