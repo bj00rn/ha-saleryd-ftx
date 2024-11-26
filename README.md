@@ -44,7 +44,7 @@ Name | Description | Unit | State attributes
 `heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm` |
 `heater_active` | auxillary heater active | boolean |
 `heater_air_temperature` | air temperature at heater | `°C` |
-`heater_power_percent` | auxillary heater power | `%`, |
+`heater_power_percent` | auxillary heater power | `%` |
 `product_number` | product number | `str` |
 `supply_air_temperature` | supply air temperature | `°C` |
 `supply_fan_speed`  | fan speed | `%` |
@@ -55,6 +55,10 @@ Name | Description | Unit | State attributes
 `target_temperature` | target air temperature | `°C` |
 `temperature_mode` | current temperature mode setting | `str` |
 `ventilation_mode` | current ventilation mode setting | `str` |
+`normal_temperature` | temperature setting for Normal mode | `°C` |
+`economy_temperature` | temperature setting for Economy mode | `°C` |
+`cool_temperature` | temperature setting for Cool mode | `°C` |
+`heater_power_rating` | auxillary heater power rating | `W` |
 
 ### Switches
 
@@ -108,8 +112,10 @@ Switch | Description | State attributes
 
 Model | Confirmed supported control system versions | Unsupported control system versions
 -- | -- | --
-[LOKE BASIC/LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5*
-[LOKE BASIC/LS-02](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
+[LOKE LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5*
+[LOKE LT-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
+[LOKE LS-02](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
+[LOKE LT-02](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
 
 \* connectivity issues in versions below 4.1.5
 
