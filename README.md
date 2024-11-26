@@ -65,7 +65,7 @@ Name | Description | Unit | State attributes
 Switch | Description | State attributes
 -- | -- | --
 `cooling_mode` | Turn `cooling` mode on/off
-`fireplace_mode` | Turn `fireplace` mode on/off | minutes left
+`fireplace_mode` | Turn `fireplace` mode on/off
 
 ### Select
 Switch | Description
