@@ -1,3 +1,11 @@
+## [6.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.1.1-rc.1...v6.0.0) (2024-11-26)
+
+
+### Features
+
+* sensor for heater power rating ([5a3e495](https://github.com/bj00rn/ha-saleryd-ftx/commit/5a3e495932db359516fcacd1e3dfccebe7fc1280))
+* sensors for temperature settings ([e870a48](https://github.com/bj00rn/ha-saleryd-ftx/commit/e870a488314033bf7e7de0c81376695a85656f9b))
+
 ## [5.1.1-rc.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.1.1-rc.0...v5.1.1-rc.1) (2024-11-25)
 
 
@@ -29,6 +37,4 @@
 ### Bug Fixes
 
 * broken migration ([b7f43db](https://github.com/bj00rn/ha-saleryd-ftx/commit/b7f43dbd331480e91e4a72e9673659a4b3f3efb4))
-
-## [5.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v4.1.1-rc.1...v5.0.0) (2024-11-14)
 
