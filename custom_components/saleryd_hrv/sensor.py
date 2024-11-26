@@ -464,6 +464,48 @@ async def async_setup_entry(
                 device_class=SensorDeviceClass.ENUM,
             ),
         ),
+        # normal mode target temperature
+        SalerydLokeSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key=DataKeyEnum.TARGET_TEMPERATURE_NORMAL,
+                icon="mdi:home-thermometer",
+                name="Normal temperature",
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                entity_category=EntityCategory.DIAGNOSTIC,
+            ),
+        ),
+        # Cool mode target temperature
+        SalerydLokeSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key=DataKeyEnum.TARGET_TEMPERATURE_COOL,
+                icon="mdi:home-thermometer",
+                name="Cool temperature",
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                entity_category=EntityCategory.DIAGNOSTIC,
+            ),
+        ),
+        # Economy mode target temperature
+        SalerydLokeSensor(
+            coordinator,
+            entry,
+            entity_description=SensorEntityDescription(
+                key=DataKeyEnum.TARGET_TEMPERATURE_ECONOMY,
+                icon="mdi:home-thermometer",
+                name="Economy temperature",
+                device_class=SensorDeviceClass.TEMPERATURE,
+                state_class=SensorStateClass.MEASUREMENT,
+                native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+                entity_category=EntityCategory.DIAGNOSTIC,
+            ),
+        ),
     ]
 
     async_add_entities(sensors)
