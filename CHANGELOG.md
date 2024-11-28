@@ -1,3 +1,5 @@
+## [6.0.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.1-rc.0...v6.0.1) (2024-11-28)
+
 ## [6.0.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.0...v6.0.1-rc.0) (2024-11-28)
 
 
@@ -30,6 +32,4 @@
 ### Features
 
 * implement select for temperature and ventilation modes ([4802f20](https://github.com/bj00rn/ha-saleryd-ftx/commit/4802f20680d21e383c1a4900fab591111d659a6a))
-
-## [5.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.0.1-rc.0...v5.1.0) (2024-11-15)
 
