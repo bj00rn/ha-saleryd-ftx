@@ -18,7 +18,7 @@ jobs:
 
       - name: Changelog action
         id: changelog
-        uses: TriPSs/conventional-changelog-action@v5
+        uses: TriPSs/conventional-changelog-action@v6
         with:
           github-token: ${{ secrets.github_token }}
           preset: conventionalcommits
