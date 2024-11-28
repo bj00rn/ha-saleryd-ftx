@@ -171,15 +171,15 @@ def setup_hass_services(hass: HomeAssistant) -> None:
 
     async def set_target_temperature_cool(call: ServiceCall):
         """Set target temperature for Cool temperature mode"""
-        await control_request(call, DataKeyEnum.MODE_TEMPERATURE, True)
+        await control_request(call, DataKeyEnum.TARGET_TEMPERATURE_COOL, True)
 
     async def set_target_temperature_normal(call: ServiceCall):
         """Set target temperature for Normal temperature mode"""
-        await control_request(call, DataKeyEnum.MODE_TEMPERATURE, True)
+        await control_request(call, DataKeyEnum.TARGET_TEMPERATURE_NORMAL, True)
 
     async def set_target_temperature_economy(call: ServiceCall):
         """Set target temperature for Economy temperature mode"""
-        await control_request(call, DataKeyEnum.MODE_TEMPERATURE, True)
+        await control_request(call, DataKeyEnum.TARGET_TEMPERATURE_ECONOMY, True)
 
     services = {
         SERVICE_SET_FIREPLACE_MODE: set_fireplace_mode,
