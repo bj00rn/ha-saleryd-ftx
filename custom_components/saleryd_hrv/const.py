@@ -21,7 +21,8 @@ SENSOR = "sensor"
 SWITCH = "switch"
 CLIMATE = "climate"
 SELECT = "select"
-PLATFORMS = [SENSOR, SWITCH, SELECT]
+NUMBER = "number"
+PLATFORMS = [SENSOR, SWITCH, SELECT, NUMBER]
 
 
 # Configuration and options
