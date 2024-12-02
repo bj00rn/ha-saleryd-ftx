@@ -1,3 +1,10 @@
+## [6.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.1...v6.1.0) (2024-12-02)
+
+
+### Features
+
+* add numbers for installer temperature settings ([3ea6532](https://github.com/bj00rn/ha-saleryd-ftx/commit/3ea65329114b90d409183ba2c7b147fe23f20ffa))
+
 ## [6.0.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.1-rc.0...v6.0.1) (2024-11-28)
 
 ## [6.0.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.0...v6.0.1-rc.0) (2024-11-28)
@@ -25,11 +32,4 @@
 ### Features
 
 * major refactor ([a4f6662](https://github.com/bj00rn/ha-saleryd-ftx/commit/a4f6662c4a5de387f2f9ab3672b7f0dea20ef86e))
-
-## [5.1.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v5.1.0...v5.1.1-rc.0) (2024-11-17)
-
-
-### Features
-
-* implement select for temperature and ventilation modes ([4802f20](https://github.com/bj00rn/ha-saleryd-ftx/commit/4802f20680d21e383c1a4900fab591111d659a6a))
 
