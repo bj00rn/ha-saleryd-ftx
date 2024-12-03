@@ -61,9 +61,9 @@ async def async_setup_entry(
     entry: "SalerydLokeConfigEntry",
     async_add_entities: "AddEntitiesCallback",
 ):
+    coordinator = entry.runtime_data.coordinator
     if entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS):
-        coordinator = entry.runtime_data.coordinator
-        entities = [
+        config_entities = [
             SalerydLokeNumber(
                 coordinator,
                 entry,
@@ -108,4 +108,4 @@ async def async_setup_entry(
             ),
         ]
 
-        async_add_entities(entities)
+        async_add_entities(config_entities)

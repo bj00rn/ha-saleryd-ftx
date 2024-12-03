@@ -2,11 +2,17 @@ from enum import IntEnum
 from typing import TYPE_CHECKING
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
+from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
-from .const import TemperatureModeEnum, VentilationModeEnum
+from .const import (
+    CONF_ENABLE_INSTALLER_SETTINGS,
+    ModeEnum,
+    TemperatureModeEnum,
+    VentilationModeEnum,
+)
 from .coordinator import SalerydLokeDataUpdateCoordinator
 from .entity import SalerydLokeEntity
 
@@ -57,6 +63,10 @@ class SalerydLokeTemperatureModeSelect(SalerydLokeSelect):
     OPTION_ENUM = TemperatureModeEnum
 
 
+class SalerydLokeSystemActiveModeSelect(SalerydLokeSelect):
+    OPTION_ENUM = ModeEnum
+
+
 async def async_setup_entry(
     hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
@@ -82,3 +92,18 @@ async def async_setup_entry(
         ),
     ]
     async_add_entities(entites)
+
+    if entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS):
+        config_entities = [
+            SalerydLokeSystemActiveModeSelect(
+                coordinator,
+                entry,
+                SelectEntityDescription(
+                    key=DataKeyEnum.CONTROL_SYSTEM_STATE,
+                    name="System active",
+                    entity_category=EntityCategory.CONFIG,
+                    icon="mdi:power",
+                ),
+            )
+        ]
+        async_add_entities(config_entities)

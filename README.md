@@ -71,8 +71,9 @@ Name | Description
 
 Name | Description
 -- | --
-`ventilation_mode` | set ventilation mode normal/away/boost
-`temperature_mode` | set temperature mode cool/normal/economy
+`ventilation_mode` | set ventilation mode Normal/Away/Boost
+`temperature_mode` | set temperature mode Cool/Normal/Economy
+`system state` | set control system state on/off
 
 ### Number
 Name | Description
@@ -80,6 +81,11 @@ Name | Description
 `cool temperature` | Cool temperature installer setting
 `economy temperature` | Economy temperature installer setting
 `normal temperature` | Normal temperature installer setting
+
+### Button
+Name | Description
+-- | --
+`system reset` | Reset system warnings
 
 ## Experimental features
 

@@ -15,11 +15,16 @@ class SalerydLokeBridge:
     """Representation of bridge between client and coordinator"""
 
     def __init__(
-        self, client: "Client", coordinator: "SalerydLokeDataUpdateCoordinator", logger
+        self,
+        entry: "SalerydLokeConfigEntry",
+        client: "Client",
+        coordinator: "SalerydLokeDataUpdateCoordinator",
+        logger,
     ):
         self.client = client
         self.coordinator = coordinator
         self.logger = logger
+        self.entry = entry
 
         self.client.add_handler(self.update_data_callback)
 
@@ -43,6 +48,6 @@ class SalerydLokeBridge:
             await self.client.send_command(key, data)
 
         if auth:
-            installer_password = self._entry.data.get(CONF_INSTALLER_PASSWORD)
+            installer_password = self.entry.data.get(CONF_INSTALLER_PASSWORD)
             await send(DataKeyEnum.INSTALLER_PASSWORD, installer_password)
         await send(key, data)
