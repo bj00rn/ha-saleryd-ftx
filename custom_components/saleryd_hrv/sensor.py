@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -65,7 +65,9 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         )
         return self._get_native_value(value)
 
-    def _get_extra_state_attributes(self, system_property: SystemProperty):
+    def _get_extra_state_attributes(
+        self, system_property: SystemProperty
+    ) -> dict[str, Any] | None:
         return None
 
     @property
@@ -103,35 +105,6 @@ class SalerydLokeHeaterPowerRatingSensor(SalerydLokeSensor):
             return HeaterPowerEnum.High
 
         return None
-
-
-class SalerydLokeErrorMessageSensor(SalerydLokeSensor):
-
-    @property
-    def native_value(self):
-        error = ErrorSystemProperty(
-            self.entity_description.key,
-            self.coordinator.data.get(self.entity_description.key, None),
-        )
-        if error.value is None:
-            return None
-
-        return any(error.value)
-
-    @property
-    def extra_state_attributes(self):
-        error = ErrorSystemProperty(
-            self.entity_description.key,
-            self.coordinator.data.get(self.entity_description.key, None),
-        )
-        if error.value is None:
-            return None
-
-        attrs = {}
-        for v in error.value:
-            attrs[v] = True
-
-        return attrs
 
 
 class SalerydLokeTargetTemperatureSensor(SalerydLokeSensor):
@@ -406,18 +379,6 @@ async def async_setup_entry(
                 entity_category=EntityCategory.DIAGNOSTIC,
             ),
         ),
-        # connection_state
-        SalerydLokeSensor(
-            coordinator,
-            entry,
-            entity_description=SensorEntityDescription(
-                key=KEY_CLIENT_STATE,
-                icon="mdi:wrench-clock",
-                name="Connection state",
-                device_class=SensorDeviceClass.ENUM,
-                entity_category=EntityCategory.DIAGNOSTIC,
-            ),
-        ),
         # control_system_version
         SalerydLokeSensor(
             coordinator,
@@ -428,40 +389,6 @@ async def async_setup_entry(
                 name="System version",
                 device_class=SensorDeviceClass.ENUM,
                 entity_category=EntityCategory.DIAGNOSTIC,
-            ),
-        ),
-        # control_system_warning
-        SalerydLokeErrorMessageSensor(
-            coordinator,
-            entry,
-            entity_description=SensorEntityDescription(
-                key=DataKeyEnum.ERROR_MESSAGE,
-                icon="mdi:alert",
-                name="System warning",
-                device_class=SensorDeviceClass.ENUM,
-            ),
-        ),
-        # control_system_active
-        SalerydLokeEnumSensor(
-            coordinator,
-            entry,
-            entity_description=SensorEntityDescription(
-                key=DataKeyEnum.CONTROL_SYSTEM_STATE,
-                icon="mdi:power",
-                name="System active",
-                device_class=SensorDeviceClass.ENUM,
-            ),
-            options_enum=SystemActiveModeEnum,
-        ),
-        # heater_active
-        SalerydLokeEnumSensor(
-            coordinator,
-            entry,
-            entity_description=SensorEntityDescription(
-                key=DataKeyEnum.MODE_HEATER,
-                icon="mdi:heating-coil",
-                name="Heater active",
-                device_class=SensorDeviceClass.ENUM,
             ),
         ),
         # normal mode target temperature

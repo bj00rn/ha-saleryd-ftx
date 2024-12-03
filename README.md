@@ -42,19 +42,19 @@ Name | Description | Unit | State attributes
 `fireplace_mode_minutes_left` | minutes left until fireplace mode expires | `min` |
 `heat_exchanger_rotor_speed_percent` | rotor speed of heat exchanger | `%` |
 `heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm` |
-`heater_active` | auxillary heater active | boolean |
+`heater_active` | auxillary heater active  | `Running` \| `Not running` |
 `heater_air_temperature` | air temperature at heater | `°C` |
 `heater_power_percent` | auxillary heater power | `%` |
 `product_number` | product number | `str` |
 `supply_air_temperature` | supply air temperature | `°C` |
 `supply_fan_speed`  | fan speed | `%` |
-`system_active` | status of the system | `On` \| `Off` \| `Reset` |
+`system_active` | status of the system | `Running` \| `Not running`
 `system_name` | control system name | `str` |
 `system_version` | control system version | `str` |
-`system_warning` | system warning | boolean | raw system error/warning codes
+`system_warning` | system warning | `Problem` \| `No problem` | raw system error/warning codes
 `target_temperature` | target air temperature | `°C` |
-`temperature_mode` | current temperature mode setting | `str` |
-`ventilation_mode` | current ventilation mode setting | `str` |
+`temperature_mode` | current temperature mode setting | `Cool` \| `Normal` \| `Economy` |
+`ventilation_mode` | current ventilation mode setting | `Normal` \| `Away` \| `Boost` |
 `normal_temperature` | temperature setting for Normal mode | `°C` |
 `economy_temperature` | temperature setting for Economy mode | `°C` |
 `cool_temperature` | temperature setting for Cool mode | `°C` |
@@ -78,14 +78,14 @@ Name | Description
 ### Number
 Name | Description
 -- | --
-`cool temperature` | Cool temperature installer setting
-`economy temperature` | Economy temperature installer setting
-`normal temperature` | Normal temperature installer setting
+`cool_temperature` | Cool temperature installer setting
+`economy_temperature` | Economy temperature installer setting
+`normal_temperature` | Normal temperature installer setting
 
 ### Button
 Name | Description
 -- | --
-`system reset` | Reset system warnings
+`system_reset` | Reset system warnings
 
 ## Experimental features
 
@@ -99,7 +99,7 @@ Name | Description | Unit
 
 Switch | Description
 -- | --
-`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking mode` is active, it automatically deactivates `fireplace mode` before its timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
+`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking mode` is active, it automatically deactivates `fireplace_mode` before its timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
 
 ## Supported devices
 

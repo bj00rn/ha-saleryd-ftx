@@ -33,11 +33,11 @@ class SalerydLokeBridge:
         self.logger.debug("Received data")
         _data = data.copy()
         self.__inject_virtual_keys(_data)
-        self.coordinator.async_set_updated_data(data)
+        self.coordinator.async_set_updated_data(_data)
 
     def __inject_virtual_keys(self, data):
         """Inject additional keys for virtual sensors not present in the data set"""
-        data[KEY_CLIENT_STATE] = self.client.state.name
+        data[KEY_CLIENT_STATE] = self.client.state.value
         data[KEY_TARGET_TEMPERATURE] = None
 
     async def send_command(self, key: DataKeyEnum, data: str | int, auth: bool = False):
