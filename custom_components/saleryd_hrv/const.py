@@ -23,7 +23,8 @@ CLIMATE = "climate"
 SELECT = "select"
 NUMBER = "number"
 BUTTON = "button"
-PLATFORMS = [SENSOR, SWITCH, SELECT, NUMBER, BUTTON]
+BINARY_SENSOR = "binary_sensor"
+PLATFORMS = [SENSOR, SWITCH, SELECT, NUMBER, BUTTON, BINARY_SENSOR]
 
 
 # Configuration and options
