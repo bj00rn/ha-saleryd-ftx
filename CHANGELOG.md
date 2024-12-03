@@ -1,3 +1,5 @@
+## [8.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v7.1.0-rc.0...v8.0.0) (2024-12-03)
+
 ## [7.1.0-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v7.0.0-rc.0...v7.1.0-rc.0) (2024-12-03)
 
 
@@ -25,11 +27,4 @@
 * add numbers for installer temperature settings ([3ea6532](https://github.com/bj00rn/ha-saleryd-ftx/commit/3ea65329114b90d409183ba2c7b147fe23f20ffa))
 
 ## [6.0.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.1-rc.0...v6.0.1) (2024-11-28)
-
-## [6.0.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.0...v6.0.1-rc.0) (2024-11-28)
-
-
-### Bug Fixes
-
-* wrong key in commands to set target temperature ([e6493ed](https://github.com/bj00rn/ha-saleryd-ftx/commit/e6493edf72c96b8953930e92be52e372ec3aa6b2))
 
