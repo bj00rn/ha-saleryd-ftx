@@ -113,7 +113,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: "SalerydLokeConfigEntry"
         raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
     else:
         coordinator = SalerydLokeDataUpdateCoordinator(hass, LOGGER)
-        bridge = SalerydLokeBridge(client, coordinator, LOGGER)
+        bridge = SalerydLokeBridge(entry, client, coordinator, LOGGER)
         entry.runtime_data = SalerydLokeData(
             client=client,
             coordinator=coordinator,

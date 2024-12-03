@@ -22,7 +22,8 @@ SWITCH = "switch"
 CLIMATE = "climate"
 SELECT = "select"
 NUMBER = "number"
-PLATFORMS = [SENSOR, SWITCH, SELECT, NUMBER]
+BUTTON = "button"
+PLATFORMS = [SENSOR, SWITCH, SELECT, NUMBER, BUTTON]
 
 
 # Configuration and options
@@ -81,8 +82,8 @@ class SystemActiveModeEnum(IntEnum):
 
 
 class ModeEnum(IntEnum):
-    On = 1
     Off = 0
+    On = 1
 
 
 LOGGER: Logger = getLogger(__package__)
