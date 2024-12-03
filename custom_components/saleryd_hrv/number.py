@@ -51,7 +51,7 @@ class SalerydLokeNumber(SalerydLokeEntity, NumberEntity):
         return self._get_native_value(system_property)
 
     async def async_set_native_value(self, value):
-        await self._entry.runtime_data.client.send_command(
+        await self._entry.runtime_data.bridge.send_command(
             self.entity_description.key, int(value)
         )
 

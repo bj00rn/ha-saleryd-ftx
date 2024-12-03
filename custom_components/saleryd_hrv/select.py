@@ -1,34 +1,30 @@
-from abc import abstractmethod
 from enum import IntEnum
-from typing import Any
+from typing import TYPE_CHECKING
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
-from homeassistant.const import CONF_DEVICE
-from homeassistant.core import HomeAssistant
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
-from .const import (
-    CONF_VALUE,
-    DOMAIN,
-    SERVICE_SET_TEMPERATURE_MODE,
-    SERVICE_SET_VENTILATION_MODE,
-    TemperatureModeEnum,
-    VentilationModeEnum,
-)
+from .const import TemperatureModeEnum, VentilationModeEnum
 from .coordinator import SalerydLokeDataUpdateCoordinator
-from .data import SalerydLokeConfigEntry
 from .entity import SalerydLokeEntity
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+    from .data import SalerydLokeConfigEntry
 
 
 class SalerydLokeSelect(SalerydLokeEntity, SelectEntity):
-    SERVICE: str = None
     OPTION_ENUM: IntEnum = None
 
     def __init__(
-        self, coordinator: SalerydLokeDataUpdateCoordinator, entry, entity_description
+        self,
+        coordinator: "SalerydLokeDataUpdateCoordinator",
+        entry: "SalerydLokeConfigEntry",
+        entity_description: SelectEntityDescription,
     ):
         self._attr_current_option = None
         self._entry = entry
@@ -42,33 +38,29 @@ class SalerydLokeSelect(SalerydLokeEntity, SelectEntity):
             self.entity_description.key,
             self.coordinator.data.get(self.entity_description.key, None),
         )
-        self._attr_current_option = self.OPTION_ENUM(system_property.value).name
+        if system_property.value is not None:
+            self._attr_current_option = self.OPTION_ENUM(system_property.value).name
         super()._handle_coordinator_update()
 
-    def select_option(self, option) -> None:
+    async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
-        self.hass.services.call(
-            DOMAIN,
-            self.SERVICE,
-            {CONF_DEVICE: self.device_entry.id, CONF_VALUE: self.OPTION_ENUM[option]},
-            blocking=True,
+        await self._entry.runtime_data.bridge.send_command(
+            self.entity_description.key, self.OPTION_ENUM[option]
         )
 
 
 class SalerydLokeVentilationModeSelect(SalerydLokeSelect):
-    SERVICE = SERVICE_SET_VENTILATION_MODE
     OPTION_ENUM = VentilationModeEnum
 
 
 class SalerydLokeTemperatureModeSelect(SalerydLokeSelect):
-    SERVICE = SERVICE_SET_TEMPERATURE_MODE
     OPTION_ENUM = TemperatureModeEnum
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
-    async_add_entities: AddEntitiesCallback,
+    async_add_entities: "AddEntitiesCallback",
 ):
     coordinator = entry.runtime_data.coordinator
     entites = [
