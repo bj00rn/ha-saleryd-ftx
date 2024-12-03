@@ -41,7 +41,7 @@ STARTUP_MESSAGE = f"""
 -------------------------------------------------------------------
 %s %s
 This is a custom integration!
-If you have any issues with this you need to open an issue here:
+If encounter any problems open an issue here:
 {ISSUE_URL}
 -------------------------------------------------------------------
 """
@@ -84,16 +84,6 @@ class ModeEnum(IntEnum):
     On = 1
     Off = 0
 
-
-# Services
-SERVICE_SET_FIREPLACE_MODE = "set_fireplace_mode"
-SERVICE_SET_COOLING_MODE = "set_cooling_mode"
-SERVICE_SET_VENTILATION_MODE = "set_ventilation_mode"
-SERVICE_SET_TEMPERATURE_MODE = "set_temperature_mode"
-SERVICE_SET_SYSTEM_ACTIVE_MODE = "set_system_active_mode"
-SERVICE_SET_TARGET_TEMPERATURE_COOL = "set_target_temperature_cool"
-SERVICE_SET_TARGET_TEMPERATURE_NORMAL = "set_target_temperature_normal"
-SERVICE_SET_TARGET_TEMPERATURE_ECONOMY = "set_target_temperature_economy"
 
 LOGGER: Logger = getLogger(__package__)
 

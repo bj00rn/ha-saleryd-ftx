@@ -7,26 +7,17 @@ from homeassistant.components.switch import (
     SwitchEntity,
     SwitchEntityDescription,
 )
-from homeassistant.const import CONF_DEVICE
-from homeassistant.core import HomeAssistant
+from homeassistant.core import HassJobType
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
-from .const import (
-    CONF_VALUE,
-    DOMAIN,
-    KEY_COOKING_MODE,
-    LOGGER,
-    SERVICE_SET_COOLING_MODE,
-    SERVICE_SET_FIREPLACE_MODE,
-    ModeEnum,
-)
+from .const import KEY_COOKING_MODE, LOGGER, ModeEnum
 from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
 
 if TYPE_CHECKING:
-    from homeassistant.core import Event, EventStateChangedData
+    from homeassistant.core import Event, EventStateChangedData, HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
     from .data import SalerydLokeConfigEntry
@@ -60,13 +51,10 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         coordinator,
         entry: "SalerydLokeConfigEntry",
         entity_description,
-        service_turn_on,
-        service_turn_off,
         state_when_on=ModeEnum.On,
         state_when_off=ModeEnum.Off,
     ) -> None:
-        self._service_turn_on = service_turn_on
-        self._service_turn_off = service_turn_off
+        self._entry = entry
         self._state_when_on = state_when_on
         self._state_when_off = state_when_off
         self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
@@ -82,22 +70,14 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
 
         return system_property.value == self._state_when_on
 
-    def turn_on(self, **kwargs) -> None:
-        """Turn on the switch."""
-        self.hass.services.call(
-            DOMAIN,
-            self._service_turn_on,
-            {CONF_DEVICE: self.device_entry.id, CONF_VALUE: self._state_when_on},
-            blocking=True,
+    async def async_turn_on(self, **kwargs):
+        await self._entry.runtime_data.bridge.send_command(
+            self.entity_description.key, self._state_when_on
         )
 
-    def turn_off(self, **kwargs) -> None:
-        """Turn on the switch."""
-        self.hass.services.call(
-            DOMAIN,
-            self._service_turn_off,
-            {CONF_DEVICE: self.device_entry.id, CONF_VALUE: self._state_when_off},
-            blocking=True,
+    async def async_turn_off(self, **kwargs):
+        await self._entry.runtime_data.bridge.send_command(
+            self.entity_description.key, self._state_when_off
         )
 
 
@@ -116,7 +96,10 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
         )
         self._attr_is_on = False
         self._unsubscribe = async_track_state_change_event(
-            self.hass, track_entity_id, self._maybe_cancel
+            self.hass,
+            track_entity_id,
+            self._maybe_cancel,
+            HassJobType.Coroutinefunction,
         )
         await super().async_added_to_hass()
 
@@ -125,7 +108,7 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
             self._unsubscribe()
         await super().async_will_remove_from_hass()
 
-    def _maybe_cancel(self, event: "Event[EventStateChangedData]"):
+    async def _maybe_cancel(self, event: "Event[EventStateChangedData]"):
         if self._attr_is_on:
             if not event.data["new_state"].state.isnumeric():
                 return
@@ -136,17 +119,13 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
                     event.data["new_state"].state,
                     self.THRESHOLD,
                 )
-
-                self.hass.services.call(
-                    DOMAIN,
-                    SERVICE_SET_FIREPLACE_MODE,
-                    {CONF_DEVICE: self.device_entry.id, CONF_VALUE: ModeEnum.Off},
-                    blocking=True,
+                await self._entry.runtime_data.bridge.send_command(
+                    DataKeyEnum.FIREPLACE_MODE, ModeEnum.Off
                 )
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
+    hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
     async_add_entities: "AddEntitiesCallback",
 ):
@@ -164,8 +143,6 @@ async def async_setup_entry(
                 name="Fireplace mode",
                 device_class=SwitchDeviceClass.SWITCH,
             ),
-            service_turn_on=SERVICE_SET_FIREPLACE_MODE,
-            service_turn_off=SERVICE_SET_FIREPLACE_MODE,
         ),
         # "cooling_mode"
         SalerydLokeBinarySwitch(
@@ -177,8 +154,6 @@ async def async_setup_entry(
                 name="Cooling mode",
                 device_class=SwitchDeviceClass.SWITCH,
             ),
-            service_turn_on=SERVICE_SET_COOLING_MODE,
-            service_turn_off=SERVICE_SET_COOLING_MODE,
         ),
         # "cooking_mode"
         SalerydLokeCookingModeSwitch(

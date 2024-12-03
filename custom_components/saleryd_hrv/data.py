@@ -5,12 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from pysaleryd.client import Client
-
 if TYPE_CHECKING:
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.loader import Integration
+    from pysaleryd.client import Client
 
+    from .bridge import SalerydLokeBridge
     from .coordinator import SalerydLokeDataUpdateCoordinator
 
 
@@ -24,3 +24,4 @@ class SalerydLokeData:
     client: Client
     coordinator: SalerydLokeDataUpdateCoordinator
     integration: Integration
+    bridge: SalerydLokeBridge
