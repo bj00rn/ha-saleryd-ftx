@@ -1,3 +1,10 @@
+## [8.1.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.0.0...v8.1.0) (2024-12-04)
+
+
+### Features
+
+* use binary sensors where applicable ([388e26f](https://github.com/bj00rn/ha-saleryd-ftx/commit/388e26fb897ca43e11d2056f198a629454e9ba48))
+
 ## [8.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v7.1.0-rc.0...v8.0.0) (2024-12-03)
 
 ## [7.1.0-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v7.0.0-rc.0...v7.1.0-rc.0) (2024-12-03)
@@ -25,6 +32,4 @@
 ### Features
 
 * add numbers for installer temperature settings ([3ea6532](https://github.com/bj00rn/ha-saleryd-ftx/commit/3ea65329114b90d409183ba2c7b147fe23f20ffa))
-
-## [6.0.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.0.1-rc.0...v6.0.1) (2024-11-28)
 
