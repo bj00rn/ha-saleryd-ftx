@@ -1,3 +1,10 @@
+## [8.2.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.1.1...v8.2.0) (2025-04-30)
+
+
+### Features
+
+* restore state for cooking mode switch on HA restart ([cc566ae](https://github.com/bj00rn/ha-saleryd-ftx/commit/cc566aefefc9240c414176e3c3ed5d1d43ae2cfa))
+
 ## [8.1.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.1.0...v8.1.1) (2024-12-14)
 
 
@@ -21,15 +28,4 @@
 
 * add button to reset system warnings ([30ac5dd](https://github.com/bj00rn/ha-saleryd-ftx/commit/30ac5dd1b0c9a4e7383ed25e1e5db6611324e9e0))
 * add select for system state ([eabe8b9](https://github.com/bj00rn/ha-saleryd-ftx/commit/eabe8b9f1ff4a21b70cf0bbe163e0e5b824889f3))
-
-## [7.0.0-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v6.1.0...v7.0.0-rc.0) (2024-12-03)
-
-
-### ⚠ BREAKING CHANGES
-
-* Remove integration services, use generic enity services in automations and scripts
-
-### Features
-
-* remove integration services ([a9bbe75](https://github.com/bj00rn/ha-saleryd-ftx/commit/a9bbe755be8887cf920ef4755498bde03cba36b3))
 
