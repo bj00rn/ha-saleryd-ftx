@@ -7,8 +7,10 @@ from homeassistant.components.switch import (
     SwitchEntity,
     SwitchEntityDescription,
 )
+from homeassistant.const import STATE_ON
 from homeassistant.core import HassJobType
 from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
@@ -81,7 +83,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         )
 
 
-class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
+class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
     """Emulate virtual cooking mode switch to deactivate fireplace mode before timer expires."""
 
     THRESHOLD = 3
@@ -91,17 +93,19 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch):
         super().__init__(coordinator, entry, entity_description)
 
     async def async_added_to_hass(self) -> Coroutine[Any, Any, None]:
+        await super().async_added_to_hass()
+        state = await self.async_get_last_state()
+        self._attr_is_on = state is not None and state.state == STATE_ON
         track_entity_id = (
             f"sensor.{self._entry.unique_id}_{slugify('Fireplace mode minutes left')}"
         )
-        self._attr_is_on = False
+
         self._unsubscribe = async_track_state_change_event(
             self.hass,
             track_entity_id,
             self._maybe_cancel,
             HassJobType.Coroutinefunction,
         )
-        await super().async_added_to_hass()
 
     async def async_will_remove_from_hass(self) -> Coroutine[Any, Any, None]:
         if self._unsubscribe:
