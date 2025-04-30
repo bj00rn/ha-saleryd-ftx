@@ -103,14 +103,7 @@ Switch | Description
 
 ## Supported devices
 
-Model | Confirmed supported control system versions | Unsupported control system versions
--- | -- | --
-[LOKE LS-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | 4.1.5 | <4.1.5*
-[LOKE LT-01](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
-[LOKE LS-02](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
-[LOKE LT-02](https://saleryd.se/produkt/varmeatervinningsaggregat-loke/) | unconfirmed |
-
-\* connectivity issues in versions below 4.1.5
+See [list of supported devices](https://github.com/bj00rn/pysaleryd/blob/master/README.rst#supported-devices)
 
 ## Installation
 
