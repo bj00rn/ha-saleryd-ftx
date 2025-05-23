@@ -1,3 +1,10 @@
+## [8.2.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.2.0...v8.2.1) (2025-05-23)
+
+
+### Bug Fixes
+
+* **sensor:** heater power calculation ([5c27bd2](https://github.com/bj00rn/ha-saleryd-ftx/commit/5c27bd2ecb95da405f267c5bed3d7728e42ce753))
+
 ## [8.2.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.1.1...v8.2.0) (2025-04-30)
 
 
@@ -20,12 +27,4 @@
 * use binary sensors where applicable ([388e26f](https://github.com/bj00rn/ha-saleryd-ftx/commit/388e26fb897ca43e11d2056f198a629454e9ba48))
 
 ## [8.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v7.1.0-rc.0...v8.0.0) (2024-12-03)
-
-## [7.1.0-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v7.0.0-rc.0...v7.1.0-rc.0) (2024-12-03)
-
-
-### Features
-
-* add button to reset system warnings ([30ac5dd](https://github.com/bj00rn/ha-saleryd-ftx/commit/30ac5dd1b0c9a4e7383ed25e1e5db6611324e9e0))
-* add select for system state ([eabe8b9](https://github.com/bj00rn/ha-saleryd-ftx/commit/eabe8b9f1ff4a21b70cf0bbe163e0e5b824889f3))
 
