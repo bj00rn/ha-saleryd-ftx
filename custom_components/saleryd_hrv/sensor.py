@@ -89,9 +89,9 @@ class SalerydLokeEstimatedHeaterPowerSensor(SalerydLokeSensor):
 
         if heater_power_percent.value is not None:
             if heater_power_rating.value == HeaterModeEnum.Low:
-                return heater_power_percent.value * HeaterPowerEnum.Low * 100
+                return heater_power_percent.value / 100 * HeaterPowerEnum.Low
             if heater_power_rating == HeaterPowerEnum.High:
-                return heater_power_percent * HeaterPowerEnum * 100
+                return heater_power_percent.value / 100 * HeaterPowerEnum.High
 
         return None
 
@@ -233,7 +233,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=SensorEntityDescription(
-                key=DataKeyEnum.MODE_HEATER_POWER_RATING,
+                key=DataKeyEnum.HEATER_POWER_PERCENT,
                 icon="mdi:fuse-blade",
                 name="Heater power",
                 device_class=SensorDeviceClass.POWER,
