@@ -8,7 +8,7 @@ jobs:
     runs-on: "ubuntu-latest"
     name: Validate
     steps:
-        - uses: "actions/checkout@v2"
+        - uses: "actions/checkout@v4"
 
         - name: HACS validation
           uses: "hacs/action@main"
@@ -23,10 +23,10 @@ jobs:
     runs-on: "ubuntu-latest"
     name: Check style formatting
     steps:
-        - uses: "actions/checkout@v2"
-        - uses: "actions/setup-python@v1"
+        - uses: "actions/checkout@v4"
+        - uses: "actions/setup-python@v3"
           with:
-            python-version: "3.11"
+            python-version: "3.13"
         - run: python3 -m pip install black
         - run: black .
 
@@ -43,7 +43,7 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-python@v3
     - uses: pre-commit/action@v3.0.0
 
