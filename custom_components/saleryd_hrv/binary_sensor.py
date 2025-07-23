@@ -15,9 +15,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import slugify
-from pysaleryd.const import DataKeyEnum
-from pysaleryd.utils import ErrorSystemProperty, SystemProperty
-from pysaleryd.websocket import State
+from pysaleryd.client import State
+from pysaleryd.const import DataKey
+from pysaleryd.data import ErrorSystemProperty, SystemProperty
 
 from .const import KEY_CLIENT_STATE, ModeEnum
 from .entity import SalerydLokeEntity
@@ -122,7 +122,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=BinarySensorEntityDescription(
-                key=DataKeyEnum.ERROR_MESSAGE,
+                key=DataKey.ERROR_MESSAGE,
                 icon="mdi:alert",
                 name="System warning",
                 device_class=BinarySensorDeviceClass.PROBLEM,
@@ -133,7 +133,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=BinarySensorEntityDescription(
-                key=DataKeyEnum.CONTROL_SYSTEM_STATE,
+                key=DataKey.CONTROL_SYSTEM_STATE,
                 icon="mdi:power",
                 name="System active",
                 device_class=BinarySensorDeviceClass.RUNNING,
@@ -144,7 +144,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=BinarySensorEntityDescription(
-                key=DataKeyEnum.MODE_HEATER,
+                key=DataKey.MODE_HEATER,
                 icon="mdi:heating-coil",
                 name="Heater active",
                 device_class=BinarySensorDeviceClass.RUNNING,
@@ -161,7 +161,7 @@ async def async_setup_entry(
                 device_class=BinarySensorDeviceClass.CONNECTIVITY,
                 entity_category=EntityCategory.DIAGNOSTIC,
             ),
-            state_when_on=State.RUNNING,
+            state_when_on=State.OPEN,
         ),
     ]
 

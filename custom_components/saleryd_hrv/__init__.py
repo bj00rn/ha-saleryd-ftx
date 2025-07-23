@@ -9,7 +9,6 @@ from datetime import timedelta
 from typing import TYPE_CHECKING
 
 import async_timeout
-from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_NAME
 from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
@@ -17,6 +16,7 @@ from homeassistant.loader import async_get_loaded_integration
 from homeassistant.util import slugify
 from pysaleryd.client import Client
 
+from .bridge import SalerydLokeBridge
 from .const import (
     CONF_ENABLE_INSTALLER_SETTINGS,
     CONF_INSTALLER_PASSWORD,
@@ -26,19 +26,17 @@ from .const import (
     DEFAULT_NAME,
     DEPRECATED_CONF_ENABLE_MAINTENANCE_SETTINGS,
     DEPRECATED_CONF_MAINTENANCE_PASSWORD,
-    DOMAIN,
     LOGGER,
     PLATFORMS,
     STARTUP_MESSAGE,
 )
-
-if TYPE_CHECKING:
-    from .data import SalerydLokeConfigEntry
-    from homeassistant.core import HomeAssistant, ServiceCall
-
-from .bridge import SalerydLokeBridge
 from .coordinator import SalerydLokeDataUpdateCoordinator
 from .data import SalerydLokeData
+
+if TYPE_CHECKING:
+    from homeassistant.core import HomeAssistant
+
+    from .data import SalerydLokeConfigEntry
 
 SCAN_INTERVAL = timedelta(seconds=30)
 

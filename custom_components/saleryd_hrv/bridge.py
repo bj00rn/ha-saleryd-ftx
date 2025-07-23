@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from pysaleryd.const import DataKeyEnum
+from pysaleryd.const import DataKey
 
 from .const import CONF_INSTALLER_PASSWORD, KEY_CLIENT_STATE, KEY_TARGET_TEMPERATURE
 
@@ -26,7 +26,7 @@ class SalerydLokeBridge:
         self.logger = logger
         self.entry = entry
 
-        self.client.add_handler(self.update_data_callback)
+        self.client.add_data_handler(self.update_data_callback)
 
     def update_data_callback(self, data):
         """Update coordindator data"""
@@ -40,7 +40,7 @@ class SalerydLokeBridge:
         data[KEY_CLIENT_STATE] = self.client.state.value
         data[KEY_TARGET_TEMPERATURE] = None
 
-    async def send_command(self, key: DataKeyEnum, data: str | int, auth: bool = False):
+    async def send_command(self, key: DataKey, data: str | int, auth: bool = False):
         """Send command to client"""
 
         async def send(key, data):
@@ -49,5 +49,5 @@ class SalerydLokeBridge:
 
         if auth:
             installer_password = self.entry.data.get(CONF_INSTALLER_PASSWORD)
-            await send(DataKeyEnum.INSTALLER_PASSWORD, installer_password)
+            await send(DataKey.INSTALLER_PASSWORD, installer_password)
         await send(key, data)

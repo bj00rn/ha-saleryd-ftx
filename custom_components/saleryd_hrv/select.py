@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import slugify
-from pysaleryd.const import DataKeyEnum
+from pysaleryd.const import DataKey
 from pysaleryd.utils import SystemProperty
 
 from .const import (
@@ -78,7 +78,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             SelectEntityDescription(
-                key=DataKeyEnum.MODE_TEMPERATURE,
+                key=DataKey.MODE_TEMPERATURE,
                 name="Temperature mode",
                 icon="mdi:home-thermometer",
             ),
@@ -87,7 +87,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             SelectEntityDescription(
-                DataKeyEnum.MODE_FAN, name="Ventilation mode", icon="mdi:hvac"
+                DataKey.MODE_FAN, name="Ventilation mode", icon="mdi:hvac"
             ),
         ),
     ]
@@ -99,7 +99,7 @@ async def async_setup_entry(
                 coordinator,
                 entry,
                 SelectEntityDescription(
-                    key=DataKeyEnum.CONTROL_SYSTEM_STATE,
+                    key=DataKey.CONTROL_SYSTEM_STATE,
                     name="System active",
                     entity_category=EntityCategory.CONFIG,
                     icon="mdi:power",

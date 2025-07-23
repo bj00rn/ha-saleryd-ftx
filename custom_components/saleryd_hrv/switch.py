@@ -12,7 +12,7 @@ from homeassistant.core import HassJobType
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.util import slugify
-from pysaleryd.const import DataKeyEnum
+from pysaleryd.const import DataKey
 from pysaleryd.utils import SystemProperty
 
 from .const import CONF_ENABLE_INSTALLER_SETTINGS, KEY_COOKING_MODE, LOGGER, ModeEnum
@@ -132,7 +132,7 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
                     self.THRESHOLD,
                 )
                 await self._entry.runtime_data.bridge.send_command(
-                    DataKeyEnum.FIREPLACE_MODE, ModeEnum.Off
+                    DataKey.FIREPLACE_MODE, ModeEnum.Off
                 )
 
 
@@ -150,7 +150,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=SwitchEntityDescription(
-                key=DataKeyEnum.FIREPLACE_MODE,
+                key=DataKey.FIREPLACE_MODE,
                 icon="mdi:fireplace",
                 name="Fireplace mode",
                 device_class=SwitchDeviceClass.SWITCH,
@@ -161,7 +161,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=SwitchEntityDescription(
-                key=DataKeyEnum.COOLING_MODE,
+                key=DataKey.COOLING_MODE,
                 icon="mdi:snowflake",
                 name="Cooling mode",
                 device_class=SwitchDeviceClass.SWITCH,

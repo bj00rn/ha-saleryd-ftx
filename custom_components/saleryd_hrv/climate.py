@@ -9,8 +9,11 @@ from homeassistant.components.climate import (
     HVACAction,
     HVACMode,
 )
-from homeassistant.const import PERCENTAGE, TEMP_CELSIUS, UnitOfPower
+from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+from .const import DOMAIN
+from .entity import SalerydLokeEntity
 
 PRESET_COOL = "cool"
 
@@ -18,8 +21,6 @@ FAN_MODE_HOME = "home"
 FAN_MODE_AWAY = "away"
 FAN_MODE_BOOST = "boost"
 
-from .const import DOMAIN
-from .entity import SalerydLokeEntity
 
 _LOGGER = logging.getLogger(__package__)
 
@@ -38,7 +39,7 @@ class SalerydVentilation(_SalerydClimate):
     _attr_preset_modes = [PRESET_COMFORT, PRESET_ECO, PRESET_COOL]
     _attr_fan_modes = [FAN_MODE_HOME, FAN_MODE_AWAY, FAN_MODE_BOOST]
     _attr_hvac_modes = [HVACMode.FAN_ONLY, HVACMode.COOL]
-    _attr_temperature_unit = TEMP_CELSIUS
+    _attr_temperature_unit = UnitOfTemperature.CELSIUS
 
     def set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         self.hass.services.call(
