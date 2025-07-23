@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from .data import SalerydLokeConfigEntry
 
 
-class SaleryLokeVirtualEntity(Entity):
+class SalerydLokeVirtualEntity(Entity):
     """Virtual Entity base class"""
 
     def __init__(

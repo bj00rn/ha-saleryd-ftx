@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Type
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -63,7 +63,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         return self._get_native_value(value)
 
     def _get_extra_state_attributes(
-        self, system_property: SystemProperty
+        self, system_property: SystemProperty  # pylint: disable=unused-argument
     ) -> dict[str, Any] | None:
         return None
 
@@ -77,29 +77,31 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
 
 
 class SalerydLokeEstimatedHeaterPowerSensor(SalerydLokeSensor):
+    """Estimated heater power sensor"""
 
-    def _get_native_value(self, heater_power_percent: SystemProperty):
+    def _get_native_value(self, system_property: SystemProperty):
         heater_power_rating = SystemProperty.from_str(
             DataKey.MODE_HEATER_POWER_RATING,
             self.coordinator.data.get(DataKey.MODE_HEATER_POWER_RATING, None),
         )
 
-        if heater_power_percent.value is not None:
-            if heater_power_rating.value == HeaterModeEnum.Low:
-                return heater_power_percent.value / 100 * HeaterPowerEnum.Low
-            if heater_power_rating == HeaterPowerEnum.High:
-                return heater_power_percent.value / 100 * HeaterPowerEnum.High
+        if system_property.value is not None:
+            if heater_power_rating.value == HeaterModeEnum.LOW:
+                return system_property.value / 100 * HeaterPowerEnum.LOW
+            if heater_power_rating == HeaterPowerEnum.HIGH:
+                return system_property.value / 100 * HeaterPowerEnum.HIGH
 
         return None
 
 
 class SalerydLokeHeaterPowerRatingSensor(SalerydLokeSensor):
+    """Heater power rating sensor"""
 
     def _get_native_value(self, system_property):
-        if system_property.value == HeaterModeEnum.Low:
-            return HeaterPowerEnum.Low
-        if system_property.value == HeaterModeEnum.High:
-            return HeaterPowerEnum.High
+        if system_property.value == HeaterModeEnum.LOW:
+            return HeaterPowerEnum.LOW
+        if system_property.value == HeaterModeEnum.HIGH:
+            return HeaterPowerEnum.HIGH
 
         return None
 
@@ -110,13 +112,14 @@ class SalerydLokeTargetTemperatureSensor(SalerydLokeSensor):
     def _get_native_value(self, system_property: SystemProperty):
         if system_property.value is None:
             return None
-
-        if system_property.value == TemperatureModeEnum.Normal:
+        if system_property.value == TemperatureModeEnum.NORMAL:
             key = DataKey.TARGET_TEMPERATURE_NORMAL
-        elif system_property.value == TemperatureModeEnum.Economy:
+        elif system_property.value == TemperatureModeEnum.ECONOMY:
             key = DataKey.TARGET_TEMPERATURE_ECONOMY
-        elif system_property.value == TemperatureModeEnum.Cool:
+        elif system_property.value == TemperatureModeEnum.COOL:
             key = DataKey.TARGET_TEMPERATURE_COOL
+        else:
+            return None
 
         return SystemProperty.from_str(
             self.entity_description.key, self.coordinator.data.get(key, None)
@@ -141,7 +144,7 @@ class SalerydLokeEnumSensor(SalerydLokeSensor):
         coordinator: SalerydLokeDataUpdateCoordinator,
         entry: "SalerydLokeConfigEntry",
         entity_description: SensorEntityDescription,
-        options_enum: IntEnum = ModeEnum,
+        options_enum: Type[IntEnum] = ModeEnum,
     ) -> None:
         self.options_enum = options_enum
         super().__init__(coordinator, entry, entity_description)
@@ -158,8 +161,8 @@ class SalerydLokeEnumSensor(SalerydLokeSensor):
 
 
 async def async_setup_entry(
-    hass: HomeAssistant,
-    entry: "SalerydLokeConfigEntry",
+    _hass: HomeAssistant,
+    entry: SalerydLokeConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ):
     """Setup sensor platform."""

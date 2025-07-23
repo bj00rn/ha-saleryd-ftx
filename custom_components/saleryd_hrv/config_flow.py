@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Mapping
+from typing import Any
 
 import async_timeout
 from homeassistant import config_entries
@@ -21,6 +21,7 @@ from .const import (
     DOMAIN,
     LOGGER,
 )
+from .data import SalerydLokeConfigEntry
 
 RECONFIG_DATA = {
     vol.Required(CONF_WEBSOCKET_IP): str,
@@ -44,7 +45,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
 
     VERSION = CONFIG_VERSION
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
-    _config_entry: config_entries.ConfigEntry
+    _config_entry: SalerydLokeConfigEntry
 
     def __init__(self):
         """Initialize."""
@@ -93,13 +94,13 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
             )
 
     async def async_step_reconfigure(
-        self, user_input: Mapping[str, Any]
+        self, user_input: dict[str, Any]
     ) -> config_entries.ConfigFlowResult:
         """Handle a reconfiguration flow initialized by the user."""
         config_entry = self.hass.config_entries.async_get_entry(
             self.context["entry_id"]
         )
-        self._config_entry = config_entry
+        self._config_entry = config_entry  # type: ignore[assignment]
         return await self.async_step_reconfigure_confirm(user_input)
 
     async def async_step_reconfigure_confirm(

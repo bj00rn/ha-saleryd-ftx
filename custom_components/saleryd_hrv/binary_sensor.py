@@ -35,7 +35,7 @@ class SalerydLokeBinarySensor(SalerydLokeEntity, BinarySensorEntity):
         coordinator: SalerydLokeDataUpdateCoordinator,
         entry: "SalerydLokeConfigEntry",
         entity_description: SensorEntityDescription,
-        state_when_on: IntEnum = ModeEnum.On,
+        state_when_on: IntEnum = ModeEnum.ON,
     ) -> None:
         """Initialize the sensor."""
         self.entity_id = (

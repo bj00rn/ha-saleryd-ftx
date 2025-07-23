@@ -1,3 +1,5 @@
+"""Saleryd HRV Climate Entity"""
+
 import logging
 
 from homeassistant.components.climate import (
@@ -51,7 +53,7 @@ class SalerydVentilation(_SalerydClimate):
         self.schedule_update_ha_state(force_refresh=True)
 
     @property
-    def hvac_mode(self) -> HVACMode | str | None:
+    def hvac_mode(self) -> HVACMode | None:
         value = self.coordinator.data.get("MK")
         if not isinstance(value, list):
             return None
@@ -59,9 +61,10 @@ class SalerydVentilation(_SalerydClimate):
             return HVACMode.FAN_ONLY
         if value[0] == 1:
             return HVACMode.COOL
+        return None
 
     @property
-    def hvac_action(self) -> HVACAction | str | None:
+    def hvac_action(self) -> HVACAction | None:
         value = self.coordinator.data.get("MK")
         if not isinstance(value, list):
             return None
@@ -69,6 +72,7 @@ class SalerydVentilation(_SalerydClimate):
             return HVACAction.IDLE
         if value[0] == 1:
             return HVACAction.COOLING
+        return None
 
     @property
     def preset_mode(self) -> str | None:
@@ -94,6 +98,7 @@ class SalerydVentilation(_SalerydClimate):
         fan_mode = self.coordinator.data.get("MF")
         if isinstance(fan_mode, list):
             return self.fan_modes[fan_mode[0]]
+        return None
 
     def set_fan_mode(self, fan_mode: str) -> None:
         self.hass.services.call(
@@ -111,7 +116,7 @@ class SalerydVentilation(_SalerydClimate):
         return float(self.coordinator.data.get("*TC"))
 
 
-async def async_setup_entry(hass, entry, async_add_entities: AddEntitiesCallback):
+async def async_setup_entry(_hass, entry, async_add_entities: AddEntitiesCallback):
     """Setup sensor platform."""
     coordinator = entry.runtime_data
 

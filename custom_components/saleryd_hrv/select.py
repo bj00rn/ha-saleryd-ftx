@@ -1,11 +1,14 @@
+"""Select entities for the Saleryd Loke integration."""
+
+from abc import ABC
 from enum import IntEnum
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Type
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import slugify
 from pysaleryd.const import DataKey
-from pysaleryd.utils import SystemProperty
+from pysaleryd.data import SystemProperty
 
 from .const import (
     CONF_ENABLE_INSTALLER_SETTINGS,
@@ -23,8 +26,10 @@ if TYPE_CHECKING:
     from .data import SalerydLokeConfigEntry
 
 
-class SalerydLokeSelect(SalerydLokeEntity, SelectEntity):
-    OPTION_ENUM: IntEnum = None
+class SalerydLokeSelect(SalerydLokeEntity, SelectEntity, ABC):
+    """Base class for Saleryd Loke select entities."""
+
+    OPTION_ENUM_CLASS: Type[IntEnum]
 
     def __init__(
         self,
@@ -34,7 +39,7 @@ class SalerydLokeSelect(SalerydLokeEntity, SelectEntity):
     ):
         self._attr_current_option = None
         self._entry = entry
-        self._attr_options = [o.name for o in self.OPTION_ENUM]
+        self._attr_options = [o.name for o in self.OPTION_ENUM_CLASS]
         self.entity_id = f"select.{entry.unique_id}_{slugify(entity_description.name)}"
         super().__init__(coordinator, entry, entity_description)
 
@@ -45,33 +50,43 @@ class SalerydLokeSelect(SalerydLokeEntity, SelectEntity):
             self.coordinator.data.get(self.entity_description.key, None),
         )
         if system_property.value is not None:
-            self._attr_current_option = self.OPTION_ENUM(system_property.value).name
+            self._attr_current_option = self.OPTION_ENUM_CLASS(
+                system_property.value
+            ).name  # type: ignore[assignment]
         super()._handle_coordinator_update()
 
     async def async_select_option(self, option: str) -> None:
         """Change the selected option."""
         await self._entry.runtime_data.bridge.send_command(
-            self.entity_description.key, self.OPTION_ENUM[option]
+            self.entity_description.key, self.OPTION_ENUM_CLASS[option]
         )
 
 
 class SalerydLokeVentilationModeSelect(SalerydLokeSelect):
-    OPTION_ENUM = VentilationModeEnum
+    """Select entity for ventilation modes."""
+
+    OPTION_ENUM_CLASS = VentilationModeEnum
 
 
 class SalerydLokeTemperatureModeSelect(SalerydLokeSelect):
-    OPTION_ENUM = TemperatureModeEnum
+    """Select entity for temperature modes."""
+
+    OPTION_ENUM_CLASS = TemperatureModeEnum
 
 
 class SalerydLokeSystemActiveModeSelect(SalerydLokeSelect):
-    OPTION_ENUM = ModeEnum
+    """Select entity for system active modes."""
+
+    OPTION_ENUM_CLASS = ModeEnum
 
 
 async def async_setup_entry(
-    hass: "HomeAssistant",
+    _hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
     async_add_entities: "AddEntitiesCallback",
 ):
+    """ "Set up the Saleryd Loke select entities from a config entry."""
+
     coordinator = entry.runtime_data.coordinator
     entites = [
         SalerydLokeTemperatureModeSelect(
