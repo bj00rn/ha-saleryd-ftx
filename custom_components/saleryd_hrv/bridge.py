@@ -20,7 +20,7 @@ class SalerydLokeBridge:
         client: "Client",
         coordinator: "SalerydLokeDataUpdateCoordinator",
         logger,
-    ):
+    ) -> None:
         self.client = client
         self.coordinator = coordinator
         self.logger = logger
@@ -28,19 +28,21 @@ class SalerydLokeBridge:
 
         self.client.add_data_handler(self.update_data_callback)
 
-    def update_data_callback(self, data):
+    def update_data_callback(self, data) -> None:
         """Update coordindator data"""
         self.logger.debug("Received data")
         _data = data.copy()
         self.__inject_virtual_keys(_data)
         self.coordinator.async_set_updated_data(_data)
 
-    def __inject_virtual_keys(self, data):
+    def __inject_virtual_keys(self, data) -> None:
         """Inject additional keys for virtual sensors not present in the data set"""
-        data[KEY_CLIENT_STATE] = self.client.state.value
+        data[KEY_CLIENT_STATE] = str(self.client.state.value)
         data[KEY_TARGET_TEMPERATURE] = None
 
-    async def send_command(self, key: DataKey, data: str | int, auth: bool = False):
+    async def send_command(
+        self, key: DataKey, data: str | int, auth: bool = False
+    ) -> None:
         """Send command to client"""
 
         async def send(key, data):

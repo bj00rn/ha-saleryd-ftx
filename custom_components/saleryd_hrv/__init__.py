@@ -8,10 +8,8 @@ import asyncio
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
-import async_timeout
 from homeassistant.const import CONF_NAME
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from homeassistant.loader import async_get_loaded_integration
 from homeassistant.util import slugify
 from pysaleryd.client import Client
@@ -98,16 +96,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: "SalerydLokeConfigEntry"
     integration = async_get_loaded_integration(hass, entry.domain)
     LOGGER.info(STARTUP_MESSAGE, integration.name, integration.version)
 
-    url = entry.data.get(CONF_WEBSOCKET_IP)
-    port = entry.data.get(CONF_WEBSOCKET_PORT)
+    url = str(entry.data.get(CONF_WEBSOCKET_IP))
+    port = int(entry.data.get(CONF_WEBSOCKET_PORT))  # type: ignore[arg-type]
 
-    session = async_create_clientsession(hass, raise_for_status=True)
-    client = Client(url, port, session, SCAN_INTERVAL.seconds)
+    client = Client(url, port, SCAN_INTERVAL.seconds)
     try:
-        async with async_timeout.timeout(10):
-            await client.connect()
+        await client.connect()
     except (TimeoutError, asyncio.CancelledError) as ex:
-        client.disconnect()
+        await client.close()
         raise ConfigEntryNotReady(f"Timeout while connecting to {url}:{port}") from ex
     else:
         coordinator = SalerydLokeDataUpdateCoordinator(hass, LOGGER)
@@ -131,13 +127,14 @@ async def async_unload_entry(
     hass: HomeAssistant, entry: "SalerydLokeConfigEntry"
 ) -> bool:
     """Handle unload of an entry."""
-
-    # unload platforms
-    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
-
-    # disconnect client
-    client: SalerydLokeDataUpdateCoordinator = entry.runtime_data.client
-    client.disconnect()
+    unload_ok = False
+    try:
+        # unload platforms
+        unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    finally:
+        # disconnect client
+        client: Client = entry.runtime_data.client
+        await client.close()
 
     return unload_ok
 

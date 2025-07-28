@@ -7,7 +7,6 @@ from typing import Any
 import async_timeout
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 from pysaleryd.client import Client
 import voluptuous as vol
 
@@ -51,7 +50,11 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
         """Initialize."""
         self._errors = {}
 
-    async def async_step_user(self, user_input=None):
+    def is_matching(self, other_flow: config_entries.ConfigFlow) -> bool:
+        """Return True if other_flow is matching this flow."""
+        raise NotImplementedError
+
+    async def async_step_user(self, user_input=None) -> config_entries.ConfigFlowResult:
         """Handle a flow initialized by the user."""
         self._errors = {}
 
@@ -140,10 +143,10 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
                 errors=self._errors,
             )
 
-    async def _test_connection(self, ip, port):
+    async def _test_connection(self, ip, port) -> bool:
         """Return true if connection is working"""
         try:
-            async with Client(ip, port, async_create_clientsession(self.hass)):
+            async with Client(ip, port):
                 return True
         except Exception as e:  # pylint: disable=broad-except
             LOGGER.error("Could not connect", exc_info=True)
