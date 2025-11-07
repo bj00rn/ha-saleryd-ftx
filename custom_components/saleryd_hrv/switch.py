@@ -1,6 +1,6 @@
 """Switch platform"""
 
-from typing import TYPE_CHECKING, Any, Coroutine
+from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.switch import (
     SwitchDeviceClass,
@@ -15,11 +15,16 @@ from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
-from .const import KEY_COOKING_MODE, LOGGER, ModeEnum
+from .const import CONF_ENABLE_INSTALLER_SETTINGS, KEY_COOKING_MODE, LOGGER, ModeEnum
 from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
 
 if TYPE_CHECKING:
-    from homeassistant.core import Event, EventStateChangedData, HomeAssistant
+    from homeassistant.core import (
+        CALLBACK_TYPE,
+        Event,
+        EventStateChangedData,
+        HomeAssistant,
+    )
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
     from .data import SalerydLokeConfigEntry
@@ -89,10 +94,10 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
     THRESHOLD = 3
 
     def __init__(self, coordinator, entry, entity_description) -> None:
-        self._unsubscribe = None
+        self._unsubscribe: CALLBACK_TYPE | None = None
         super().__init__(coordinator, entry, entity_description)
 
-    async def async_added_to_hass(self) -> Coroutine[Any, Any, None]:
+    async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
         state = await self.async_get_last_state()
         self._attr_is_on = state is not None and state.state == STATE_ON
@@ -107,14 +112,17 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
             HassJobType.Coroutinefunction,
         )
 
-    async def async_will_remove_from_hass(self) -> Coroutine[Any, Any, None]:
-        if self._unsubscribe:
+    async def async_will_remove_from_hass(self) -> None:
+        if self._unsubscribe is not None:
             self._unsubscribe()
         await super().async_will_remove_from_hass()
 
     async def _maybe_cancel(self, event: "Event[EventStateChangedData]"):
         if self._attr_is_on:
-            if not event.data["new_state"].state.isnumeric():
+            if (
+                event.data["new_state"] is None
+                or not event.data["new_state"].state.isnumeric()
+            ):
                 return
             if float(event.data["new_state"].state) < self.THRESHOLD:
                 LOGGER.info("Cooking mode triggered deactivation of fireplace mode")
@@ -173,3 +181,18 @@ async def async_setup_entry(
     ]
 
     async_add_entities(switches)
+
+    if entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS):
+        config_entities = [
+            SalerydLokeBinarySwitch(
+                coordinator,
+                entry,
+                entity_description=SwitchEntityDescription(
+                    key=DataKeyEnum.MODE_HEATER,
+                    icon="mdi:heating-coil",
+                    name="Heater active",
+                    device_class=SwitchDeviceClass.SWITCH,
+                ),
+            )
+        ]
+        async_add_entities(config_entities)
