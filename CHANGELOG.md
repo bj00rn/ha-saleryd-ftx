@@ -1,3 +1,10 @@
+## [8.3.0-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.2.1...v8.3.0-rc.0) (2025-11-07)
+
+
+### Features
+
+* add switch for for electric heater ([ad53e20](https://github.com/bj00rn/ha-saleryd-ftx/commit/ad53e20abcee950adc6b6e5e28593fefc9cabeb1))
+
 ## [8.2.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.2.0...v8.2.1) (2025-05-23)
 
 
@@ -25,6 +32,4 @@
 ### Features
 
 * use binary sensors where applicable ([388e26f](https://github.com/bj00rn/ha-saleryd-ftx/commit/388e26fb897ca43e11d2056f198a629454e9ba48))
-
-## [8.0.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v7.1.0-rc.0...v8.0.0) (2024-12-03)
 
