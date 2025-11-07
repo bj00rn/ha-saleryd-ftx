@@ -81,6 +81,12 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
 
         return system_property.value == self._state_when_on
 
+    def turn_on(self, **kwargs) -> None:
+        raise NotImplementedError
+
+    def turn_off(self, **kwargs) -> None:
+        raise NotImplementedError
+
     async def async_turn_on(self, **kwargs):
         await self._entry.runtime_data.bridge.send_command(
             self.entity_description.key, self._state_when_on
@@ -142,7 +148,7 @@ async def async_setup_entry(
     _hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
     async_add_entities: "AddEntitiesCallback",
-):
+) -> None:
     """Setup sensor platform."""
     coordinator = entry.runtime_data.coordinator
 

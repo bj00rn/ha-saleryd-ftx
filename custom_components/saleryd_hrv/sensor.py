@@ -55,7 +55,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         return system_property.value
 
     @property
-    def native_value(self):
+    def native_value(self) -> int | str | float | None:
         value = SystemProperty.from_str(
             self.entity_description.key,
             self.coordinator.data.get(self.entity_description.key),
@@ -87,9 +87,9 @@ class SalerydLokeEstimatedHeaterPowerSensor(SalerydLokeSensor):
 
         if system_property.value is not None:
             if heater_power_rating.value == HeaterModeEnum.LOW:
-                return system_property.value / 100 * HeaterPowerEnum.LOW
+                return float(system_property.value) / 100 * HeaterPowerEnum.LOW
             if heater_power_rating == HeaterPowerEnum.HIGH:
-                return system_property.value / 100 * HeaterPowerEnum.HIGH
+                return float(system_property.value) / 100 * HeaterPowerEnum.HIGH
 
         return None
 
