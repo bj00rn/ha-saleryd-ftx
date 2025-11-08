@@ -10,111 +10,119 @@
 
 ## :warning: Disclaimer
 
-:nerd_face: This integration has been developed for my HRV unit for personal use.
 
-:biohazard: Be careful when altering settings on your ventilation system. Improper settings on your ventilation system can over time damage your house and personal health.
+**Note:** This integration was developed for personal use with my HRV unit.
 
-:bomb: *Use at own risk*.
 
-:grey_exclamation: I am in no way affiliated with Saleryd. All trademarks belong to their respective owners.
+**Warning:** Be careful when altering settings on your ventilation system. Improper settings can damage your house and affect personal health over time.
+
+
+**Use at your own risk.**
+
+
+I am not affiliated with Saleryd. All trademarks belong to their respective owners.
 
 ## Motivation
 
+
 Monitor and control Saleryd HRV units from Home Assistant.
 
-### Ideas for automations
 
-- `airflow/temperature/cooling based on presence/schedule.`
-- `cooling/temperature mode based on external temperature/humidity sensors or alarm system state`
-- `energy price integration`
-- `remote control using dashboard or physical controls`
-- `...`
+### Example Automations
 
-## Integration features
+- Airflow/temperature/cooling based on presence/schedule or alarm system state.
+- Cooling/temperature mode based on external temperature/humidity sensors
+- Energy price integration
+- Remote control using dashboard or physical controls
+- ...
+
+## Integration Features
 
 ### Sensors
 
 Name | Description | Unit | State attributes
 -- | -- | -- | --
-`boost_mode_minutes_left` | minutes left until boost mode expires | `min` |
-`extract_fan_speed` | fan speed | `%` |
-`filter_months_left` | filter months left | `m` |
-`fireplace_mode_minutes_left` | minutes left until fireplace mode expires | `min` |
-`heat_exchanger_rotor_speed_percent` | rotor speed of heat exchanger | `%` |
-`heat_exchanger_rotor_speed` | rotor speed of heat exchanger | `rpm` |
-`heater_active` | auxillary heater active  | `Running` \| `Not running` |
-`heater_air_temperature` | air temperature at heater | `°C` |
-`heater_power_percent` | auxillary heater power | `%` |
-`product_number` | product number | `str` |
-`supply_air_temperature` | supply air temperature | `°C` |
-`supply_fan_speed`  | fan speed | `%` |
-`system_active` | status of the system | `Running` \| `Not running`
-`system_name` | control system name | `str` |
-`system_version` | control system version | `str` |
-`system_warning` | system warning | `Problem` \| `No problem` | raw system error/warning codes
-`target_temperature` | target air temperature | `°C` |
-`temperature_mode` | current temperature mode setting | `Cool` \| `Normal` \| `Economy` |
-`ventilation_mode` | current ventilation mode setting | `Normal` \| `Away` \| `Boost` |
-`normal_temperature` | temperature setting for Normal mode | `°C` |
-`economy_temperature` | temperature setting for Economy mode | `°C` |
-`cool_temperature` | temperature setting for Cool mode | `°C` |
-`heater_power_rating` | auxillary heater power rating | `W` |
+`boost_mode_minutes_left` | Minutes left until boost mode expires | `min` |
+`extract_fan_speed` | Extract fan speed | `%` |
+`filter_months_left` | Filter months left | `m` |
+`fireplace_mode_minutes_left` | Minutes left until fireplace mode expires | `min` |
+`heat_exchanger_rotor_speed_percent` | Rotor speed of heat exchanger | `%` |
+`heat_exchanger_rotor_speed` | Rotor speed of heat exchanger | `rpm` |
+`heater_active` | Auxillary heater state | `Running` \| `Not running` |
+`heater_air_temperature` | Air temperature at heater | `°C` |
+`heater_power_percent` | Auxillary heater power | `%` |
+`product_number` | Product number | `str` |
+`supply_air_temperature` | Supply air temperature | `°C` |
+`supply_fan_speed`  | Supply fan speed | `%` |
+`system_active` | Status of the system | `Running` \| `Not running`
+`system_name` | Control system name | `str` |
+`system_version` | Control system version | `str` |
+`system_warning` | System warning | `Problem` \| `No problem` | Raw system error/warning codes
+`target_temperature` | Target air temperature | `°C` |
+`temperature_mode` | Current temperature mode setting | `Cool` \| `Normal` \| `Economy` |
+`ventilation_mode` | Current ventilation mode setting | `Normal` \| `Away` \| `Boost` |
+`normal_temperature` | Temperature setting for Normal mode | `°C` |
+`economy_temperature` | Temperature setting for Economy mode | `°C` |
+`cool_temperature` | Temperature setting for Cool mode | `°C` |
+`heater_power_rating` | Auxillary heater power rating | `W` |
 
 ### Switches
 
-Name | Description
--- | --
+Name | Description | Installer setting?
+-- | -- | --
 `cooling_mode` | Turn `cooling` mode on/off
 `fireplace_mode` | Turn `fireplace` mode on/off
+`heater_active` | Turn `electric auxiliary heater` on/off. Note: Disabling the electric heater is not recommended and may trigger emergency shutdown of the system! Consult the manual for more information. | Yes
 
 ### Select
 
-Name | Description
--- | --
-`ventilation_mode` | set ventilation mode Normal/Away/Boost
-`temperature_mode` | set temperature mode Cool/Normal/Economy
-`system state` | set control system state on/off
+Name | Description  | Installer setting?
+-- | -- | --
+`system_state` | Set control system state on/off | Yes
+`temperature_mode` | Set temperature mode Cool/Normal/Economy
+`ventilation_mode` | Set ventilation mode Normal/Away/Boost
 
 ### Number
-Name | Description
--- | --
-`cool_temperature` | Cool temperature installer setting
-`economy_temperature` | Economy temperature installer setting
-`normal_temperature` | Normal temperature installer setting
+Name | Description | Installer setting?
+-- | -- | --
+`cool_temperature` | Cool temperature installer setting | Yes
+`economy_temperature` | Economy temperature installer setting | Yes
+`normal_temperature` | Normal temperature installer setting  | Yes
 
 ### Button
-Name | Description
--- | --
-`system_reset` | Reset system warnings
+Name | Description | Installer setting?
+-- | -- | --
+`system_reset` | Reset system warnings | Yes
 
-## Experimental features
+## Experimental Features
 
 ### Sensors
 
 Name | Description | Unit
 -- | -- | --
-`heater_power` | Estimated auxillary heater power | `W` |
+`heater_power` | Estimated electric auxillary heater power. This approximation might be inaccurate as it is a simple calculation based on heater power rating multiplied by heater power percent. | `W` |
 
 ### Switches
 
 Switch | Description
 -- | --
-`cooking_mode` | Turn `cooking` mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking mode` is active, it automatically deactivates `fireplace_mode` before its timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
+`cooking_mode` | Turn cooking mode on/off. Emulates cooking mode when fireplace mode is active. When `cooking_mode` is active, it automatically deactivates `fireplace_mode` before its timer expires. This will reset rotary heat exchanger to normal operation as is desirable in warm weather.
 
-## Supported devices
+
+## Supported Devices
 
 See [list of supported devices](https://github.com/bj00rn/pysaleryd/blob/master/README.rst#supported-devices)
 
 ## Installation
 
-## HACS Install
+### HACS Install
 
 1. In Home Assistant go to `HACS` -> `Integrations` and add this repository as a `custom repository`.
 2. In Home Assistant go to `Configuration` -> `Integrations` click `+` and search for `Saleryd HRV`.
 3. Click install.
 4. Restart Home Assistant.
 
-## Manual ZIP install
+### Manual ZIP Install
 
 1. Download release .zip file from [releases](https://github.com/bj00rn/ha-saleryd-ftx/releases) page.
 2. Copy the `saleryd_hrv` directory from the release archive to the `/custom_components` directory in your Home Assistant server.
@@ -122,22 +130,22 @@ See [list of supported devices](https://github.com/bj00rn/pysaleryd/blob/master/
 
 ## Configuration
 
-### Prequisites
+### Prerequisites
 
 1. Connect HRV system to your local WIFI network. See instructions in user manual.
-2. Take note of the assigned IP adress of the system
+2. Take note of the assigned IP address of the system
 
 ### YAML Configuration
 
-Configuration in `congfiguration.yaml` is not supported
+Configuration in `configuration.yaml` is not supported.
 
 ### UI Configuration
 
-* [Add Intergration](https://www.home-assistant.io/getting-started/integration/) to Home Assistant.
+* [Add Integration](https://www.home-assistant.io/getting-started/integration/) to Home Assistant.
 
 Setting | Description | Default
 -- | -- | --
-Name | System name. Must be unique. |
+Name | System name. Must be unique as it is used to generate device id |
 Websocket IP | IP adress of the HRV system on the local WIFI network |
 Port | Port number for websocket connection | 3001
 Enable installer settings | Altering HRV system configuration set by the installer from Home Assistant. Don't alter these settings unless you know what you are doing | False
@@ -147,7 +155,7 @@ Installer password | Installer password. Required for installer settings |
 
 ### I can't connect to HRV system
 
-* Check the Home Assitant `logs`
+* Check the Home Assistant `logs`
 * Confirm system is connected and the UI portal is reachable on the local network. Follow steps in the manual.
 * Confirm websocket port by connecting to the UI using a browser and take note of websocket port using debug console in browser.
 * The system HRV can only handle a few connected clients. Shut down any additional clients/browsers and try again.
@@ -156,13 +164,13 @@ Installer password | Installer password. Required for installer settings |
 * Ensure installer settings are enabled in integration configuration
 * Ensure installer password is correct
 
-### Contributing
+## Contributing
 
 Issues and PRs welcome!
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-### Enable debug logging
+### Enable Debug Logging
 
 Add component to the [logger](https://www.home-assistant.io/integrations/logger/) section of homeassistant configuration.yaml.
 ```yaml
@@ -171,7 +179,7 @@ logger:
     custom_components.saleryd_hrv: debug
 ```
 
-## Related projects
+## Related Projects
 
 https://github.com/bj00rn/pysaleryd
 
