@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
-from pysaleryd.const import DataKeyEnum
 
-from .const import DOMAIN, KEY_CLIENT_STATE, KEY_TARGET_TEMPERATURE
+from .const import DOMAIN
 
 if TYPE_CHECKING:
     from .data import SalerydLokeConfigEntry

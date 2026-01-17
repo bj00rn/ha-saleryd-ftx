@@ -55,36 +55,48 @@ KEY_COOKING_MODE = "*COOKING_MODE"
 
 
 class TemperatureModeEnum(IntEnum):
-    Normal = 0
-    Economy = 1
-    Cool = 2
+    """Enum for temperature modes."""
+
+    NORMAL = 0
+    ECONOMY = 1
+    COOL = 2
 
 
 class VentilationModeEnum(IntEnum):
-    Normal = 0
-    Away = 1
-    Boost = 2
+    """Enum for ventilation modes."""
+
+    NORMAL = 0
+    AWAY = 1
+    BOOST = 2
 
 
 class HeaterModeEnum(IntEnum):
-    Low = 0
-    High = 1
+    """Enum for heater modes."""
+
+    LOW = 0
+    HIGH = 1
 
 
 class HeaterPowerEnum:
-    High = 1800
-    Low = 900
+    """Enum for heater power ratings."""
+
+    HIGH = 1800
+    LOW = 900
 
 
 class SystemActiveModeEnum(IntEnum):
-    Off = 0
-    On = 1
-    Reset = 2
+    """Enum for system active modes."""
+
+    OFF = 0
+    ON = 1
+    RESET = 2
 
 
 class ModeEnum(IntEnum):
-    Off = 0
-    On = 1
+    """Enum for generic modes."""
+
+    OFF = 0
+    ON = 1
 
 
 LOGGER: Logger = getLogger(__package__)
