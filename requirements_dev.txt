@@ -1,5 +1,5 @@
 -r requirements_test.txt
-homeassistant==2025.7.3
+homeassistant==2025.10.2
 pre-commit==3.6.0
 colorlog
 debugpy
