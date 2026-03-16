@@ -9,8 +9,8 @@ from homeassistant.components.number import (
 from homeassistant.const import UnitOfTemperature
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import slugify
-from pysaleryd.const import DataKeyEnum
-from pysaleryd.utils import SystemProperty
+from pysaleryd.const import DataKey
+from pysaleryd.data import SystemProperty
 
 from .const import CONF_ENABLE_INSTALLER_SETTINGS
 from .entity import SalerydLokeEntity
@@ -68,7 +68,7 @@ async def async_setup_entry(
                 coordinator,
                 entry,
                 NumberEntityDescription(
-                    key=DataKeyEnum.TARGET_TEMPERATURE_NORMAL,
+                    key=DataKey.TARGET_TEMPERATURE_NORMAL,
                     name="Normal temperature",
                     device_class=NumberDeviceClass.TEMPERATURE,
                     native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -82,7 +82,7 @@ async def async_setup_entry(
                 coordinator,
                 entry,
                 NumberEntityDescription(
-                    key=DataKeyEnum.TARGET_TEMPERATURE_ECONOMY,
+                    key=DataKey.TARGET_TEMPERATURE_ECONOMY,
                     name="Economy temperature",
                     device_class=NumberDeviceClass.TEMPERATURE,
                     native_unit_of_measurement=UnitOfTemperature.CELSIUS,
@@ -96,7 +96,7 @@ async def async_setup_entry(
                 coordinator,
                 entry,
                 NumberEntityDescription(
-                    key=DataKeyEnum.TARGET_TEMPERATURE_COOL,
+                    key=DataKey.TARGET_TEMPERATURE_COOL,
                     name="Cool temperature",
                     device_class=NumberDeviceClass.TEMPERATURE,
                     native_unit_of_measurement=UnitOfTemperature.CELSIUS,

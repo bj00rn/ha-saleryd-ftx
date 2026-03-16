@@ -3,10 +3,10 @@ from typing import TYPE_CHECKING
 from homeassistant.components.button import ButtonEntity, ButtonEntityDescription
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import slugify
-from pysaleryd.const import DataKeyEnum
+from pysaleryd.const import DataKey
 
 from .const import CONF_ENABLE_INSTALLER_SETTINGS, SystemActiveModeEnum
-from .entity import SaleryLokeVirtualEntity
+from .entity import SalerydLokeVirtualEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .data import SalerydLokeConfigEntry
 
 
-class SalerydLokeButton(SaleryLokeVirtualEntity, ButtonEntity):
+class SalerydLokeButton(SalerydLokeVirtualEntity, ButtonEntity):
     def __init__(self, entry: "SalerydLokeConfigEntry", entity_description):
         self._entry = entry
         self.entity_id = f"button.{entry.unique_id}_{slugify(entity_description.name)}"
@@ -25,7 +25,7 @@ class SalerydLokeButton(SaleryLokeVirtualEntity, ButtonEntity):
 class SalerydLokeSystemResetButton(SalerydLokeButton):
     async def async_press(self):
         await self._entry.runtime_data.bridge.send_command(
-            DataKeyEnum.CONTROL_SYSTEM_STATE, SystemActiveModeEnum.Reset, True
+            DataKey.CONTROL_SYSTEM_STATE, SystemActiveModeEnum.RESET, True
         )
 
 
@@ -39,7 +39,7 @@ async def async_setup_entry(
             SalerydLokeSystemResetButton(
                 entry,
                 ButtonEntityDescription(
-                    key=DataKeyEnum.CONTROL_SYSTEM_STATE,
+                    key=DataKey.CONTROL_SYSTEM_STATE,
                     name="System reset",
                     entity_category=EntityCategory.CONFIG,
                     icon="mdi:restart",

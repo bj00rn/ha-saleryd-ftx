@@ -22,7 +22,7 @@
 			"extensions": [
 				"ms-python.python",
 				"ms-python.flake8",
-				"ms-python.mypy",
+				"ms-python.mypy-type-checker",
 				"ms-python.isort",
 				"ms-python.pylint",
 				"ms-python.vscode-pylance",
@@ -49,7 +49,7 @@
 				"python.testing.pytestArgs": [
 					"."
 				],
-				"python.defaultInterpreterPath": "/usr/local/bin/python3",
+				"python.defaultInterpreterPath": "/usr/local/bin/python",
 				"python.analysis.autoSearchPaths": false,
 				"[python]": {
 					"editor.defaultFormatter": "ms-python.black-formatter",

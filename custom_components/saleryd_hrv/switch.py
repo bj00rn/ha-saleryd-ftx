@@ -12,11 +12,11 @@ from homeassistant.core import HassJobType
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.util import slugify
-from pysaleryd.const import DataKeyEnum
-from pysaleryd.utils import SystemProperty
+from pysaleryd.const import DataKey
+from pysaleryd.data import SystemProperty
 
 from .const import CONF_ENABLE_INSTALLER_SETTINGS, KEY_COOKING_MODE, LOGGER, ModeEnum
-from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
+from .entity import SalerydLokeEntity, SalerydLokeVirtualEntity
 
 if TYPE_CHECKING:
     from homeassistant.core import (
@@ -27,14 +27,18 @@ if TYPE_CHECKING:
     )
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+    from .coordinator import SalerydLokeDataUpdateCoordinator
     from .data import SalerydLokeConfigEntry
 
 
-class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
+class SalerydLokeVirtualSwitch(SalerydLokeVirtualEntity, SwitchEntity):
     """Virtual switch base class"""
 
     def __init__(
-        self, coordinator, entry: "SalerydLokeConfigEntry", entity_description
+        self,
+        _coordinator: "SalerydLokeDataUpdateCoordinator",
+        entry: "SalerydLokeConfigEntry",
+        entity_description,
     ) -> None:
         self._entry = entry
         self._attr_is_on = False
@@ -58,8 +62,8 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         coordinator,
         entry: "SalerydLokeConfigEntry",
         entity_description,
-        state_when_on=ModeEnum.On,
-        state_when_off=ModeEnum.Off,
+        state_when_on=ModeEnum.ON,
+        state_when_off=ModeEnum.OFF,
     ) -> None:
         self._entry = entry
         self._state_when_on = state_when_on
@@ -76,6 +80,12 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         )
 
         return system_property.value == self._state_when_on
+
+    def turn_on(self, **kwargs) -> None:
+        raise NotImplementedError
+
+    def turn_off(self, **kwargs) -> None:
+        raise NotImplementedError
 
     async def async_turn_on(self, **kwargs):
         await self._entry.runtime_data.bridge.send_command(
@@ -117,30 +127,28 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
             self._unsubscribe()
         await super().async_will_remove_from_hass()
 
-    async def _maybe_cancel(self, event: "Event[EventStateChangedData]"):
+    async def _maybe_cancel(self, event: "Event[EventStateChangedData]") -> None:
         if self._attr_is_on:
-            if (
-                event.data["new_state"] is None
-                or not event.data["new_state"].state.isnumeric()
-            ):
+            new_state = event.data["new_state"]
+            if new_state is None or not new_state.state.isnumeric():
                 return
-            if float(event.data["new_state"].state) < self.THRESHOLD:
+            if float(new_state.state) < self.THRESHOLD:
                 LOGGER.info("Cooking mode triggered deactivation of fireplace mode")
                 LOGGER.debug(
-                    "Cooking mode deactivating fireplace mode, since time left [%s] < threshold [%s]",
-                    event.data["new_state"].state,
+                    "Cooking mode deactivating fireplace mode, time left [%s] < threshold [%s]",
+                    new_state.state,
                     self.THRESHOLD,
                 )
                 await self._entry.runtime_data.bridge.send_command(
-                    DataKeyEnum.FIREPLACE_MODE, ModeEnum.Off
+                    DataKey.FIREPLACE_MODE, ModeEnum.OFF
                 )
 
 
 async def async_setup_entry(
-    hass: "HomeAssistant",
+    _hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
     async_add_entities: "AddEntitiesCallback",
-):
+) -> None:
     """Setup sensor platform."""
     coordinator = entry.runtime_data.coordinator
 
@@ -150,7 +158,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=SwitchEntityDescription(
-                key=DataKeyEnum.FIREPLACE_MODE,
+                key=DataKey.FIREPLACE_MODE,
                 icon="mdi:fireplace",
                 name="Fireplace mode",
                 device_class=SwitchDeviceClass.SWITCH,
@@ -161,7 +169,7 @@ async def async_setup_entry(
             coordinator,
             entry,
             entity_description=SwitchEntityDescription(
-                key=DataKeyEnum.COOLING_MODE,
+                key=DataKey.COOLING_MODE,
                 icon="mdi:snowflake",
                 name="Cooling mode",
                 device_class=SwitchDeviceClass.SWITCH,
@@ -188,7 +196,7 @@ async def async_setup_entry(
                 coordinator,
                 entry,
                 entity_description=SwitchEntityDescription(
-                    key=DataKeyEnum.MODE_HEATER,
+                    key=DataKey.MODE_HEATER,
                     icon="mdi:heating-coil",
                     name="Heater active",
                     device_class=SwitchDeviceClass.SWITCH,

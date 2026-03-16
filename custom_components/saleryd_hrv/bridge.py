@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from pysaleryd.const import DataKeyEnum
+from pysaleryd.const import DataKey
 
 from .const import CONF_INSTALLER_PASSWORD, KEY_CLIENT_STATE, KEY_TARGET_TEMPERATURE
 
@@ -20,27 +20,29 @@ class SalerydLokeBridge:
         client: "Client",
         coordinator: "SalerydLokeDataUpdateCoordinator",
         logger,
-    ):
+    ) -> None:
         self.client = client
         self.coordinator = coordinator
         self.logger = logger
         self.entry = entry
 
-        self.client.add_handler(self.update_data_callback)
+        self.client.add_data_handler(self.update_data_callback)
 
-    def update_data_callback(self, data):
+    def update_data_callback(self, data) -> None:
         """Update coordindator data"""
         self.logger.debug("Received data")
         _data = data.copy()
         self.__inject_virtual_keys(_data)
         self.coordinator.async_set_updated_data(_data)
 
-    def __inject_virtual_keys(self, data):
+    def __inject_virtual_keys(self, data) -> None:
         """Inject additional keys for virtual sensors not present in the data set"""
-        data[KEY_CLIENT_STATE] = self.client.state.value
+        data[KEY_CLIENT_STATE] = str(self.client.state.value)
         data[KEY_TARGET_TEMPERATURE] = None
 
-    async def send_command(self, key: DataKeyEnum, data: str | int, auth: bool = False):
+    async def send_command(
+        self, key: DataKey, data: str | int, auth: bool = False
+    ) -> None:
         """Send command to client"""
 
         async def send(key, data):
@@ -49,5 +51,5 @@ class SalerydLokeBridge:
 
         if auth:
             installer_password = self.entry.data.get(CONF_INSTALLER_PASSWORD)
-            await send(DataKeyEnum.INSTALLER_PASSWORD, installer_password)
+            await send(DataKey.INSTALLER_PASSWORD, installer_password)
         await send(key, data)
