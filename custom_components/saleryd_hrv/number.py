@@ -6,7 +6,7 @@ from homeassistant.components.number import (
     NumberEntityDescription,
     NumberMode,
 )
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import UnitOfTemperature, UnitOfTime
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
@@ -62,8 +62,37 @@ async def async_setup_entry(
     async_add_entities: "AddEntitiesCallback",
 ):
     coordinator = entry.runtime_data.coordinator
+
     if entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS):
         config_entities = [
+            SalerydLokeNumber(
+                coordinator,
+                entry,
+                NumberEntityDescription(
+                    key=DataKeyEnum.BOOST_MODE_MINUTES,
+                    name="Boost mode minutes",
+                    device_class=NumberDeviceClass.DURATION,
+                    native_unit_of_measurement=UnitOfTime.MINUTES,
+                    native_max_value=999,
+                    native_min_value=1,
+                    icon="mdi:fan-clock",
+                    entity_category=EntityCategory.CONFIG,
+                ),
+            ),
+            SalerydLokeNumber(
+                coordinator,
+                entry,
+                NumberEntityDescription(
+                    key=DataKeyEnum.FIREPLACE_MODE_MINUTES,
+                    name="Fireplace mode minutes",
+                    device_class=NumberDeviceClass.DURATION,
+                    native_unit_of_measurement=UnitOfTime.MINUTES,
+                    native_max_value=999,
+                    native_min_value=1,
+                    icon="mdi:fireplace",
+                    entity_category=EntityCategory.CONFIG,
+                ),
+            ),
             SalerydLokeNumber(
                 coordinator,
                 entry,
