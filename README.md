@@ -48,16 +48,13 @@ Name | Description | Unit | State attributes
 `fireplace_mode_minutes_left` | Minutes left until fireplace mode expires | `min` |
 `heat_exchanger_rotor_speed_percent` | Rotor speed of heat exchanger | `%` |
 `heat_exchanger_rotor_speed` | Rotor speed of heat exchanger | `rpm` |
-`heater_active` | Auxillary heater state | `Running` \| `Not running` |
 `heater_air_temperature` | Air temperature at heater | `°C` |
 `heater_power_percent` | Auxillary heater power | `%` |
 `product_number` | Product number | `str` |
 `supply_air_temperature` | Supply air temperature | `°C` |
 `supply_fan_speed`  | Supply fan speed | `%` |
-`system_active` | Status of the system | `Running` \| `Not running`
 `system_name` | Control system name | `str` |
 `system_version` | Control system version | `str` |
-`system_warning` | System warning | `Problem` \| `No problem` | Raw system error/warning codes
 `target_temperature` | Target air temperature | `°C` |
 `temperature_mode` | Current temperature mode setting | `Cool` \| `Normal` \| `Economy` |
 `ventilation_mode` | Current ventilation mode setting | `Normal` \| `Away` \| `Boost` |
@@ -65,6 +62,15 @@ Name | Description | Unit | State attributes
 `economy_temperature` | Temperature setting for Economy mode | `°C` |
 `cool_temperature` | Temperature setting for Cool mode | `°C` |
 `heater_power_rating` | Auxillary heater power rating | `W` |
+
+### Binary sensors
+
+Name | Description | State | State attributes
+-- | -- | -- | --
+`connection_state` | Integration websocket connection state | `Connected` \| `Disconnected` | Raw connection state
+`heater_active` | Auxillary heater state | `Running` \| `Not running` |
+`system_active` | System running state | `Running` \| `Not running` |
+`system_warning` | System warning state | `Problem` \| `No problem` | Raw system error/warning codes
 
 ### Switches
 
@@ -78,15 +84,17 @@ Name | Description | Installer setting?
 
 Name | Description  | Installer setting?
 -- | -- | --
-`system_state` | Set control system state on/off | Yes
+`system_active` | Set control system state on/off | Yes
 `temperature_mode` | Set temperature mode Cool/Normal/Economy
 `ventilation_mode` | Set ventilation mode Normal/Away/Boost
 
 ### Number
 Name | Description | Installer setting?
 -- | -- | --
+`boost_mode_minutes` | Boost mode duration | Yes
 `cool_temperature` | Cool temperature installer setting | Yes
 `economy_temperature` | Economy temperature installer setting | Yes
+`fireplace_mode_minutes` | Fireplace mode duration | Yes
 `normal_temperature` | Normal temperature installer setting  | Yes
 
 ### Button
