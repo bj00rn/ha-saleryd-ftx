@@ -1,4 +1,11 @@
-## [8.3.0-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.2.1...v8.3.0-rc.0) (2025-11-07)
+## [8.3.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.2.1...v8.3.0) (2026-05-18)
+
+
+### Features
+
+* add installer settings for boost mode and fireplace mode duration ([8b22284](https://github.com/bj00rn/ha-saleryd-ftx/commit/8b2228434507c27235ceae24b03a949c1f9e819a))
+
+## 8.3.0-rc.0 (2025-11-07)
 
 
 ### Features
