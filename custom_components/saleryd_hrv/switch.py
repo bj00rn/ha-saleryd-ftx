@@ -1,5 +1,7 @@
 """Switch platform"""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.switch import (
@@ -15,7 +17,13 @@ from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
-from .const import CONF_ENABLE_INSTALLER_SETTINGS, KEY_COOKING_MODE, LOGGER, ModeEnum
+from .const import (
+    CONF_ENABLE_INSTALLER_SETTINGS,
+    KEY_COOKING_MODE,
+    LOGGER,
+    ModeEnum,
+    VentilationModeEnum,
+)
 from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
 
 if TYPE_CHECKING:
@@ -136,6 +144,104 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
                 )
 
 
+class SalerydLokeModeRepeatListener:
+    """Listen for expiring mode timers and repeat mode activations."""
+
+    THRESHOLD = 3
+
+    def __init__(
+        self,
+        hass: "HomeAssistant",
+        entry: "SalerydLokeConfigEntry",
+        mode_name: str,
+        track_sensor_name: str,
+        repeat_number_name: str,
+        command_key: DataKeyEnum,
+        command_value: int,
+    ) -> None:
+        self.hass = hass
+        self._entry = entry
+        self._mode_name = mode_name
+        self._track_entity_id = f"sensor.{entry.unique_id}_{slugify(track_sensor_name)}"
+        self._repeat_entity_id = (
+            f"number.{entry.unique_id}_{slugify(repeat_number_name)}"
+        )
+        self._command_key = command_key
+        self._command_value = command_value
+        self._unsubscribe: CALLBACK_TYPE | None = None
+        self._remaining_repeats: int | None = None
+        self._waiting_for_reset = False
+
+    def async_start(self) -> CALLBACK_TYPE:
+        self._unsubscribe = async_track_state_change_event(
+            self.hass,
+            self._track_entity_id,
+            self._maybe_repeat_mode,
+            HassJobType.Coroutinefunction,
+        )
+        return self.async_stop
+
+    def async_stop(self) -> None:
+        if self._unsubscribe is not None:
+            self._unsubscribe()
+            self._unsubscribe = None
+
+    def _parse_minutes(self, state) -> float | None:
+        if state is None or not state.state.replace(".", "", 1).isnumeric():
+            return None
+        return float(state.state)
+
+    def _get_configured_repeats(self) -> int:
+        state = self.hass.states.get(self._repeat_entity_id)
+        if state is None:
+            return 0
+        try:
+            return max(0, int(float(state.state)))
+        except ValueError:
+            return 0
+
+    async def _maybe_repeat_mode(self, event: "Event[EventStateChangedData]") -> None:
+        new_minutes = self._parse_minutes(event.data.get("new_state"))
+        old_minutes = self._parse_minutes(event.data.get("old_state"))
+        configured_repeats = self._get_configured_repeats()
+
+        if (
+            new_minutes is not None
+            and old_minutes is not None
+            and new_minutes > old_minutes
+        ):
+            if self._waiting_for_reset:
+                self._waiting_for_reset = False
+            else:
+                self._remaining_repeats = configured_repeats
+
+        if self._remaining_repeats is None:
+            self._remaining_repeats = configured_repeats
+
+        if new_minutes is None or new_minutes > self.THRESHOLD:
+            return
+
+        if old_minutes is not None and old_minutes <= self.THRESHOLD:
+            return
+
+        if self._remaining_repeats <= 0:
+            return
+
+        self._remaining_repeats -= 1
+        self._waiting_for_reset = True
+        LOGGER.info("Extending %s timer by repeating mode activation", self._mode_name)
+        LOGGER.debug(
+            "Extending %s mode since time left [%s] <= threshold [%s], repeats left [%s]",
+            self._mode_name,
+            new_minutes,
+            self.THRESHOLD,
+            self._remaining_repeats,
+        )
+        await self._entry.runtime_data.bridge.send_command(
+            self._command_key, self._command_value
+        )
+
+
 async def async_setup_entry(
     hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
@@ -181,6 +287,28 @@ async def async_setup_entry(
     ]
 
     async_add_entities(switches)
+    repeat_listeners = [
+        SalerydLokeModeRepeatListener(
+            hass=hass,
+            entry=entry,
+            mode_name="boost",
+            track_sensor_name="Boost mode minutes left",
+            repeat_number_name="Boost mode repeats",
+            command_key=DataKeyEnum.MODE_FAN,
+            command_value=VentilationModeEnum.Boost,
+        ),
+        SalerydLokeModeRepeatListener(
+            hass=hass,
+            entry=entry,
+            mode_name="fireplace",
+            track_sensor_name="Fireplace mode minutes left",
+            repeat_number_name="Fireplace mode repeats",
+            command_key=DataKeyEnum.FIREPLACE_MODE,
+            command_value=ModeEnum.On,
+        ),
+    ]
+    for listener in repeat_listeners:
+        entry.async_on_unload(listener.async_start())
 
     if entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS):
         config_entities = [

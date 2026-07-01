@@ -92,9 +92,11 @@ Name | Description  | Installer setting?
 Name | Description | Installer setting?
 -- | -- | --
 `boost_mode_minutes` | Boost mode duration | Yes
+`boost_mode_repeats` | Number of automatic boost mode re-activations when timer is close to zero | No
 `cool_temperature` | Cool temperature installer setting | Yes
 `economy_temperature` | Economy temperature installer setting | Yes
 `fireplace_mode_minutes` | Fireplace mode duration | Yes
+`fireplace_mode_repeats` | Number of automatic fireplace mode re-activations when timer is close to zero | No
 `normal_temperature` | Normal temperature installer setting  | Yes
 
 ### Button
