@@ -8,12 +8,11 @@ from homeassistant.components.number import (
 )
 from homeassistant.const import UnitOfTemperature, UnitOfTime
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
 from .const import CONF_ENABLE_INSTALLER_SETTINGS
-from .entity import SalerydLokeEntity
+from .entity import SalerydLokeEntity, build_entity_id
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -36,7 +35,7 @@ class SalerydLokeNumber(SalerydLokeEntity, NumberEntity):
         self._entry = entry
 
         """Initialize the sensor."""
-        self.entity_id = f"number.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("number", entry, entity_description.name)
         super().__init__(coordinator, entry, entity_description)
 
     def _get_native_value(self, system_property: SystemProperty):

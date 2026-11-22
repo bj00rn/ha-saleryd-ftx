@@ -13,6 +13,17 @@ if TYPE_CHECKING:
     from .data import SalerydLokeConfigEntry
 
 
+def build_entity_id(platform: str, entry: "SalerydLokeConfigEntry", name: str) -> str:
+    """Build a valid entity_id from the config entry unique id and entity name.
+
+    The config entry unique id is the user supplied name (e.g. "Saleryd FTX"),
+    so it must be slugified to produce a valid entity_id. The result matches
+    the entity_id Home Assistant already derived from the unslugified value,
+    so existing installations keep their entity ids.
+    """
+    return f"{platform}.{slugify(entry.unique_id)}_{slugify(name)}"
+
+
 class SaleryLokeVirtualEntity(Entity):
     """Virtual Entity base class"""
 

@@ -11,12 +11,11 @@ from homeassistant.const import STATE_ON
 from homeassistant.core import HassJobType
 from homeassistant.helpers.event import async_track_state_change_event
 from homeassistant.helpers.restore_state import RestoreEntity
-from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
 from .const import CONF_ENABLE_INSTALLER_SETTINGS, KEY_COOKING_MODE, LOGGER, ModeEnum
-from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
+from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity, build_entity_id
 
 if TYPE_CHECKING:
     from homeassistant.core import (
@@ -38,7 +37,7 @@ class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
     ) -> None:
         self._entry = entry
         self._attr_is_on = False
-        self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("switch", entry, entity_description.name)
         super().__init__(entry, entity_description)
 
     def turn_on(self, **kwargs: Any) -> None:
@@ -64,7 +63,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         self._entry = entry
         self._state_when_on = state_when_on
         self._state_when_off = state_when_off
-        self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("switch", entry, entity_description.name)
         super().__init__(coordinator, entry, entity_description)
 
     @property
@@ -101,8 +100,8 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
         await super().async_added_to_hass()
         state = await self.async_get_last_state()
         self._attr_is_on = state is not None and state.state == STATE_ON
-        track_entity_id = (
-            f"sensor.{self._entry.unique_id}_{slugify('Fireplace mode minutes left')}"
+        track_entity_id = build_entity_id(
+            "sensor", self._entry, "Fireplace mode minutes left"
         )
 
         self._unsubscribe = async_track_state_change_event(

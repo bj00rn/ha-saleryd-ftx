@@ -14,13 +14,12 @@ from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import ErrorSystemProperty, SystemProperty
 from pysaleryd.websocket import State
 
 from .const import KEY_CLIENT_STATE, ModeEnum
-from .entity import SalerydLokeEntity
+from .entity import SalerydLokeEntity, build_entity_id
 
 if TYPE_CHECKING:
     from .coordinator import SalerydLokeDataUpdateCoordinator
@@ -38,8 +37,8 @@ class SalerydLokeBinarySensor(SalerydLokeEntity, BinarySensorEntity):
         state_when_on: IntEnum = ModeEnum.On,
     ) -> None:
         """Initialize the sensor."""
-        self.entity_id = (
-            f"binary_sensor.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id(
+            "binary_sensor", entry, entity_description.name
         )
         self.state_when_on = state_when_on
         super().__init__(coordinator, entry, entity_description)
