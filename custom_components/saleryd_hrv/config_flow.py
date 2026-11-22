@@ -43,7 +43,6 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
     """Config flow for SalerydLoke."""
 
     VERSION = CONFIG_VERSION
-    CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_PUSH
     _config_entry: config_entries.ConfigEntry
 
     def __init__(self):
@@ -71,6 +70,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
                 )
 
             return self.async_show_form(
+                step_id="user",
                 data_schema=self.add_suggested_values_to_schema(
                     CONFIG_SCHEMA, user_input
                 ),
@@ -86,6 +86,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
             }
 
             return self.async_show_form(
+                step_id="user",
                 data_schema=self.add_suggested_values_to_schema(
                     CONFIG_SCHEMA, suggested_values
                 ),
@@ -126,6 +127,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
                 )
 
             return self.async_show_form(
+                step_id="reconfigure",
                 data_schema=self.add_suggested_values_to_schema(
                     RECONFIG_SCHEMA, user_input
                 ),
@@ -133,6 +135,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
             )
         else:
             return self.async_show_form(
+                step_id="reconfigure",
                 data_schema=self.add_suggested_values_to_schema(
                     RECONFIG_SCHEMA, self._config_entry.data
                 ),
