@@ -90,7 +90,7 @@ class SalerydLokeEstimatedHeaterPowerSensor(SalerydLokeSensor):
         if heater_power_percent.value is not None:
             if heater_power_rating.value == HeaterModeEnum.Low:
                 return heater_power_percent.value / 100 * HeaterPowerEnum.Low
-            if heater_power_rating == HeaterPowerEnum.High:
+            if heater_power_rating.value == HeaterModeEnum.High:
                 return heater_power_percent.value / 100 * HeaterPowerEnum.High
 
         return None
