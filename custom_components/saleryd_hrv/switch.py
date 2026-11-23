@@ -8,8 +8,7 @@ from homeassistant.components.switch import (
     SwitchEntityDescription,
 )
 from homeassistant.const import STATE_ON
-from homeassistant.core import HassJobType
-from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.core import callback
 from homeassistant.helpers.restore_state import RestoreEntity
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
@@ -18,14 +17,10 @@ from .const import CONF_ENABLE_INSTALLER_SETTINGS, KEY_COOKING_MODE, LOGGER, Mod
 from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity, build_entity_id
 
 if TYPE_CHECKING:
-    from homeassistant.core import (
-        CALLBACK_TYPE,
-        Event,
-        EventStateChangedData,
-        HomeAssistant,
-    )
+    from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+    from .coordinator import SalerydLokeDataUpdateCoordinator
     from .data import SalerydLokeConfigEntry
 
 
@@ -93,46 +88,44 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
     THRESHOLD = 3
 
     def __init__(self, coordinator, entry, entity_description) -> None:
-        self._unsubscribe: CALLBACK_TYPE | None = None
+        self._coordinator: "SalerydLokeDataUpdateCoordinator" = coordinator
+        self._minutes_left: int | None = None
         super().__init__(coordinator, entry, entity_description)
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
         state = await self.async_get_last_state()
         self._attr_is_on = state is not None and state.state == STATE_ON
-        track_entity_id = build_entity_id(
-            "sensor", self._entry, "Fireplace mode minutes left"
+        # Follow the fireplace timer through the coordinator rather than the
+        # timer sensor's entity id, which the user may have renamed.
+        self.async_on_remove(
+            self._coordinator.async_add_listener(self._handle_coordinator_update)
         )
 
-        self._unsubscribe = async_track_state_change_event(
-            self.hass,
-            track_entity_id,
-            self._maybe_cancel,
-            HassJobType.Coroutinefunction,
-        )
-
-    async def async_will_remove_from_hass(self) -> None:
-        if self._unsubscribe is not None:
-            self._unsubscribe()
-        await super().async_will_remove_from_hass()
-
-    async def _maybe_cancel(self, event: "Event[EventStateChangedData]"):
-        if self._attr_is_on:
-            if (
-                event.data["new_state"] is None
-                or not event.data["new_state"].state.isnumeric()
-            ):
-                return
-            if float(event.data["new_state"].state) < self.THRESHOLD:
-                LOGGER.info("Cooking mode triggered deactivation of fireplace mode")
-                LOGGER.debug(
-                    "Cooking mode deactivating fireplace mode, since time left [%s] < threshold [%s]",
-                    event.data["new_state"].state,
-                    self.THRESHOLD,
-                )
-                await self._entry.runtime_data.bridge.send_command(
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        minutes_left = SystemProperty.from_str(
+            DataKeyEnum.MINUTES_LEFT_FIREPLACE_MODE,
+            self._coordinator.data.get(DataKeyEnum.MINUTES_LEFT_FIREPLACE_MODE),
+        ).value
+        if minutes_left == self._minutes_left:
+            return
+        self._minutes_left = minutes_left
+        if not self._attr_is_on or not isinstance(minutes_left, int):
+            return
+        # 0 means the timer is not running
+        if 0 < minutes_left < self.THRESHOLD:
+            LOGGER.info("Cooking mode triggered deactivation of fireplace mode")
+            LOGGER.debug(
+                "Cooking mode deactivating fireplace mode, since time left [%s] < threshold [%s]",
+                minutes_left,
+                self.THRESHOLD,
+            )
+            self.hass.async_create_task(
+                self._entry.runtime_data.bridge.send_command(
                     DataKeyEnum.FIREPLACE_MODE, ModeEnum.Off
                 )
+            )
 
 
 async def async_setup_entry(
