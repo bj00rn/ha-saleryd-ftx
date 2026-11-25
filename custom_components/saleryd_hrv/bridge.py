@@ -44,7 +44,8 @@ class SalerydLokeBridge:
         """Send command to client"""
 
         async def send(key, data):
-            self.logger.debug("Sending control request %s with payload %s", key, data)
+            safe_data = "***REDACTED***" if key == DataKeyEnum.INSTALLER_PASSWORD else data
+            self.logger.debug("Sending control request %s with payload %s", key, safe_data)
             await self.client.send_command(key, data)
 
         if auth:
