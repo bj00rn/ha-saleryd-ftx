@@ -21,7 +21,6 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import ErrorSystemProperty, SystemProperty
 
@@ -34,7 +33,7 @@ from .const import (
     TemperatureModeEnum,
     VentilationModeEnum,
 )
-from .entity import SalerydLokeEntity
+from .entity import SalerydLokeEntity, build_entity_id
 
 if TYPE_CHECKING:
     from .coordinator import SalerydLokeDataUpdateCoordinator
@@ -51,7 +50,7 @@ class SalerydLokeSensor(SalerydLokeEntity, SensorEntity):
         entity_description: SensorEntityDescription,
     ) -> None:
         """Initialize the sensor."""
-        self.entity_id = f"sensor.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("sensor", entry, entity_description.name)
         super().__init__(coordinator, entry, entity_description)
 
     def _get_native_value(self, system_property: SystemProperty):
