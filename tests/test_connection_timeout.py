@@ -6,15 +6,27 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from homeassistant.const import CONF_NAME
 from homeassistant.exceptions import ConfigEntryNotReady
 import pytest
+from pytest_homeassistant.common import MockConfigEntry
 
 from custom_components.saleryd_hrv import async_setup_entry
 from custom_components.saleryd_hrv.config_flow import SalerydLokeFlowHandler
-from custom_components.saleryd_hrv.const import CONF_WEBSOCKET_IP, CONF_WEBSOCKET_PORT
+from custom_components.saleryd_hrv.const import (
+    CONF_WEBSOCKET_IP,
+    CONF_WEBSOCKET_PORT,
+    DOMAIN,
+)
 
 
 async def wait_forever(*args):
     """Wait until cancelled by the timeout."""
     await asyncio.Event().wait()
+
+
+async def test_homeassistant_fixture(hass):
+    """The test plugin provides a Home Assistant instance and config entries."""
+    entry = MockConfigEntry(domain=DOMAIN)
+    entry.add_to_hass(hass)
+    assert hass.config_entries.async_get_entry(entry.entry_id) is entry
 
 
 @pytest.mark.asyncio

@@ -14,7 +14,7 @@ async def test_api(hass, aioclient_mock, caplog):
     # To test the api submodule, we first create an instance of our API client
     api = SalerydLokeApiClient("test", "test", async_create_clientsession(hass))
 
-    # Use aioclient_mock which is provided by `pytest_homeassistant_custom_components`
+    # Use aioclient_mock which is provided by `pytest_homeassistant`
     # to mock responses to aiohttp requests. In this case we are telling the mock to
     # return {"test": "test"} when a `GET` call is made to the specified URL. We then
     # call `async_get_data` which will make that `GET` request.

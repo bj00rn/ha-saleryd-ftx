@@ -9,25 +9,15 @@
 # Fixtures that are defined in conftest.py are available across all tests. You can also
 # define fixtures within a particular test file to scope them locally.
 #
-# pytest_homeassistant_custom_component provides some fixtures that are provided by
+# pytest_homeassistant provides some fixtures that are provided by
 # Home Assistant core. You can find those fixture definitions here:
-# https://github.com/MatthewFlamm/pytest-homeassistant-custom-component/blob/master/pytest_homeassistant_custom_component/common.py
+# https://github.com/home-assistant/core/tree/dev/pytest_homeassistant
 #
 # See here for more info: https://docs.pytest.org/en/latest/fixture.html (note that
 # pytest includes fixtures OOB which you can use as defined on this page)
 from unittest.mock import patch
 
 import pytest
-
-pytest_plugins = "pytest_homeassistant_custom_component"
-
-
-# This fixture enables loading custom integrations in all tests.
-# Remove to enable selective use of this fixture
-@pytest.fixture(autouse=True)
-def auto_enable_custom_integrations(enable_custom_integrations):
-    yield
-
 
 # This fixture is used to prevent HomeAssistant from attempting to create and dismiss persistent
 # notifications. These calls would fail without this fixture since the persistent_notification
