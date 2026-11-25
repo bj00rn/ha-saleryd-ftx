@@ -1,5 +1,7 @@
 """Switch platform"""
 
+from __future__ import annotations
+
 from typing import TYPE_CHECKING, Any
 
 from homeassistant.components.switch import (
@@ -9,15 +11,24 @@ from homeassistant.components.switch import (
 )
 from homeassistant.const import STATE_ON
 from homeassistant.core import callback
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.restore_state import RestoreEntity
+from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
-from .const import CONF_ENABLE_INSTALLER_SETTINGS, KEY_COOKING_MODE, LOGGER, ModeEnum
+from .const import (
+    CONF_ENABLE_INSTALLER_SETTINGS,
+    DOMAIN,
+    KEY_COOKING_MODE,
+    LOGGER,
+    ModeEnum,
+    VentilationModeEnum,
+)
 from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity, build_entity_id
 
 if TYPE_CHECKING:
-    from homeassistant.core import HomeAssistant
+    from homeassistant.core import CALLBACK_TYPE, HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
     from .coordinator import SalerydLokeDataUpdateCoordinator
@@ -128,6 +139,105 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
             )
 
 
+class SalerydLokeModeRepeatListener:
+    """Repeat a mode activation when its timer is about to expire."""
+
+    THRESHOLD = 3
+
+    def __init__(
+        self,
+        hass: "HomeAssistant",
+        entry: "SalerydLokeConfigEntry",
+        mode_name: str,
+        minutes_left_key: DataKeyEnum,
+        repeat_number_name: str,
+        command_key: DataKeyEnum,
+        command_value: int,
+    ) -> None:
+        self.hass = hass
+        self._entry = entry
+        self._mode_name = mode_name
+        self._minutes_left_key = minutes_left_key
+        self._repeat_unique_id = f"{entry.unique_id}_{slugify(repeat_number_name)}"
+        self._command_key = command_key
+        self._command_value = command_value
+        self._unsubscribe: "CALLBACK_TYPE | None" = None
+        self._active = False
+        self._remaining_repeats = 0
+        self._extension_pending = False
+
+    def async_start(self) -> "CALLBACK_TYPE":
+        self._unsubscribe = self._entry.runtime_data.coordinator.async_add_listener(
+            self._handle_coordinator_update
+        )
+        return self.async_stop
+
+    def async_stop(self) -> None:
+        if self._unsubscribe is not None:
+            self._unsubscribe()
+            self._unsubscribe = None
+
+    def _get_configured_repeats(self) -> int:
+        # Resolve through the registry so renamed entities keep working
+        entity_id = er.async_get(self.hass).async_get_entity_id(
+            "number", DOMAIN, self._repeat_unique_id
+        )
+        state = self.hass.states.get(entity_id) if entity_id else None
+        if state is None:
+            return 0
+        try:
+            return max(0, int(float(state.state)))
+        except ValueError:
+            return 0
+
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        minutes_left = SystemProperty.from_str(
+            self._minutes_left_key,
+            self._entry.runtime_data.coordinator.data.get(self._minutes_left_key),
+        ).value
+        if not isinstance(minutes_left, (int, float)):
+            # Unknown value, keep state until the timer is reported again
+            return
+
+        if minutes_left <= 0:
+            self._active = False
+            self._extension_pending = False
+            return
+
+        if not self._active:
+            self._active = True
+            if not self._extension_pending:
+                self._remaining_repeats = self._get_configured_repeats()
+
+        if minutes_left > self.THRESHOLD:
+            # Timer was reset (or a new session started)
+            self._extension_pending = False
+            return
+
+        if self._extension_pending or self._remaining_repeats <= 0:
+            return
+
+        if self._get_configured_repeats() <= 0:
+            return
+
+        self._remaining_repeats -= 1
+        self._extension_pending = True
+        LOGGER.info("Extending %s timer by repeating mode activation", self._mode_name)
+        LOGGER.debug(
+            "Extending %s mode since time left [%s] <= threshold [%s], repeats left [%s]",
+            self._mode_name,
+            minutes_left,
+            self.THRESHOLD,
+            self._remaining_repeats,
+        )
+        self.hass.async_create_task(
+            self._entry.runtime_data.bridge.send_command(
+                self._command_key, self._command_value
+            )
+        )
+
+
 async def async_setup_entry(
     hass: "HomeAssistant",
     entry: "SalerydLokeConfigEntry",
@@ -173,6 +283,28 @@ async def async_setup_entry(
     ]
 
     async_add_entities(switches)
+    repeat_listeners = [
+        SalerydLokeModeRepeatListener(
+            hass=hass,
+            entry=entry,
+            mode_name="boost",
+            minutes_left_key=DataKeyEnum.MINUTES_LEFT_BOOST_MODE,
+            repeat_number_name="Boost mode repeats",
+            command_key=DataKeyEnum.MODE_FAN,
+            command_value=VentilationModeEnum.Boost,
+        ),
+        SalerydLokeModeRepeatListener(
+            hass=hass,
+            entry=entry,
+            mode_name="fireplace",
+            minutes_left_key=DataKeyEnum.MINUTES_LEFT_FIREPLACE_MODE,
+            repeat_number_name="Fireplace mode repeats",
+            command_key=DataKeyEnum.FIREPLACE_MODE,
+            command_value=ModeEnum.On,
+        ),
+    ]
+    for listener in repeat_listeners:
+        entry.async_on_unload(listener.async_start())
 
     if entry.data.get(CONF_ENABLE_INSTALLER_SETTINGS):
         config_entities = [
