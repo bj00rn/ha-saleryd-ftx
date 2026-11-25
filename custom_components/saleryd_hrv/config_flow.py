@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any, Mapping
 
-import async_timeout
 from homeassistant import config_entries
 from homeassistant.const import CONF_NAME
 from homeassistant.helpers.aiohttp_client import async_create_clientsession
@@ -56,7 +56,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
 
         if user_input is not None:
             try:
-                async with async_timeout.timeout(10):
+                async with asyncio.timeout(10):
                     await self._test_connection(
                         user_input[CONF_WEBSOCKET_IP], user_input[CONF_WEBSOCKET_PORT]
                     )
@@ -110,7 +110,7 @@ class SalerydLokeFlowHandler(config_entries.ConfigFlow):
 
         if user_input is not None:
             try:
-                async with async_timeout.timeout(10):
+                async with asyncio.timeout(10):
                     await self._test_connection(
                         user_input[CONF_WEBSOCKET_IP], user_input[CONF_WEBSOCKET_PORT]
                     )

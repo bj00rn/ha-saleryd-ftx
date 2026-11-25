@@ -8,7 +8,6 @@ import asyncio
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
-import async_timeout
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.const import CONF_NAME
 from homeassistant.exceptions import ConfigEntryNotReady
@@ -106,7 +105,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: "SalerydLokeConfigEntry"
     session = async_create_clientsession(hass, raise_for_status=True)
     client = Client(url, port, session, SCAN_INTERVAL.seconds)
     try:
-        async with async_timeout.timeout(10):
+        async with asyncio.timeout(10):
             await client.connect()
     except (TimeoutError, asyncio.CancelledError) as ex:
         client.disconnect()
