@@ -8,6 +8,8 @@ on:
         type: boolean
         description: "pre-release?"
         required: true
+permissions:
+  contents: write
 jobs:
   release:
     runs-on: "ubuntu-latest"

@@ -11,9 +11,9 @@ source venv/bin/activate
 ```
 
 You can then install the dependencies that will allow you to run tests:
-`pip3 install -r requirements_test.txt.`
+`pip3 install -r requirements_test.txt "pysaleryd>=6.1.0,<7"`
 
-This will install `homeassistant`, `pytest`, and `pytest-homeassistant-custom-component`, a plugin which allows you to leverage helpers that are available in Home Assistant for core integration tests.
+This requires Python 3.14.2 or newer and installs `homeassistant`, `pytest`, `pytest-homeassistant`, and the integration's `pysaleryd` dependency. The plugin provides helpers for Home Assistant integration tests.
 
 # Useful commands
 

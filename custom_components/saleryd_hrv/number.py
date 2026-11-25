@@ -9,7 +9,6 @@ from homeassistant.components.number import (
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.const import UnitOfTemperature, UnitOfTime
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
@@ -18,7 +17,7 @@ from .const import (
     KEY_BOOST_MODE_REPEAT,
     KEY_FIREPLACE_MODE_REPEAT,
 )
-from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
+from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity, build_entity_id
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -41,7 +40,7 @@ class SalerydLokeNumber(SalerydLokeEntity, NumberEntity):
         self._entry = entry
 
         """Initialize the sensor."""
-        self.entity_id = f"number.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("number", entry, entity_description.name)
         super().__init__(coordinator, entry, entity_description)
 
     def _get_native_value(self, system_property: SystemProperty):
@@ -65,7 +64,7 @@ class SalerydLokeVirtualNumber(SaleryLokeVirtualEntity, NumberEntity, RestoreEnt
     def __init__(self, entry, entity_description: "NumberEntityDescription") -> None:
         self._attr_mode = NumberMode.BOX
         self._attr_native_value = 0
-        self.entity_id = f"number.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("number", entry, entity_description.name)
         super().__init__(entry, entity_description)
 
     async def async_added_to_hass(self) -> None:

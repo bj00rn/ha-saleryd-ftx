@@ -3,7 +3,6 @@ from typing import TYPE_CHECKING
 
 from homeassistant.components.select import SelectEntity, SelectEntityDescription
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
 from pysaleryd.utils import SystemProperty
 
@@ -14,7 +13,7 @@ from .const import (
     VentilationModeEnum,
 )
 from .coordinator import SalerydLokeDataUpdateCoordinator
-from .entity import SalerydLokeEntity
+from .entity import SalerydLokeEntity, build_entity_id
 
 if TYPE_CHECKING:
     from homeassistant.core import HomeAssistant
@@ -35,7 +34,7 @@ class SalerydLokeSelect(SalerydLokeEntity, SelectEntity):
         self._attr_current_option = None
         self._entry = entry
         self._attr_options = [o.name for o in self.OPTION_ENUM]
-        self.entity_id = f"select.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("select", entry, entity_description.name)
         super().__init__(coordinator, entry, entity_description)
 
     def _handle_coordinator_update(self) -> None:

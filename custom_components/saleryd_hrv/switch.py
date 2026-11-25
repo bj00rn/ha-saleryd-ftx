@@ -10,8 +10,8 @@ from homeassistant.components.switch import (
     SwitchEntityDescription,
 )
 from homeassistant.const import STATE_ON
-from homeassistant.core import HassJobType
-from homeassistant.helpers.event import async_track_state_change_event
+from homeassistant.core import callback
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.util import slugify
 from pysaleryd.const import DataKeyEnum
@@ -19,22 +19,19 @@ from pysaleryd.utils import SystemProperty
 
 from .const import (
     CONF_ENABLE_INSTALLER_SETTINGS,
+    DOMAIN,
     KEY_COOKING_MODE,
     LOGGER,
     ModeEnum,
     VentilationModeEnum,
 )
-from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity
+from .entity import SalerydLokeEntity, SaleryLokeVirtualEntity, build_entity_id
 
 if TYPE_CHECKING:
-    from homeassistant.core import (
-        CALLBACK_TYPE,
-        Event,
-        EventStateChangedData,
-        HomeAssistant,
-    )
+    from homeassistant.core import CALLBACK_TYPE, HomeAssistant
     from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
+    from .coordinator import SalerydLokeDataUpdateCoordinator
     from .data import SalerydLokeConfigEntry
 
 
@@ -46,7 +43,7 @@ class SalerydLokeVirtualSwitch(SaleryLokeVirtualEntity, SwitchEntity):
     ) -> None:
         self._entry = entry
         self._attr_is_on = False
-        self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("switch", entry, entity_description.name)
         super().__init__(entry, entity_description)
 
     def turn_on(self, **kwargs: Any) -> None:
@@ -72,7 +69,7 @@ class SalerydLokeBinarySwitch(SalerydLokeEntity, SwitchEntity):
         self._entry = entry
         self._state_when_on = state_when_on
         self._state_when_off = state_when_off
-        self.entity_id = f"switch.{entry.unique_id}_{slugify(entity_description.name)}"
+        self.entity_id = build_entity_id("switch", entry, entity_description.name)
         super().__init__(coordinator, entry, entity_description)
 
     @property
@@ -102,50 +99,48 @@ class SalerydLokeCookingModeSwitch(SalerydLokeVirtualSwitch, RestoreEntity):
     THRESHOLD = 3
 
     def __init__(self, coordinator, entry, entity_description) -> None:
-        self._unsubscribe: CALLBACK_TYPE | None = None
+        self._coordinator: "SalerydLokeDataUpdateCoordinator" = coordinator
+        self._minutes_left: int | None = None
         super().__init__(coordinator, entry, entity_description)
 
     async def async_added_to_hass(self) -> None:
         await super().async_added_to_hass()
         state = await self.async_get_last_state()
         self._attr_is_on = state is not None and state.state == STATE_ON
-        track_entity_id = (
-            f"sensor.{self._entry.unique_id}_{slugify('Fireplace mode minutes left')}"
+        # Follow the fireplace timer through the coordinator rather than the
+        # timer sensor's entity id, which the user may have renamed.
+        self.async_on_remove(
+            self._coordinator.async_add_listener(self._handle_coordinator_update)
         )
 
-        self._unsubscribe = async_track_state_change_event(
-            self.hass,
-            track_entity_id,
-            self._maybe_cancel,
-            HassJobType.Coroutinefunction,
-        )
-
-    async def async_will_remove_from_hass(self) -> None:
-        if self._unsubscribe is not None:
-            self._unsubscribe()
-        await super().async_will_remove_from_hass()
-
-    async def _maybe_cancel(self, event: "Event[EventStateChangedData]"):
-        if self._attr_is_on:
-            if (
-                event.data["new_state"] is None
-                or not event.data["new_state"].state.isnumeric()
-            ):
-                return
-            if float(event.data["new_state"].state) < self.THRESHOLD:
-                LOGGER.info("Cooking mode triggered deactivation of fireplace mode")
-                LOGGER.debug(
-                    "Cooking mode deactivating fireplace mode, since time left [%s] < threshold [%s]",
-                    event.data["new_state"].state,
-                    self.THRESHOLD,
-                )
-                await self._entry.runtime_data.bridge.send_command(
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        minutes_left = SystemProperty.from_str(
+            DataKeyEnum.MINUTES_LEFT_FIREPLACE_MODE,
+            self._coordinator.data.get(DataKeyEnum.MINUTES_LEFT_FIREPLACE_MODE),
+        ).value
+        if minutes_left == self._minutes_left:
+            return
+        self._minutes_left = minutes_left
+        if not self._attr_is_on or not isinstance(minutes_left, int):
+            return
+        # 0 means the timer is not running
+        if 0 < minutes_left < self.THRESHOLD:
+            LOGGER.info("Cooking mode triggered deactivation of fireplace mode")
+            LOGGER.debug(
+                "Cooking mode deactivating fireplace mode, since time left [%s] < threshold [%s]",
+                minutes_left,
+                self.THRESHOLD,
+            )
+            self.hass.async_create_task(
+                self._entry.runtime_data.bridge.send_command(
                     DataKeyEnum.FIREPLACE_MODE, ModeEnum.Off
                 )
+            )
 
 
 class SalerydLokeModeRepeatListener:
-    """Listen for expiring mode timers and repeat mode activations."""
+    """Repeat a mode activation when its timer is about to expire."""
 
     THRESHOLD = 3
 
@@ -154,7 +149,7 @@ class SalerydLokeModeRepeatListener:
         hass: "HomeAssistant",
         entry: "SalerydLokeConfigEntry",
         mode_name: str,
-        track_sensor_name: str,
+        minutes_left_key: DataKeyEnum,
         repeat_number_name: str,
         command_key: DataKeyEnum,
         command_value: int,
@@ -162,22 +157,18 @@ class SalerydLokeModeRepeatListener:
         self.hass = hass
         self._entry = entry
         self._mode_name = mode_name
-        self._track_entity_id = f"sensor.{entry.unique_id}_{slugify(track_sensor_name)}"
-        self._repeat_entity_id = (
-            f"number.{entry.unique_id}_{slugify(repeat_number_name)}"
-        )
+        self._minutes_left_key = minutes_left_key
+        self._repeat_unique_id = f"{entry.unique_id}_{slugify(repeat_number_name)}"
         self._command_key = command_key
         self._command_value = command_value
-        self._unsubscribe: CALLBACK_TYPE | None = None
-        self._remaining_repeats: int | None = None
-        self._waiting_for_reset = False
+        self._unsubscribe: "CALLBACK_TYPE | None" = None
+        self._active = False
+        self._remaining_repeats = 0
+        self._extension_pending = False
 
-    def async_start(self) -> CALLBACK_TYPE:
-        self._unsubscribe = async_track_state_change_event(
-            self.hass,
-            self._track_entity_id,
-            self._maybe_repeat_mode,
-            HassJobType.Coroutinefunction,
+    def async_start(self) -> "CALLBACK_TYPE":
+        self._unsubscribe = self._entry.runtime_data.coordinator.async_add_listener(
+            self._handle_coordinator_update
         )
         return self.async_stop
 
@@ -186,13 +177,12 @@ class SalerydLokeModeRepeatListener:
             self._unsubscribe()
             self._unsubscribe = None
 
-    def _parse_minutes(self, state) -> float | None:
-        if state is None or not state.state.replace(".", "", 1).isnumeric():
-            return None
-        return float(state.state)
-
     def _get_configured_repeats(self) -> int:
-        state = self.hass.states.get(self._repeat_entity_id)
+        # Resolve through the registry so renamed entities keep working
+        entity_id = er.async_get(self.hass).async_get_entity_id(
+            "number", DOMAIN, self._repeat_unique_id
+        )
+        state = self.hass.states.get(entity_id) if entity_id else None
         if state is None:
             return 0
         try:
@@ -200,45 +190,51 @@ class SalerydLokeModeRepeatListener:
         except ValueError:
             return 0
 
-    async def _maybe_repeat_mode(self, event: "Event[EventStateChangedData]") -> None:
-        new_minutes = self._parse_minutes(event.data.get("new_state"))
-        old_minutes = self._parse_minutes(event.data.get("old_state"))
-        configured_repeats = self._get_configured_repeats()
-
-        if (
-            new_minutes is not None
-            and old_minutes is not None
-            and new_minutes > old_minutes
-        ):
-            if self._waiting_for_reset:
-                self._waiting_for_reset = False
-            else:
-                self._remaining_repeats = configured_repeats
-
-        if self._remaining_repeats is None:
-            self._remaining_repeats = configured_repeats
-
-        if new_minutes is None or new_minutes > self.THRESHOLD:
+    @callback
+    def _handle_coordinator_update(self) -> None:
+        minutes_left = SystemProperty.from_str(
+            self._minutes_left_key,
+            self._entry.runtime_data.coordinator.data.get(self._minutes_left_key),
+        ).value
+        if not isinstance(minutes_left, (int, float)):
+            # Unknown value, keep state until the timer is reported again
             return
 
-        if old_minutes is not None and old_minutes <= self.THRESHOLD:
+        if minutes_left <= 0:
+            self._active = False
+            self._extension_pending = False
             return
 
-        if self._remaining_repeats <= 0:
+        if not self._active:
+            self._active = True
+            if not self._extension_pending:
+                self._remaining_repeats = self._get_configured_repeats()
+
+        if minutes_left > self.THRESHOLD:
+            # Timer was reset (or a new session started)
+            self._extension_pending = False
+            return
+
+        if self._extension_pending or self._remaining_repeats <= 0:
+            return
+
+        if self._get_configured_repeats() <= 0:
             return
 
         self._remaining_repeats -= 1
-        self._waiting_for_reset = True
+        self._extension_pending = True
         LOGGER.info("Extending %s timer by repeating mode activation", self._mode_name)
         LOGGER.debug(
             "Extending %s mode since time left [%s] <= threshold [%s], repeats left [%s]",
             self._mode_name,
-            new_minutes,
+            minutes_left,
             self.THRESHOLD,
             self._remaining_repeats,
         )
-        await self._entry.runtime_data.bridge.send_command(
-            self._command_key, self._command_value
+        self.hass.async_create_task(
+            self._entry.runtime_data.bridge.send_command(
+                self._command_key, self._command_value
+            )
         )
 
 
@@ -292,7 +288,7 @@ async def async_setup_entry(
             hass=hass,
             entry=entry,
             mode_name="boost",
-            track_sensor_name="Boost mode minutes left",
+            minutes_left_key=DataKeyEnum.MINUTES_LEFT_BOOST_MODE,
             repeat_number_name="Boost mode repeats",
             command_key=DataKeyEnum.MODE_FAN,
             command_value=VentilationModeEnum.Boost,
@@ -301,7 +297,7 @@ async def async_setup_entry(
             hass=hass,
             entry=entry,
             mode_name="fireplace",
-            track_sensor_name="Fireplace mode minutes left",
+            minutes_left_key=DataKeyEnum.MINUTES_LEFT_FIREPLACE_MODE,
             repeat_number_name="Fireplace mode repeats",
             command_key=DataKeyEnum.FIREPLACE_MODE,
             command_value=ModeEnum.On,
