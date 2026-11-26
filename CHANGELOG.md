@@ -1,4 +1,11 @@
-## [8.4.1-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.4.0...v8.4.1-rc.0) (2026-11-25)
+## [8.4.1](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.4.0...v8.4.1) (2026-11-26)
+
+
+### Bug Fixes
+
+* potential fix for code scanning alert no. 17: clear-text logging of sensitive information ([6f2353f](https://github.com/bj00rn/ha-saleryd-ftx/commit/6f2353ffa6b34eff1f3a18bd243c4656740b757e))
+
+## 8.4.1-rc.0 (2026-11-25)
 
 
 ### Bug Fixes
@@ -13,14 +20,14 @@
 
 * set min/max values for fireplace and boost timer settings ([692f9f7](https://github.com/bj00rn/ha-saleryd-ftx/commit/692f9f737b5b556137596cdfaa7732f03d25fddf))
 
-## [8.3.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.3.0-rc.0...v8.3.0) (2026-05-18)
+## [8.3.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.2.1...v8.3.0) (2026-05-18)
 
 
 ### Features
 
 * add installer settings for boost mode and fireplace mode duration ([8b22284](https://github.com/bj00rn/ha-saleryd-ftx/commit/8b2228434507c27235ceae24b03a949c1f9e819a))
 
-## [8.3.0-rc.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.2.1...v8.3.0-rc.0) (2025-11-07)
+## 8.3.0-rc.0 (2025-11-07)
 
 
 ### Features
@@ -33,4 +40,11 @@
 ### Bug Fixes
 
 * **sensor:** heater power calculation ([5c27bd2](https://github.com/bj00rn/ha-saleryd-ftx/commit/5c27bd2ecb95da405f267c5bed3d7728e42ce753))
+
+## [8.2.0](https://github.com/bj00rn/ha-saleryd-ftx/compare/v8.1.1...v8.2.0) (2025-04-30)
+
+
+### Features
+
+* restore state for cooking mode switch on HA restart ([cc566ae](https://github.com/bj00rn/ha-saleryd-ftx/commit/cc566aefefc9240c414176e3c3ed5d1d43ae2cfa))
 
